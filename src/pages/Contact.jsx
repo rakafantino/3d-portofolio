@@ -80,7 +80,6 @@ const Contact = () => {
             Your Message
             <textarea type="text" rows={4} name="message" className="textarea" placeholder="Let me know how I can help you!" required value={form.message} onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} />
           </label>
-          ,
           <button type="submit" className="btn" onFocus={handleFocus} onBlur={handleBlur}>
             {isLoading ? "Sending..." : "Send Message"}
           </button>
