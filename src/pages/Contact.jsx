@@ -49,7 +49,6 @@ const Contact = () => {
       .catch((error) => {
         setIsloading(false);
         setCurrentAnimation("idle");
-        console.log(error);
         showAlert({ show: true, text: "I didn't recive your message", type: "danger" });
       });
   };
