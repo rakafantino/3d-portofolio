@@ -9,7 +9,7 @@ Title: Fox's islands
 
 import React, { useRef, useEffect } from "react";
 import { useGLTF } from "@react-three/drei";
-import { events, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { a } from "@react-spring/three";
 
 import islandScene from "../assets/3d/island.glb";
@@ -55,6 +55,18 @@ const Island = ({ isRotating, setIsRotating, setCurrentStage, ...props }) => {
 
       rotationSpeed.current = delta * 0.01 * Math.PI;
     }
+  };
+
+  const handleTouchStart = (e) => {
+    handlePointerDown(e);
+  };
+
+  const handleTouchMove = (e) => {
+    handlePointerMove(e);
+  };
+
+  const handleTouchEnd = () => {
+    handlePointerUp();
   };
 
   const handleKeyDown = (e) => {
@@ -114,6 +126,9 @@ const Island = ({ isRotating, setIsRotating, setCurrentStage, ...props }) => {
     canvas.addEventListener("pointerdown", handlePointerDown);
     canvas.addEventListener("pointerup", handlePointerUp);
     canvas.addEventListener("pointermove", handlePointerMove);
+    canvas.addEventListener("touchstart", handleTouchStart);
+    canvas.addEventListener("touchmove", handleTouchMove);
+    canvas.addEventListener("touchend", handleTouchEnd);
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
 
@@ -121,6 +136,9 @@ const Island = ({ isRotating, setIsRotating, setCurrentStage, ...props }) => {
       canvas.removeEventListener("pointerdown", handlePointerDown);
       canvas.removeEventListener("pointerup", handlePointerUp);
       canvas.removeEventListener("pointermove", handlePointerMove);
+      canvas.removeEventListener("touchstart", handleTouchStart);
+      canvas.removeEventListener("touchmove", handleTouchMove);
+      canvas.removeEventListener("touchend", handleTouchEnd);
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keyup", handleKeyUp);
     };
