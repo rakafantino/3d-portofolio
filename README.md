@@ -10,19 +10,19 @@ To get started with this project, first make sure you have Node.js and npm insta
 
 Copy code
 
-    `git clone https://github.com/rakafantino/3d-portofolio.git`
+    git clone https://github.com/rakafantino/3d-portofolio.git
 
 2.  Navigate to the project directory:
 
 Copy code
 
-    `cd 3d_portofolio`
+    cd 3d_portofolio
 
 3.  Install the dependencies:
 
 Copy code
 
-    `npm install`
+    npm install
 
 4.  Create a `.env.local` file in the root directory of the project and add the following variables:
 
@@ -38,7 +38,7 @@ you can get `service_id`,`template_id`, and `public_key` by registering on this 
 
 Copy code
 
-    `npm run dev`
+    npm run dev
 
 6.  Open your browser and go to `http://localhost:5173` to view the portfolio.
 
