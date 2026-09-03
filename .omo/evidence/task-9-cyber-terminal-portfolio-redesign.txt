@@ -1,0 +1,30 @@
+TASK 9 EVIDENCE: feat(3d): build procedural pbr tech core with direct three dependency
+========================================================================================
+
+CONTEXT:
+- Recovered from interrupted parallel batch.
+- Implementation verified by orchestrator; this session finalized gates + commit.
+- Direct dependency: added three@^0.160.0 to package.json / package-lock.json.
+- Procedural model: src/models/TechCore.jsx replaces legacy Island.glb with zero external assets.
+- Test suite: src/models/TechCore.test.jsx (4 tests).
+
+COMMANDS & GATES:
+1. Captured RED baseline:
+   .omo/evidence/task-9-red.txt documented prior test failure before implementation.
+2. Verified implementation:
+   - Central metallic icosahedron core with cyan emissive glow.
+   - 3 nested rotating gimbal torus rings with dark metallic surfaces and differential rotation speeds.
+   - Inner cyan point light + cursor-reactive point light lerping across pointer-projected viewport.
+   - Outer particle ring with additive blending and circular geometry buffer.
+   - useFrame animation loop with stage-aware rotation matching stageCalculator.
+3. Verified GREEN:
+   $ npm test src/models/TechCore.test.jsx
+   Output: 4/4 tests passed.
+4. Repo-wide verification:
+   - npm test -> 78/78 tests passed
+   - npm run lint -> exit 0
+   - npm run build -> exit 0
+
+ADVERSARIAL CLASSES & HYGIENE:
+- Zero asset download/bandwidth overhead: 100% procedural WebGL primitives.
+- Deterministic fallback: graceful handling of missing or invalid scale/position props.
