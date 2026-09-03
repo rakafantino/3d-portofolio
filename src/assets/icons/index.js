@@ -24,8 +24,6 @@ import summiz from "./summiz.svg";
 import threads from "./threads.svg";
 import arrow from "./arrow.svg";
 import contact from "./contact.svg";
-import soundon from "./soundon.png";
-import soundoff from "./soundoff.png";
 import bootstrap from "./bootstrap.svg";
 import storybook from "./storybook.svg";
 
@@ -56,8 +54,6 @@ export {
   threads,
   arrow,
   contact,
-  soundon,
-  soundoff,
   bootstrap,
   storybook,
 };

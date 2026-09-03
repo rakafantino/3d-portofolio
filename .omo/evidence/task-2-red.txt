@@ -1,0 +1,55 @@
+TASK 2 RED EVIDENCE (verified pre-change state)
+================================================
+Plan: cyber-terminal-portfolio-redesign
+Task: 2 - Setup Vitest & React Testing Library Harness
+Date: 2026-09-03
+Type: RED (reconstructed from git history — no fabricated test output)
+
+NATURE OF THE PRE-CHANGE STATE
+------------------------------
+Task 2 introduced the test harness. Before commit 88f5cfe
+("test(harness): install vitest and testing-library with audio and webgl mocks")
+the repository had:
+  - NO "test" script in package.json (scripts were only dev/build/lint/preview)
+  - NO vitest / @testing-library/react / jsdom / @testing-library/jest-dom
+    in devDependencies
+
+Therefore the RED equivalent of the harness task is not a failing vitest run
+(no runner existed) but the verified ABSENCE of any test entry point: running
+`npm test` at that commit fails immediately with npm's "Missing script: test"
+error because package.json declares no such script.
+
+VERIFIED EVIDENCE (real commands run on 2026-09-03)
+---------------------------------------------------
+Command 1: git show 88f5cfe^:package.json | grep -n '"test"'
+Output:    (no matches — exit status 1)
+Interpretation: the parent of the harness commit has no "test" key in scripts.
+
+Command 2: git show 88f5cfe^:package.json | grep -n '"test"\|"lint"\|"build"\|"preview"\|"dev"'
+Output:
+    7:    "dev": "vite",
+    8:    "build": "vite build",
+    9:    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+   10:    "preview": "vite preview"
+Interpretation: scripts block contains dev/build/lint/preview only; there is
+NO test script for npm to invoke.
+
+Command 3: git show 88f5cfe^:package.json | grep -n "vitest\|testing-library\|jsdom"
+Output:    (no matches — exit status 1)
+Interpretation: no vitest/testing-library/jsdom dependencies existed pre-harness.
+
+Command 4 (post-change control): git show 88f5cfe:package.json | grep -n '"test"'
+Output:
+   11:    "test": "vitest run",
+   12:    "test:watch": "vitest"
+Interpretation: the harness commit added the "test": "vitest run" script,
+confirming the pre-change absence was real and is now resolved.
+
+WHAT `npm test` WOULD HAVE DONE AT 88f5cfe^ (honest reconstruction)
+-------------------------------------------------------------------
+npm would resolve package.json scripts, find no "test" entry, and exit non-zero
+with npm's standard error:
+    npm error Missing script: "test"
+No test files were executed because no runner existed. This statement is a
+factual consequence of the verified package.json contents above — we did not
+run a phantom command and are not presenting invented runner output.

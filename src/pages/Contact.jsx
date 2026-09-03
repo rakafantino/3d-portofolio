@@ -22,6 +22,7 @@ const Contact = () => {
   });
 
   const lastSubmitTimestampRef = useRef(0);
+  const lastSendModeRef = useRef(null);
   const { alert, showAlert, hideAlert } = useAlert();
 
   const handleInputChange = (e) => {
@@ -129,6 +130,7 @@ const Contact = () => {
 
       setIsTransmitting(false);
       const isMock = result.mode === "mock";
+      lastSendModeRef.current = result.mode;
       setTerminalState({
         statusText: "STATUS 200: TRANSMISSION DELIVERED",
         stateType: "success",
@@ -297,7 +299,7 @@ const Contact = () => {
 
       {/* Right Column: Decorative Transmission Console (no WebGL canvas) */}
       <div
-        className={`lg:w-1/2 w-full flex-col justify-between terminal-card p-6 border border-slate-800 bg-[#0c1017] text-slate-200 font-mono rounded-xl shadow-2xl transition-all duration-200 ${
+        className={`lg:w-1/2 w-full flex-col justify-between terminal-card p-6 border border-slate-800 bg-cyber-dark text-slate-200 font-mono rounded-xl shadow-2xl transition-all duration-200 ${
           isInputFocused ? "hidden lg:flex" : "flex"
         }`}
       >
@@ -351,7 +353,10 @@ const Contact = () => {
 
         <div className="mt-4 pt-3 border-t border-slate-800/60 text-[10px] text-slate-500 flex justify-between">
           <span>PACKET BUFFER: {messageCount}/1000</span>
-          <span>LATENCY: ~800MS SIMULATED</span>
+          <span>
+            LATENCY: ~800MS
+            {lastSendModeRef.current === "mock" ? " SIMULATED" : ""}
+          </span>
         </div>
       </div>
     </section>

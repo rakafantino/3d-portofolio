@@ -8,6 +8,14 @@ const Projects = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
 
+  // Display labels for raw category slugs (labels derived from the data's keys)
+  const CATEGORY_LABELS = {
+    all: "ALL",
+    "web3-crypto": "WEB3 & CRYPTO",
+    "fullstack-saas": "FULLSTACK & SaaS",
+    "ai-awards": "AI & AWARDS",
+  };
+
   const categories = useMemo(() => {
     const rawCategories = Array.from(new Set(projects.map((p) => p.category).filter(Boolean)));
     return ["all", ...rawCategories];
@@ -61,7 +69,7 @@ const Projects = () => {
                   : "bg-cyber-dark text-slate-400 border border-cyber-border hover:border-cyber-cyan/50 hover:text-slate-200"
               }`}
             >
-              <span>[ {cat} ({count}) ]</span>
+              <span>[ {CATEGORY_LABELS[cat] || cat} ({count}) ]</span>
             </button>
           );
         })}

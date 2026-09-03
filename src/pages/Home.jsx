@@ -136,6 +136,7 @@ const Home = () => {
 
   const targetAngleRef = useRef(STAGE_CENTERS[1]);
   const isSnappingRef = useRef(false);
+  const snapResetTimerRef = useRef(null);
 
   // Responsive scale listener
   useEffect(() => {
@@ -151,6 +152,16 @@ const Home = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Clear any pending stage-select rotation reset on unmount
+  useEffect(() => {
+    return () => {
+      if (snapResetTimerRef.current !== null) {
+        clearTimeout(snapResetTimerRef.current);
+        snapResetTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Handler for HUD Stage Scrubber clicks
   const handleStageSelect = (stageNum) => {
     if (STAGE_CENTERS[stageNum] === undefined) return;
@@ -158,8 +169,13 @@ const Home = () => {
     targetAngleRef.current = STAGE_CENTERS[stageNum];
     isSnappingRef.current = true;
     setIsRotating(true);
+    // Clear any pending reset from a previous select before arming a new one
+    if (snapResetTimerRef.current !== null) {
+      clearTimeout(snapResetTimerRef.current);
+    }
     // Smooth reset of rotating flag after transition
-    setTimeout(() => {
+    snapResetTimerRef.current = setTimeout(() => {
+      snapResetTimerRef.current = null;
       setIsRotating(false);
     }, 450);
   };

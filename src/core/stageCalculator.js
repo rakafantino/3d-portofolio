@@ -8,11 +8,12 @@
  * - Stage 3: 1.05 (~60.2°)
  * - Stage 4: 5.65 (~323.7°)
  *
- * Windows partition the full 2pi radian circle evenly into 4 contiguous quarter-windows:
+ * Windows are 4 contiguous windows partitioning the full 2pi radian circle
+ * (spans differ; windows are NOT equal quarter arcs):
  * - Stage 2: [1.775, 3.500)
  * - Stage 1: [3.500, 5.075)
- * - Stage 4: [5.075, 2pi) U [0, 0.275) (spans the 0/2pi wrap boundary)
- * - Stage 3: [0.275, 1.775)
+ * - Stage 4: [5.075, 2pi) U [0, 0.2084073) (spans the 0/2pi wrap boundary)
+ * - Stage 3: [0.2084073, 1.775)
  */
 
 const TWO_PI = 2 * Math.PI;
@@ -29,7 +30,7 @@ export const STAGE_CENTERS = Object.freeze({
  * For a < b, midpoint is (a + b) / 2.
  * For wrap boundary (e.g. Stage 4 at 5.65 to Stage 3 at 1.05),
  * distance across 0 is (TWO_PI - 5.65) + 1.05 = 1.683185...
- * Midpoint is (5.65 + 1.683185... / 2) % TWO_PI = 0.275796...
+ * Midpoint is (5.65 + 1.683185... / 2) % TWO_PI = 0.2084073... (see B_4_3)
  */
 const B_3_2 = (STAGE_CENTERS[3] + STAGE_CENTERS[2]) / 2; // (1.05 + 2.5) / 2 = 1.775
 const B_2_1 = (STAGE_CENTERS[2] + STAGE_CENTERS[1]) / 2; // (2.5 + 4.5) / 2 = 3.500

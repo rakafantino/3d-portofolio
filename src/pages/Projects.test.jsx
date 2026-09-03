@@ -35,11 +35,11 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     });
   });
 
-  it("renders category filter pills with live counts from data", () => {
+  it("renders category filter pills with display labels and live counts from data", () => {
     renderProjects();
     expect(screen.getByRole("button", { name: /all\s*\(7\)/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /web3-crypto\s*\(5\)/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /fullstack-saas\s*\(2\)/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /web3 & crypto\s*\(5\)/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /fullstack & saas\s*\(2\)/i })).toBeInTheDocument();
   });
 
   it("filters projects when category pills are clicked and restores when ALL is clicked", () => {
@@ -47,7 +47,7 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     expect(screen.getByText("Diklik.co")).toBeInTheDocument();
     expect(screen.getByText("NinjaPump.ai")).toBeInTheDocument();
 
-    const web3Filter = screen.getByRole("button", { name: /web3-crypto\s*\(5\)/i });
+    const web3Filter = screen.getByRole("button", { name: /web3 & crypto\s*\(5\)/i });
     fireEvent.click(web3Filter);
 
     expect(screen.queryByText("Diklik.co")).not.toBeInTheDocument();

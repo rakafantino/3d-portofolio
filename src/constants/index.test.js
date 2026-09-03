@@ -35,7 +35,8 @@ describe("src/constants/index schema and authentic CV data", () => {
         expect(experience.title.trim().length).toBeGreaterThan(0);
         expect(typeof experience.company_name).toBe("string");
         expect(experience.company_name.trim().length).toBeGreaterThan(0);
-        expect(experience.icon).toBeDefined();
+        // Regression guard: `icon` was dropped with the dead image assets (B2).
+        expect(Object.prototype.hasOwnProperty.call(experience, "icon")).toBe(false);
         expect(typeof experience.iconBg).toBe("string");
         expect(typeof experience.date).toBe("string");
         expect(Array.isArray(experience.points)).toBe(true);

@@ -1,10 +1,4 @@
 import {
-  meta,
-  shopify,
-  starbucks,
-  tesla,
-} from "../assets/images";
-import {
   contact,
   css,
   estate,
@@ -105,7 +99,6 @@ export const experiences = [
   {
     title: "Fullstack Developer (Freelance)",
     company_name: "Meraki Warna Teknologi",
-    icon: meta,
     iconBg: "#10b981",
     date: "May 2025 - Present",
     category: "tech",
@@ -120,7 +113,6 @@ export const experiences = [
   {
     title: "Frontend Developer (Software Engineer)",
     company_name: "Loka Mining",
-    icon: tesla,
     iconBg: "#06b6d4",
     date: "May 2024 - May 2025",
     category: "tech",
@@ -135,7 +127,6 @@ export const experiences = [
   {
     title: "Content Creator",
     company_name: "Pemerintah Kota Pekanbaru",
-    icon: starbucks,
     iconBg: "#f59e0b",
     date: "May 2023 - Jun 2024",
     category: "creative",
@@ -149,7 +140,6 @@ export const experiences = [
   {
     title: "Head Operation, Engineer",
     company_name: "PT Alga Jaya Solusi",
-    icon: shopify,
     iconBg: "#3b82f6",
     date: "Sep 2021 - Dec 2021",
     category: "operations",
@@ -163,7 +153,6 @@ export const experiences = [
   {
     title: "Sales Promotion Boy (SPB)",
     company_name: "PT Mitra Cahaya Sentosa",
-    icon: shopify,
     iconBg: "#ec4899",
     date: "Apr 2022 - May 2022",
     category: "operations",

@@ -13,6 +13,8 @@ import * as THREE from "three";
  *
  * Replaces legacy Island.glb without any external GLB assets.
  */
+const isFiniteNumber = (value) => typeof value === "number" && Number.isFinite(value);
+
 const TechCore = ({
   scale = 1,
   position = [0, 0, 0],
@@ -31,20 +33,26 @@ const TechCore = ({
 
   const { viewport } = useThree();
 
-  // Guard transform props against invalid non-array/non-numeric values
+  // Guard transform props against invalid / non-finite values
   const safeScale = useMemo(() => {
-    if (typeof scale === "number" && !Number.isNaN(scale)) return [scale, scale, scale];
-    if (Array.isArray(scale) && scale.length === 3) return scale;
+    if (isFiniteNumber(scale)) return [scale, scale, scale];
+    if (Array.isArray(scale) && scale.length === 3 && scale.every(isFiniteNumber)) {
+      return scale;
+    }
     return [1, 1, 1];
   }, [scale]);
 
   const safePosition = useMemo(() => {
-    if (Array.isArray(position) && position.length === 3) return position;
+    if (Array.isArray(position) && position.length === 3 && position.every(isFiniteNumber)) {
+      return position;
+    }
     return [0, 0, 0];
   }, [position]);
 
   const safeRotation = useMemo(() => {
-    if (Array.isArray(rotation) && rotation.length === 3) return rotation;
+    if (Array.isArray(rotation) && rotation.length === 3 && rotation.every(isFiniteNumber)) {
+      return rotation;
+    }
     return [0, 0, 0];
   }, [rotation]);
 

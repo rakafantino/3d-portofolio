@@ -22,6 +22,7 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
 
   const inputRef = useRef(null);
   const dialogRef = useRef(null);
+  const wasOpenRef = useRef(false);
 
   // Command definitions
   const commands = useMemo(
@@ -131,13 +132,22 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
     if (open) {
       document.body.dataset.paletteOpen = "true";
       inputRef.current?.focus();
+      wasOpenRef.current = true;
       return () => {
         document.body.dataset.paletteOpen = "false";
       };
-    } else {
-      document.body.dataset.paletteOpen = "false";
-      setQuery("");
-      setActiveIndex(0);
+    }
+
+    document.body.dataset.paletteOpen = "false";
+    setQuery("");
+    setActiveIndex(0);
+
+    // Restore keyboard focus to the opener button on close (mirrors the
+    // ProjectDrawer focus-restore pattern). Skipped on initial mount and
+    // guarded: the trigger may be absent (unit tests / pure Cmd+K usage).
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+      document.querySelector('[aria-label="Open command palette"]')?.focus();
     }
   }, [open]);
 
