@@ -83,48 +83,48 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     expect(screen.getByRole("button", { name: /Kontak/i })).toBeInTheDocument();
   });
 
-  it("switches to Zone 2 (AI & Awards) on button click, displaying link to /about", () => {
+  it("switches to Zone 2 (AI & Awards) on button click, displaying link to /about", async () => {
     renderHome();
 
     const aiAwardsBtn = screen.getByRole("button", { name: /AI & Awards/i });
     fireEvent.click(aiAwardsBtn);
 
-    const aboutLink = screen.getByRole("link", { name: /Buka halaman About/i });
+    const aboutLink = await screen.findByRole("link", { name: /Buka halaman About/i });
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
-    expect(screen.getByText(/AI Singapore & Google Gemma Challenge/i)).toBeInTheDocument();
+    expect(await screen.findByText(/AI Singapore & Google Gemma Challenge/i)).toBeInTheDocument();
   });
 
-  it("switches to Zone 3 (Web3 & Kripto) on button click, displaying link to /projects", () => {
+  it("switches to Zone 3 (Web3 & Kripto) on button click, displaying link to /projects", async () => {
     renderHome();
 
     const web3Btn = screen.getByRole("button", { name: /Web3 & Kripto/i });
     fireEvent.click(web3Btn);
 
-    const projectsLink = screen.getByRole("link", { name: /Lihat Proyek Web3/i });
+    const projectsLink = await screen.findByRole("link", { name: /Lihat Proyek Web3/i });
     expect(projectsLink).toBeInTheDocument();
     expect(projectsLink).toHaveAttribute("href", "/projects");
-    expect(screen.getByText(/NinjaPump\.ai/i)).toBeInTheDocument();
+    expect(await screen.findByText(/NinjaPump\.ai/i)).toBeInTheDocument();
   });
 
-  it("switches to Zone 4 (Fullstack) on button click, displaying portofolio link", () => {
+  it("switches to Zone 4 (Fullstack) on button click, displaying portofolio link", async () => {
     renderHome();
 
     const fullstackBtn = screen.getByRole("button", { name: /Fullstack/i });
     fireEvent.click(fullstackBtn);
 
-    const projectsLink = screen.getByRole("link", { name: /Lihat Portofolio/i });
+    const projectsLink = await screen.findByRole("link", { name: /Lihat Portofolio/i });
     expect(projectsLink).toBeInTheDocument();
     expect(projectsLink).toHaveAttribute("href", "/projects");
   });
 
-  it("switches to Zone 5 (Mercusuar Kontak) on button click, displaying contact link", () => {
+  it("switches to Zone 5 (Mercusuar Kontak) on button click, displaying contact link", async () => {
     renderHome();
 
     const contactBtn = screen.getByRole("button", { name: /Kontak/i });
     fireEvent.click(contactBtn);
 
-    const contactLink = screen.getByRole("link", { name: /Kirim Pesan/i });
+    const contactLink = await screen.findByRole("link", { name: /Kirim Pesan/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
   });

@@ -22,33 +22,33 @@ const ZONE_BUTTONS = [
  */
 const CAMERA_FRAMINGS = {
   1: {
-    pos: [0, 3.8, 8.2],
-    target: [0, 0, 0],
-    islandRotY: STAGE_CENTERS[1],
+    pos: [0, 2.9, 6.2],
+    target: [0, 0.2, 0],
+    islandRotY: 0,
     cardAlignment: "center",
   },
   2: {
-    pos: [1.8, 2.0, 3.8],
-    target: [0.9, 1.0, 0],
-    islandRotY: STAGE_CENTERS[2],
+    pos: [1.2, 1.8, 3.2],
+    target: [0.6, 0.85, 0],
+    islandRotY: -0.65,
     cardAlignment: "right",
   },
   3: {
-    pos: [-1.8, 2.0, 3.8],
-    target: [-0.9, 0.8, 0],
-    islandRotY: STAGE_CENTERS[3],
+    pos: [-1.2, 1.7, 3.2],
+    target: [-0.6, 0.7, 0],
+    islandRotY: 0.85,
     cardAlignment: "left",
   },
   4: {
-    pos: [1.6, 1.6, 3.6],
-    target: [0.7, 0.5, 0],
-    islandRotY: STAGE_CENTERS[4],
+    pos: [1.1, 1.4, 2.9],
+    target: [0.5, 0.45, 0],
+    islandRotY: 0,
     cardAlignment: "right",
   },
   5: {
-    pos: [-1.6, 1.8, 3.8],
-    target: [-0.8, 0.7, 0],
-    islandRotY: 3.14,
+    pos: [-1.2, 1.6, 3.1],
+    target: [-0.6, 0.65, 0],
+    islandRotY: 0.35,
     cardAlignment: "left",
   },
 };
@@ -124,20 +124,21 @@ IslandWorldRig.propTypes = {
 
 const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
-  const [isCameraMoving, setIsCameraMoving] = useState(false);
+  const [displayedStage, setDisplayedStage] = useState(1);
+  const [isCardVisible, setIsCardVisible] = useState(true);
   const [islandScale, setIslandScale] = useState(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
-      return [0.75, 0.75, 0.75];
+      return [0.9, 0.9, 0.9];
     }
-    return [0.95, 0.95, 0.95];
+    return [1.2, 1.2, 1.2];
   });
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setIslandScale([0.75, 0.75, 0.75]);
+        setIslandScale([0.9, 0.9, 0.9]);
       } else {
-        setIslandScale([0.95, 0.95, 0.95]);
+        setIslandScale([1.2, 1.2, 1.2]);
       }
     };
 
@@ -145,13 +146,26 @@ const Home = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleZoneSelect = (stageNum) => {
-    if (stageNum === currentStage) return;
-    setIsCameraMoving(true);
-    setCurrentStage(stageNum);
+  const handleMovementChange = (isMoving) => {
+    if (isMoving) {
+      setIsCardVisible(false);
+    } else {
+      setDisplayedStage(currentStage);
+      setIsCardVisible(true);
+    }
   };
 
-  const activeFraming = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
+  const handleZoneSelect = (stageNum) => {
+    if (stageNum === currentStage) return;
+    setIsCardVisible(false);
+    setCurrentStage(stageNum);
+    setTimeout(() => {
+      setDisplayedStage(stageNum);
+      setIsCardVisible(true);
+    }, 350);
+  };
+
+  const activeFraming = CAMERA_FRAMINGS[displayedStage] || CAMERA_FRAMINGS[1];
   const cardAlignment = activeFraming.cardAlignment;
 
   return (
@@ -172,7 +186,7 @@ const Home = () => {
 
           <CameraRig
             currentStage={currentStage}
-            onMovementStateChange={setIsCameraMoving}
+            onMovementStateChange={handleMovementChange}
           />
 
           <IslandWorldRig scale={islandScale} currentStage={currentStage} />
@@ -180,14 +194,14 @@ const Home = () => {
       </Canvas>
 
       <div
-        className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-700 ease-out ${
+        className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-500 ease-out ${
           cardAlignment === "center"
             ? "items-end justify-center pb-24 sm:pb-28"
             : "items-center"
         } ${
-          isCameraMoving
-            ? "opacity-0 scale-90 translate-y-8 pointer-events-none"
-            : "opacity-100 scale-100 translate-y-0"
+          isCardVisible
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-95 translate-y-6 pointer-events-none duration-200"
         }`}
       >
         <div
@@ -200,7 +214,7 @@ const Home = () => {
           }`}
         >
           <div className="pointer-events-auto max-w-sm w-full">
-            {currentStage && <Homeinfo currentStage={currentStage} />}
+            {displayedStage && <Homeinfo currentStage={displayedStage} />}
           </div>
         </div>
       </div>
