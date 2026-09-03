@@ -1,4 +1,4 @@
-import { useState, useRef, Suspense } from "react";
+import { useState, Suspense } from "react";
 import emailjs from "@emailjs/browser";
 import { Canvas } from "@react-three/fiber";
 
@@ -8,7 +8,6 @@ import useAlert from "../hooks/useAlert";
 import Alert from "../components/Alert";
 
 const Contact = () => {
-  const formRef = useRef(null);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [isLoading, setIsloading] = useState(false);
   const [currentAnimation, setCurrentAnimation] = useState("idle");
@@ -46,7 +45,7 @@ const Contact = () => {
           setForm({ name: "", email: "", message: "" });
         }, [3000]);
       })
-      .catch((error) => {
+      .catch(() => {
         setIsloading(false);
         setCurrentAnimation("idle");
         showAlert({ show: true, text: "I didn't recive your message", type: "danger" });

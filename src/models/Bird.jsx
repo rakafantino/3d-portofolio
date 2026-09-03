@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import birdScene from "../assets/3d/bird.glb";
 import { useAnimations, useGLTF } from "@react-three/drei";
@@ -11,7 +11,7 @@ const Bird = () => {
 
   useEffect(() => {
     actions["Take 001"].play();
-  }, []);
+  }, [actions]);
 
   useFrame(({ clock, camera }) => {
     birdRef.current.position.y = Math.sin(clock.elapsedTime) * 0.2 + 2;

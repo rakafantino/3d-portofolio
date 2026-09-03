@@ -19,12 +19,13 @@ const Home = () => {
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
 
   useEffect(() => {
+    const audioElement = audioRef.current;
     if (isPlayingMusic) {
-      audioRef.current.play();
+      audioElement.play();
     }
 
     return () => {
-      audioRef.current.pause();
+      audioElement.pause();
     };
   }, [isPlayingMusic]);
 

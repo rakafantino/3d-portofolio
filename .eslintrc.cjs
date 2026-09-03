@@ -2,11 +2,25 @@ module.exports = {
   root: true,
   env: { browser: true, es2020: true },
   extends: ["eslint:recommended", "plugin:react/recommended", "plugin:react/jsx-runtime", "plugin:react-hooks/recommended"],
-  ignorePatterns: ["dist", ".eslintrc.cjs", "src"],
+  ignorePatterns: ["dist", ".eslintrc.cjs"],
   parserOptions: { ecmaVersion: "latest", sourceType: "module" },
   settings: { react: { version: "18.2" } },
   plugins: ["react-refresh"],
   rules: {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+    "react/prop-types": "off",
+    "react/no-unknown-property": "off",
   },
+  overrides: [
+    {
+      files: [
+        "src/pages/index.js",
+        "src/assets/icons/index.js",
+        "src/assets/images/index.js",
+      ],
+      rules: {
+        "react-refresh/only-export-components": "off",
+      },
+    },
+  ],
 };
