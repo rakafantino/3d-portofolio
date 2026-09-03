@@ -1,0 +1,27 @@
+TASK 13 EVIDENCE: feat(contact): implement dispatch terminal with mock mode fallback and clean legacy fox model
+========================================================================================
+
+CONTEXT:
+- Recovered from interrupted parallel batch.
+- Implementation verified by orchestrator; this session finalized gates + commit.
+- Files: src/pages/Contact.jsx overhauled + src/pages/Contact.test.jsx (6 tests) + src/core/contactTransport.js + src/core/contactTransport.test.js (5 tests) + Fox model files deleted (src/models/Fox.jsx + src/assets/3d/fox.glb).
+
+COMMANDS & GATES:
+1. Captured RED baseline:
+   .omo/evidence/task-13-red.txt documented prior test failure before implementation.
+2. Verified implementation:
+   - Cyber dispatch terminal UI replacing 3D fox canvas.
+   - Dual-mode contact transport (FCIS pattern): EmailJS when credentials exist, deterministic console mock fallback when unconfigured.
+   - Clean state machine: idle, sending, success, error.
+   - Fox cleanup: legacy heavy 3D model deleted cleanly.
+3. Verified GREEN:
+   $ npm test src/core/contactTransport.test.js src/pages/Contact.test.jsx
+   Output: 11/11 tests passed.
+4. Repo-wide verification:
+   - npm test -> 78/78 tests passed
+   - npm run lint -> exit 0
+   - npm run build -> exit 0
+
+ADVERSARIAL CLASSES & HYGIENE:
+- Security: Zero secret leaks, env vars validated through transport boundary.
+- Bundle optimization: Removed fox.glb asset.
