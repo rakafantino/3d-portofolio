@@ -1,0 +1,49 @@
+================================================================================
+Task 10 Verification Evidence: Hero Canvas & Dual-Control Orbit Scrubber HUD
+================================================================================
+
+1. TDD Phase & RED Phase
+- Created test suite: `src/pages/Home.test.jsx`
+- Verified RED failure before full overhaul and captured to `.omo/evidence/task-10-red.txt`:
+  * Failure: `Island.jsx` threw TypeError (`Cannot read properties of undefined (reading 'geometry')`), legacy canvas prevented mount.
+  * Verified 100% clean failure on obsolete model code before replacement.
+
+2. GREEN Phase & Implementation
+- Replaced `src/pages/Home.jsx` with mobile-first `min-h-[100dvh]` layout and mounted `TechCore`.
+- Replaced legacy touch listeners and `preventDefault()` with R3F group pointer interaction:
+  * HeroRig uses `onPointerDown`, `onPointerUp`, `onPointerMove`, and `onPointerLeave` without `preventDefault()`.
+  * Mobile page scroll (`touch-pan-y`) remains completely preserved.
+- Integrated dual-control orbit HUD scrubber:
+  * Scrubber buttons: `[01 // SYS_INIT]`, `[02 // AI_AWARDS]`, `[03 // WEB3_ARSENAL]`, `[04 // COMMS_LINK]`.
+  * Active state highlights with cyber-cyan border and glow, inactive states styled with cyber-slate / cyber-dark tokens.
+  * Clicking scrubber snaps rotation directly to `STAGE_CENTERS[n]` from `stageCalculator.js` with smooth useFrame damping.
+- Restyled `src/components/Homeinfo.jsx`:
+  * Telemetry callout cards formatted with `.terminal-card` and `.cyber-border-glow`.
+  * Stage 1: Intro ("Raka Fantino — Fullstack Engineer / AI & Web3 Builder").
+  * Stage 2: Link to `/about` ("VIEW PERSONNEL FILE").
+  * Stage 3: Link to `/projects` ("VIEW PROJECT LOG").
+  * Stage 4: Link to `/contact` ("OPEN COMMS CHANNEL").
+- Mounted `AudioController` in bottom-left zone; removed legacy `sakura.mp3`, `soundon`, and `soundoff` references from Home.
+
+3. Deletion of Legacy 3D Assets & Models
+- Verified 0 remaining imports across `src/` via grep before removing.
+- Executed `git rm -f`:
+  * `src/models/Island.jsx`
+  * `src/models/Sky.jsx`
+  * `src/models/Bird.jsx`
+  * `src/models/Plane.jsx`
+  * `src/assets/3d/island.glb`
+  * `src/assets/3d/sky.glb`
+  * `src/assets/3d/bird.glb`
+  * `src/assets/3d/plane.glb`
+  * `src/assets/sakura.mp3`
+- Post-deletion verification:
+  * `grep -rn "sakura" src/` -> NO_SAKURA
+  * `grep -rnE "(Island|Sky|Bird|Plane)" src/` -> 0 component imports (only 1 comment line in TechCore.jsx)
+  * `grep -rl "\.glb" dist/assets/` -> NO_GLB_IN_DIST (0 glb files in production build)
+
+4. Quality Gates
+- Test suite: `npm test` -> 12 passed test suites (100 passed tests total, including 7 in `Home.test.jsx`).
+- Linter: `npm run lint` -> exit 0, 0 errors, 0 warnings.
+- Build: `npm run build` -> exit 0, bundle built successfully in 3.65s.
+- Dev smoke test: Port 5179 responded HTTP 200 OK, background process cleanly terminated.
