@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
  * No cyber/cyan, no mono system labels, no "//", no "[01]" brackets.
  */
 const StoryCard = ({ title, tag, headline, subline, links }) => (
-  <div className="w-[min(30rem,calc(100vw-2rem))] mx-auto rounded-2xl border border-island-border/80 bg-island-dark/90 backdrop-blur-md px-4 sm:px-5 py-3 shadow-2xl shadow-black/50 text-left">
+  <div className="w-full rounded-2xl border border-island-border/80 bg-island-dark/95 backdrop-blur-md px-4 sm:px-5 py-3.5 shadow-2xl shadow-black/50 text-left">
     <div className="flex items-baseline justify-between gap-3">
       <span className="font-serif font-medium text-island-sand">{title}</span>
       {tag && (
@@ -59,7 +59,7 @@ StoryCard.propTypes = {
 const renderContent = {
   // Zone 1: Intro / Identity
   1: (
-    <div className="w-[min(30rem,calc(100vw-2rem))] mx-auto rounded-2xl border border-island-border/80 bg-island-dark/90 backdrop-blur-md px-4 sm:px-5 py-3.5 shadow-2xl shadow-black/50">
+    <div className="w-full rounded-2xl border border-island-border/80 bg-island-dark/95 backdrop-blur-md px-4 sm:px-5 py-3.5 shadow-2xl shadow-black/50 text-left">
       <p className="text-[10px] font-mono tracking-widest uppercase text-copper/90">
         Workshop Island
       </p>

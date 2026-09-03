@@ -15,39 +15,47 @@ const ZONE_BUTTONS = [
   { stage: 5, name: "Kontak", title: "Mercusuar" },
 ];
 
-// Target framing posisi kamera & lookAt untuk tiap zona
+/**
+ * Camera Framings with Asymmetric Rule of Thirds:
+ * Zooms in tight on the target landmark and offsets it to one side,
+ * leaving intentional negative space on the opposite side for the card.
+ */
 const CAMERA_FRAMINGS = {
   1: {
     pos: [0, 3.8, 8.2],
     target: [0, 0, 0],
     islandRotY: STAGE_CENTERS[1],
+    cardAlignment: "center",
   },
   2: {
-    pos: [-1.4, 2.2, 5.0],
-    target: [-0.9, 0.9, 0],
+    pos: [1.8, 2.0, 3.8],
+    target: [0.9, 1.0, 0],
     islandRotY: STAGE_CENTERS[2],
+    cardAlignment: "right",
   },
   3: {
-    pos: [1.5, 2.2, 4.8],
-    target: [1.0, 0.7, 0],
+    pos: [-1.8, 2.0, 3.8],
+    target: [-0.9, 0.8, 0],
     islandRotY: STAGE_CENTERS[3],
+    cardAlignment: "left",
   },
   4: {
-    pos: [0, 1.8, 4.4],
-    target: [0, 0.4, 0],
+    pos: [1.6, 1.6, 3.6],
+    target: [0.7, 0.5, 0],
     islandRotY: STAGE_CENTERS[4],
+    cardAlignment: "right",
   },
   5: {
-    pos: [1.6, 2.0, 4.6],
-    target: [1.1, 0.6, 0],
+    pos: [-1.6, 1.8, 3.8],
+    target: [-0.8, 0.7, 0],
     islandRotY: 3.14,
+    cardAlignment: "left",
   },
 };
 
 /**
  * CameraRig
- * Smoothly lerps camera position, target lookAt, and island rotation
- * toward the active zone framing without any dragging requirements.
+ * Smoothly lerps camera position and target lookAt.
  */
 const CameraRig = ({ currentStage, onMovementStateChange }) => {
   const currentPosRef = useRef(new THREE.Vector3(0, 3.8, 8.2));
@@ -59,16 +67,16 @@ const CameraRig = ({ currentStage, onMovementStateChange }) => {
     const targetPos = new THREE.Vector3(...framing.pos);
     const targetLookAt = new THREE.Vector3(...framing.target);
 
-    // Smooth lerp for position and lookAt
+    // Smooth cinematic lerp
     currentPosRef.current.lerp(targetPos, 0.05);
     currentLookAtRef.current.lerp(targetLookAt, 0.05);
 
     state.camera.position.copy(currentPosRef.current);
     state.camera.lookAt(currentLookAtRef.current);
 
-    // Check if camera is still moving significantly
+    // Detect if camera is still traveling
     const dist = currentPosRef.current.distanceTo(targetPos);
-    const moving = dist > 0.06;
+    const moving = dist > 0.05;
 
     if (moving !== isMovingRef.current) {
       isMovingRef.current = moving;
@@ -143,6 +151,9 @@ const Home = () => {
     setCurrentStage(stageNum);
   };
 
+  const activeFraming = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
+  const cardAlignment = activeFraming.cardAlignment;
+
   return (
     <section
       role="region"
@@ -164,12 +175,35 @@ const Home = () => {
             onMovementStateChange={setIsCameraMoving}
           />
 
-          <IslandWorldRig
-            scale={islandScale}
-            currentStage={currentStage}
-          />
+          <IslandWorldRig scale={islandScale} currentStage={currentStage} />
         </Suspense>
       </Canvas>
+
+      <div
+        className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-700 ease-out ${
+          cardAlignment === "center"
+            ? "items-end justify-center pb-24 sm:pb-28"
+            : "items-center"
+        } ${
+          isCameraMoving
+            ? "opacity-0 scale-90 translate-y-8 pointer-events-none"
+            : "opacity-100 scale-100 translate-y-0"
+        }`}
+      >
+        <div
+          className={`w-full flex ${
+            cardAlignment === "left"
+              ? "justify-start pl-6 sm:pl-10 md:pl-16"
+              : cardAlignment === "right"
+              ? "justify-end pr-6 sm:pr-10 md:pr-16"
+              : "justify-center"
+          }`}
+        >
+          <div className="pointer-events-auto max-w-sm w-full">
+            {currentStage && <Homeinfo currentStage={currentStage} />}
+          </div>
+        </div>
+      </div>
 
       {/* Bottom Zone Navigator Dock */}
       <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 z-20 flex justify-center px-4 pointer-events-auto">
@@ -197,19 +231,6 @@ const Home = () => {
             );
           })}
         </nav>
-      </div>
-
-      {/* Story Callout Card — revealed only after camera movement stops */}
-      <div
-        className={`absolute bottom-20 sm:bottom-24 left-0 right-0 z-10 flex justify-center px-4 pointer-events-none transition-all duration-500 ease-out ${
-          isCameraMoving
-            ? "opacity-0 translate-y-4 pointer-events-none"
-            : "opacity-100 translate-y-0"
-        }`}
-      >
-        <div className="pointer-events-auto">
-          {currentStage && <Homeinfo currentStage={currentStage} />}
-        </div>
       </div>
     </section>
   );
