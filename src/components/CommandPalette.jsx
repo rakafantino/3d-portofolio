@@ -240,11 +240,11 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
-        className="relative z-10 w-full max-w-lg mt-[10vh] bg-cyber-dark border border-cyber-border rounded-xl shadow-2xl overflow-hidden font-mono"
+        className="relative z-10 w-full max-w-lg mt-[10vh] bg-[#1B150E]/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden font-sans backdrop-blur-md text-cream"
       >
         {/* Header / Search Input */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-cyber-border bg-cyber-slate/50">
-          <span className="text-cyber-cyan text-sm select-none" aria-hidden="true">
+        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/10 bg-white/[0.02]">
+          <span className="text-copper text-sm select-none" aria-hidden="true">
             {">"}
           </span>
           <input
@@ -258,13 +258,13 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search commands (e.g. Projects, Copy Email)..."
-            className="flex-1 bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-cream placeholder:text-cream/40 focus:outline-none"
           />
           <button
             type="button"
             onClick={() => onClose?.()}
             aria-label="Close palette"
-            className="text-xs text-slate-400 hover:text-slate-200 border border-cyber-border rounded px-1.5 py-0.5 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-cyber-cyan"
+            className="text-xs text-cream/50 hover:text-cream border border-white/10 hover:border-white/20 rounded px-1.5 py-0.5 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-copper font-mono"
           >
             ESC
           </button>
@@ -275,10 +275,10 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
           id="command-list"
           role="listbox"
           aria-label="Commands"
-          className="max-h-72 overflow-y-auto p-2 divide-y divide-cyber-border/30"
+          className="max-h-72 overflow-y-auto p-2 divide-y divide-white/5"
         >
           {filteredCommands.length === 0 ? (
-            <div className="py-8 text-center text-xs text-slate-500">
+            <div className="py-8 text-center text-xs text-cream/40 font-mono">
               NO MATCHING COMMANDS
             </div>
           ) : (
@@ -297,25 +297,25 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
                     onClose?.();
                   }}
                   onMouseEnter={() => setActiveIndex(idx)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-md cursor-pointer transition-colors text-xs ${
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-colors text-xs ${
                     isActive
-                      ? "bg-cyber-slate text-cyber-cyan border-l-2 border-cyber-cyan font-medium"
-                      : "text-slate-400 hover:bg-cyber-slate/50"
+                      ? "bg-white/10 text-copper font-medium"
+                      : "text-cream/70 hover:bg-white/5"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <span className="text-[11px] text-slate-500 select-none">
+                    <span className="text-[11px] font-mono text-cream/40 select-none">
                       {formattedIndex}
                     </span>
-                    <span className={isActive ? "text-slate-100 font-semibold" : "text-slate-300"}>
+                    <span className={isActive ? "text-cream font-semibold" : "text-cream/80"}>
                       {cmd.label}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-wider text-slate-500">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-cream/50">
                       {cmd.category}
                     </span>
-                    <span className="text-[10px] text-slate-600 hidden sm:inline">
+                    <span className="text-[10px] font-mono text-cream/30 hidden sm:inline">
                       {cmd.hint}
                     </span>
                   </div>
@@ -326,13 +326,13 @@ const CommandPalette = ({ open, onClose, onOpen }) => {
         </div>
 
         {/* Footer / Telemetry hints */}
-        <div className="flex items-center justify-between px-4 py-2 text-[10px] text-slate-500 border-t border-cyber-border bg-cyber-dark/80 select-none">
+        <div className="flex items-center justify-between px-4 py-2 text-[10px] text-cream/40 border-t border-white/10 bg-black/20 select-none font-mono">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
             <span>ESC Close</span>
           </div>
-          <span className="text-cyber-cyan/80">TERMINAL // PALETTE</span>
+          <span className="text-copper/80">Raka Fantino</span>
         </div>
       </div>
     </div>

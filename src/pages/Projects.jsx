@@ -8,12 +8,11 @@ const Projects = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedProject, setSelectedProject] = useState(null);
 
-  // Display labels for raw category slugs (labels derived from the data's keys)
   const CATEGORY_LABELS = {
-    all: "ALL",
-    "web3-crypto": "WEB3 & CRYPTO",
-    "fullstack-saas": "FULLSTACK & SaaS",
-    "ai-awards": "AI & AWARDS",
+    all: "Semua",
+    "web3-crypto": "Web3 & Crypto",
+    "fullstack-saas": "Fullstack & SaaS",
+    "ai-awards": "AI & Inovasi",
   };
 
   const categories = useMemo(() => {
@@ -37,150 +36,148 @@ const Projects = () => {
   }, [activeFilter]);
 
   return (
-    <section className="max-container">
-      <div className="mb-2">
-        <span className="telemetry-badge text-cyber-cyan">
-          {"// PROJECT_LOG"}
-        </span>
-      </div>
-
-      <h1 className="head-text text-white">
-        Featured <span className="text-cyber-cyan font-semibold drop-shadow">Projects</span>
-      </h1>
-
-      <div className="mt-4 flex flex-col gap-3 text-slate-400 max-w-3xl">
-        <p className="font-sans leading-relaxed">
-          Production systems, autonomous trading tools, and multi-chain decentralized applications built across Solana, ICP, and modern fullstack architectures. Click any module to inspect technical specifications.
-        </p>
-      </div>
-
-      <div className="mt-8 flex flex-wrap items-center gap-2.5">
-        {categories.map((cat) => {
-          const isActive = activeFilter === cat;
-          const count = categoryCounts[cat] || 0;
-          return (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setActiveFilter(cat)}
-              className={`font-mono text-xs uppercase px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
-                isActive
-                  ? "bg-cyber-cyan text-cyber-black font-semibold shadow-[0_0_10px_rgba(0,240,255,0.25)]"
-                  : "bg-cyber-dark text-slate-400 border border-cyber-border hover:border-cyber-cyan/50 hover:text-slate-200"
-              }`}
-            >
-              <span>[ {CATEGORY_LABELS[cat] || cat} ({count}) ]</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 my-12">
-        {filteredProjects.map((project, idx) => {
-          const isFeatured = activeFilter === "all" && idx === 0;
-
-          return (
-            <div
-              key={project.name}
-              className={`terminal-card p-6 flex flex-col justify-between transition-all duration-200 hover:border-cyber-cyan/70 hover:shadow-[0_0_16px_rgba(0,240,255,0.12)] group ${
-                isFeatured ? "md:col-span-2 xl:col-span-2" : ""
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-cyber-border/60">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">
-                    {project.category || "MODULE"}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyber-cyan/80 group-hover:bg-cyber-cyan animate-pulse" />
-                    <span className="font-mono text-[10px] text-slate-400 uppercase">
-                      ACTIVE
-                    </span>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedProject(project)}
-                  className="text-left w-full group/btn focus:outline-none"
-                  aria-label={`View details for ${project.name}`}
-                >
-                  <h3 className="text-xl font-poppins font-semibold text-white group-hover/btn:text-cyber-cyan transition-colors">
-                    {project.name}
-                  </h3>
-                  <p className="mt-2 text-sm text-slate-400 line-clamp-3 leading-relaxed">
-                    {project.description}
-                  </p>
-                </button>
-
-                {Array.isArray(project.tags) && (
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-mono text-[11px] px-2 py-0.5 rounded bg-cyber-slate/80 border border-cyber-border text-slate-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-cyber-border/60 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setSelectedProject(project)}
-                  className="font-mono text-xs text-slate-400 hover:text-cyber-cyan transition-colors flex items-center gap-1"
-                >
-                  <span>{"// SPEC"}</span>
-                  <span className="text-cyber-cyan">→</span>
-                </button>
-
-                {project.link && (
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-xs text-cyber-cyan hover:underline flex items-center gap-1.5"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span>LIVE LINK</span>
-                    <img src={arrow} alt="Arrow" className="w-3 h-3 object-contain invert" />
-                  </a>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-16 terminal-card p-8 border border-cyber-border bg-gradient-to-r from-cyber-dark to-cyber-slate flex flex-col md:flex-row items-center justify-between gap-6">
-        <div>
-          <span className="telemetry-badge text-cyber-cyan block mb-2">
-            {"// TRANSMISSION_OPEN"}
+    <div className="min-h-[100dvh] bg-cream text-ink">
+      <section className="max-w-5xl mx-auto px-6 sm:px-8 pt-28 sm:pt-32 pb-20 flex flex-col">
+        <div className="flex flex-col gap-3">
+          <span className="text-xs font-sans font-semibold tracking-wider uppercase text-copper">
+            Portofolio
           </span>
-          <h2 className="text-2xl sm:text-3xl font-poppins font-bold text-white">
-            Have a project in orbit?
-          </h2>
-          <p className="text-sm text-slate-400 mt-1 max-w-xl">
-            Open for technical advisory, Web3 engineering, and full-cycle system architecture.
+          <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-ink leading-tight tracking-tight">
+            Proyek Pilihan
+          </h1>
+          <p className="font-sans text-base sm:text-lg text-ink-soft leading-relaxed max-w-2xl mt-1">
+            Koleksi sistem produksi, bot otomasi perdagangan, dan aplikasi terdesentralisasi multi-chain
+            yang dibangun di atas ekosistem Solana, ICP, serta arsitektur fullstack modern.
           </p>
         </div>
 
-        <Link
-          to="/contact"
-          className="w-full md:w-auto font-mono text-xs font-semibold uppercase tracking-wider px-6 py-3 rounded bg-cyber-cyan text-cyber-black hover:bg-cyber-cyan/90 transition-all text-center shrink-0 shadow-[0_0_12px_rgba(0,240,255,0.2)]"
-        >
-          Initiate Contact →
-        </Link>
-      </div>
+        <div className="mt-8 flex flex-wrap items-center gap-2">
+          {categories.map((cat) => {
+            const isActive = activeFilter === cat;
+            const count = categoryCounts[cat] || 0;
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setActiveFilter(cat)}
+                className={`text-xs font-sans px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 border ${
+                  isActive
+                    ? "bg-ink text-cream border-ink font-medium"
+                    : "bg-white/70 text-ink-soft border-ink/15 hover:border-ink/30 hover:text-ink"
+                }`}
+              >
+                <span>{CATEGORY_LABELS[cat] || cat}</span>
+                <span className="text-[11px] opacity-70">({count})</span>
+              </button>
+            );
+          })}
+        </div>
 
-      <ProjectDrawer
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
-    </section>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-12">
+          {filteredProjects.map((project, idx) => {
+            const isFeatured = activeFilter === "all" && idx === 0;
+
+            return (
+              <div
+                key={project.name}
+                className={`bg-white/80 p-6 sm:p-7 rounded-2xl border border-ink/10 flex flex-col justify-between transition-all duration-200 hover:-translate-y-0.5 hover:border-copper/40 hover:shadow-sm group ${
+                  isFeatured ? "md:col-span-2 lg:col-span-2 bg-white" : ""
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-ink/10">
+                    <span className="font-mono text-xs uppercase tracking-wider text-ink-faint">
+                      {CATEGORY_LABELS[project.category] || project.category || "Proyek"}
+                    </span>
+                    <span className="text-[11px] font-sans font-medium text-copper">
+                      Produksi
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProject(project)}
+                    className="text-left w-full focus:outline-none"
+                    aria-label={`Detail proyek ${project.name}`}
+                  >
+                    <h3 className="font-serif text-xl sm:text-2xl font-semibold text-ink group-hover:text-copper transition-colors">
+                      {project.name}
+                    </h3>
+                    <p className="mt-2 text-sm font-sans text-ink-soft line-clamp-3 leading-relaxed">
+                      {project.description}
+                    </p>
+                  </button>
+
+                  {Array.isArray(project.tags) && (
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="font-mono text-[11px] px-2.5 py-0.5 rounded-md bg-cream-deep text-ink-soft border border-ink/5"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-ink/10 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedProject(project)}
+                    className="text-xs font-sans font-medium text-ink-soft hover:text-copper transition-colors flex items-center gap-1"
+                  >
+                    <span>Lihat Detail</span>
+                    <span>→</span>
+                  </button>
+
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Buka tautan proyek"
+                      className="text-xs font-sans font-medium text-copper hover:underline flex items-center gap-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span>Kunjungi</span>
+                      <img src={arrow} alt="Arrow" className="w-3 h-3 object-contain" />
+                    </a>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-12 p-8 sm:p-10 rounded-2xl bg-cream-deep border border-ink/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div>
+            <span className="text-xs font-sans font-semibold tracking-wider uppercase text-copper">
+              Kolaborasi
+            </span>
+            <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink mt-1">
+              Punya proyek atau ide kolaborasi?
+            </h2>
+            <p className="font-sans text-sm text-ink-soft mt-1.5 max-w-xl leading-relaxed">
+              Terbuka untuk konsultasi teknis, integrasi Web3, dan rekayasa antarmuka berbasis performa.
+            </p>
+          </div>
+
+          <Link
+            to="/contact"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-ink text-cream hover:bg-ink-soft transition-colors font-sans text-sm font-medium shrink-0"
+          >
+            Hubungi saya →
+          </Link>
+        </div>
+
+        <ProjectDrawer
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </section>
+    </div>
   );
 };
 

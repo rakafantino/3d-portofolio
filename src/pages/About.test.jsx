@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import About from "./About";
 
-describe("About Page - Credibility Timeline & System Profile", () => {
+describe("About Page - Warm Light Editorial Profile", () => {
   beforeAll(() => {
     if (!globalThis.IntersectionObserver) {
       globalThis.IntersectionObserver = class {
@@ -21,14 +21,14 @@ describe("About Page - Credibility Timeline & System Profile", () => {
     );
   };
 
-  it("renders the personnel file cyber header and intro", () => {
+  it("renders the warm editorial header, kicker, and human intro", () => {
     renderAbout();
-    expect(screen.getByText(/\/\/\s*PERSONNEL_FILE/i)).toBeInTheDocument();
-    expect(screen.getByText(/Hello,\s*I'm/i)).toBeInTheDocument();
-    expect(screen.getByText(/Raka/i)).toBeInTheDocument();
+    expect(screen.getByText(/tentang/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/raka fantino/i);
+    expect(screen.queryByText(/\/\/\s*PERSONNEL_FILE/i)).not.toBeInTheDocument();
   });
 
-  it("renders Featured Awards banner with all award titles and issuers", () => {
+  it("renders Featured Awards list with all award titles and issuers", () => {
     renderAbout();
     expect(
       screen.getByText("PAN-SEA AI Developer Challenge 2025 - Winner")
@@ -41,6 +41,8 @@ describe("About Page - Credibility Timeline & System Profile", () => {
     expect(screen.getByText("AI Singapore")).toBeInTheDocument();
     expect(screen.getByText("Kaggle")).toBeInTheDocument();
     expect(screen.getByText("Dicoding")).toBeInTheDocument();
+    expect(screen.queryByText(/\[ PRIZE_VERIFIED \]/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/HONOR: FIRST TIER/i)).not.toBeInTheDocument();
   });
 
   it("renders categorized skills grouped by type", () => {
@@ -68,9 +70,9 @@ describe("About Page - Credibility Timeline & System Profile", () => {
     expect(screen.queryByText(/Meta/i)).not.toBeInTheDocument();
   });
 
-  it("renders the cyber contact callout linking to /contact", () => {
+  it("renders the warm editorial contact callout linking to /contact", () => {
     renderAbout();
-    const contactLinks = screen.getAllByRole("link", { name: /initiate contact|contact/i });
+    const contactLinks = screen.getAllByRole("link", { name: /hubungi saya|kontak|contact/i });
     expect(contactLinks.length).toBeGreaterThan(0);
     const linkToContact = contactLinks.find((el) => el.getAttribute("href") === "/contact");
     expect(linkToContact).toBeDefined();

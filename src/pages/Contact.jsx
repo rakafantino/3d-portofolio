@@ -13,12 +13,9 @@ const Contact = () => {
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [terminalState, setTerminalState] = useState({
-    statusText: "AWAITING INPUT",
-    stateType: "idle", // idle | typing | transmitting | success | error
-    lines: [
-      "SYSTEM READY // PROTOCOL: DISPATCH-TCP",
-      "SECURE CARRIER DETECTED: READY",
-    ],
+    statusTitle: "Siap menerima pesanmu",
+    statusDesc: "Formulir siap. Pesan akan diteruskan langsung ke kotak masuk email saya.",
+    stateType: "idle",
   });
 
   const lastSubmitTimestampRef = useRef(0);
@@ -40,17 +37,17 @@ const Contact = () => {
 
     if (hasAnyContent && terminalState.stateType !== "transmitting") {
       const charTotal = nextForm.name.length + nextForm.email.length + nextForm.message.length;
-      setTerminalState((prev) => ({
-        ...prev,
-        statusText: `ENCODING (${charTotal} BYTES BUFFERED)`,
+      setTerminalState({
+        statusTitle: "Sedang menulis pesan",
+        statusDesc: `${charTotal} karakter telah diketik dalam formulir.`,
         stateType: "typing",
-      }));
+      });
     } else if (!hasAnyContent && terminalState.stateType !== "transmitting") {
-      setTerminalState((prev) => ({
-        ...prev,
-        statusText: "AWAITING INPUT",
+      setTerminalState({
+        statusTitle: "Siap menerima pesanmu",
+        statusDesc: "Formulir siap. Pesan akan diteruskan langsung ke kotak masuk email saya.",
         stateType: "idle",
-      }));
+      });
     }
   };
 
@@ -65,19 +62,19 @@ const Contact = () => {
   const validateForm = () => {
     const errors = {};
     if (!form.name.trim()) {
-      errors.name = "Name identifier is required.";
+      errors.name = "Nama wajib diisi.";
     }
 
     if (!form.email.trim()) {
-      errors.email = "Email endpoint is required.";
+      errors.email = "Alamat email wajib diisi.";
     } else if (!EMAIL_REGEX.test(form.email.trim())) {
-      errors.email = "Invalid email format.";
+      errors.email = "Format email tidak valid.";
     }
 
     if (!form.message.trim()) {
-      errors.message = "Transmission payload cannot be empty.";
+      errors.message = "Pesan tidak boleh kosong.";
     } else if (form.message.length > MAX_MESSAGE_LENGTH) {
-      errors.message = `Payload exceeds ${MAX_MESSAGE_LENGTH} characters.`;
+      errors.message = `Pesan melebihi batas ${MAX_MESSAGE_LENGTH} karakter.`;
     }
 
     setFieldErrors(errors);
@@ -94,24 +91,19 @@ const Contact = () => {
     lastSubmitTimestampRef.current = now;
 
     if (!validateForm()) {
-      setTerminalState((prev) => ({
-        ...prev,
-        statusText: "TRANSMISSION FAILED — RETRY",
+      setTerminalState({
+        statusTitle: "Gagal mengirim pesan",
+        statusDesc: "Mohon lengkapi dan perbaiki isian formulir di sebelah kiri.",
         stateType: "error",
-      }));
+      });
       return;
     }
 
     setIsTransmitting(true);
     setTerminalState({
-      statusText: "TRANSMITTING...",
+      statusTitle: "Mengirim pesan…",
+      statusDesc: "Menghubungkan ke gateway pengiriman email...",
       stateType: "transmitting",
-      lines: [
-        "ENCODING DISPATCH PAYLOAD...",
-        `TARGET: rakafantinoo@gmail.com`,
-        `SOURCE: ${form.email}`,
-        "INITIATING UPLINK HANDSHAKE...",
-      ],
     });
 
     try {
@@ -132,20 +124,18 @@ const Contact = () => {
       const isMock = result.mode === "mock";
       lastSendModeRef.current = result.mode;
       setTerminalState({
-        statusText: "STATUS 200: TRANSMISSION DELIVERED",
+        statusTitle: "Pesan terkirim ✓",
+        statusDesc: isMock
+          ? "Pesan terkirim dalam mode simulasi demo terverifikasi."
+          : "Pesan Anda telah berhasil sampai di kotak masuk saya.",
         stateType: "success",
-        lines: [
-          `UPLINK: CONFIRMED (${isMock ? "TELEMETRY MOCK ROUTE" : "EMAILJS GATEWAY"})`,
-          "STATUS: 200 OK // ACK RECEIVED",
-          "PACKET FLUSHED SUCCESSFULLY",
-        ],
       });
 
       showAlert({
         show: true,
         text: isMock
-          ? "Transmission delivered (Telemetry Mock Mode: simulation verified)."
-          : "Message sent successfully!",
+          ? "Pesan terkirim (Mode simulasi demo terverifikasi)."
+          : "Pesan terkirim dengan sukses!",
         type: "success",
       });
 
@@ -153,29 +143,22 @@ const Contact = () => {
         hideAlert();
         setForm({ name: "", email: "", message: "" });
         setTerminalState({
-          statusText: "AWAITING INPUT",
+          statusTitle: "Siap menerima pesanmu",
+          statusDesc: "Formulir siap. Pesan akan diteruskan langsung ke kotak masuk email saya.",
           stateType: "idle",
-          lines: [
-            "SYSTEM READY // PROTOCOL: DISPATCH-TCP",
-            "SECURE CARRIER DETECTED: READY",
-          ],
         });
       }, 3500);
     } catch {
       setIsTransmitting(false);
       setTerminalState({
-        statusText: "TRANSMISSION FAILED — RETRY",
+        statusTitle: "Gagal mengirim pesan",
+        statusDesc: "Gateway pengiriman tidak merespons. Silakan periksa koneksi dan coba lagi.",
         stateType: "error",
-        lines: [
-          "ERR: GATEWAY REJECTED PACKET",
-          "STATUS: 502 BAD GATEWAY // RE-ROUTING REQUIRED",
-          "ACTION: VERIFY CARRIER AND RESEND",
-        ],
       });
 
       showAlert({
         show: true,
-        text: "I didn't receive your message.",
+        text: "Pesan gagal terkirim. I didn't receive your message.",
         type: "danger",
       });
     }
@@ -185,181 +168,201 @@ const Contact = () => {
   const isMessageOverLimit = messageCount > MAX_MESSAGE_LENGTH;
 
   return (
-    <section className="relative flex lg:flex-row flex-col max-container min-h-[100dvh] gap-8">
-      {alert.show && <Alert {...alert} />}
+    <div className="min-h-[100dvh] bg-cream text-ink">
+      <section className="relative flex lg:flex-row flex-col max-w-5xl mx-auto px-6 sm:px-8 pt-28 sm:pt-32 pb-20 gap-8 sm:gap-12">
+        {alert.show && <Alert {...alert} />}
 
-      {/* Left Column: Dispatch Form */}
-      <div className="flex-1 min-w-[50%] flex flex-col justify-start">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="telemetry-badge text-blue-500 font-mono text-xs">
-            PORT: 5173 // TERMINAL DISPATCH
-          </span>
-        </div>
-        <h1 className="head-text">Dispatch Terminal</h1>
-        <p className="text-slate-600 mt-2 text-sm sm:text-base font-normal">
-          Send a direct uplink message. If transmission gateway keys are offline,
-          safe telemetry mode catches your packet.
-        </p>
-
-        {/* Mobile keyboard-focus slim status strip (Rule 23) */}
-        {isInputFocused && (
-          <div className="lg:hidden mt-4 p-2.5 rounded border border-blue-200 bg-blue-50 text-blue-800 text-xs font-mono flex items-center justify-between">
-            <span>TERMINAL STATUS:</span>
-            <span className="font-semibold uppercase">{terminalState.statusText}</span>
+        <div className="flex-1 min-w-[50%] flex flex-col justify-start">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-sans font-semibold tracking-wider uppercase text-copper">
+              Kontak
+            </span>
+            <h1 className="font-serif text-3xl sm:text-5xl font-semibold text-ink leading-tight tracking-tight">
+              Kirim Pesan
+            </h1>
+            <p className="font-sans text-base sm:text-lg text-ink-soft leading-relaxed max-w-xl mt-1">
+              Silakan tinggalkan pesan untuk konsultasi rekayasa antarmuka, diskusi proyek Web3,
+              atau peluang kerja sama lainnya.
+            </p>
           </div>
-        )}
 
-        <form className="w-full flex flex-col gap-6 mt-8" onSubmit={handleSubmit} noValidate>
-          <label htmlFor="contact-name" className="text-black-500 font-semibold text-sm">
-            Name Identifier
-            <input
-              id="contact-name"
-              type="text"
-              name="name"
-              className={`input ${fieldErrors.name ? "border-red-500 focus:border-red-500" : ""}`}
-              placeholder="e.g. Alex Vance"
-              required
-              value={form.name}
-              onChange={handleInputChange}
+          {isInputFocused && (
+            <div className="lg:hidden mt-4 p-2.5 rounded-lg border border-ink/10 bg-cream-deep text-ink-soft text-xs font-sans flex items-center justify-between">
+              <span className="text-ink-faint">Status:</span>
+              <span className="font-medium text-copper">{terminalState.statusTitle}</span>
+            </div>
+          )}
+
+          <form className="w-full flex flex-col gap-5 mt-8" onSubmit={handleSubmit} noValidate>
+            <label htmlFor="contact-name" className="text-ink font-medium text-sm font-sans flex flex-col">
+              <span>Nama Lengkap</span>
+              <input
+                id="contact-name"
+                type="text"
+                name="name"
+                className={`mt-1.5 px-4 py-2.5 rounded-lg border bg-white text-ink text-sm placeholder:text-ink-faint focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-colors ${
+                  fieldErrors.name ? "border-red-500 focus:border-red-500" : "border-ink/15"
+                }`}
+                placeholder="mis. Raka Fantino"
+                required
+                value={form.name}
+                onChange={handleInputChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+              {fieldErrors.name && (
+                <span className="text-xs text-red-600 font-sans mt-1">
+                  {fieldErrors.name}
+                </span>
+              )}
+            </label>
+
+            <label htmlFor="contact-email" className="text-ink font-medium text-sm font-sans flex flex-col">
+              <span>Alamat Email</span>
+              <input
+                id="contact-email"
+                type="email"
+                name="email"
+                className={`mt-1.5 px-4 py-2.5 rounded-lg border bg-white text-ink text-sm placeholder:text-ink-faint focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-colors ${
+                  fieldErrors.email ? "border-red-500 focus:border-red-500" : "border-ink/15"
+                }`}
+                placeholder="nama@domain.com"
+                required
+                value={form.email}
+                onChange={handleInputChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+              {fieldErrors.email && (
+                <span className="text-xs text-red-600 font-sans mt-1">
+                  {fieldErrors.email}
+                </span>
+              )}
+            </label>
+
+            <label htmlFor="contact-message" className="text-ink font-medium text-sm font-sans flex flex-col">
+              <div className="flex justify-between items-center">
+                <span>Pesan Anda</span>
+                <span
+                  data-testid="char-counter"
+                  className={`text-xs font-mono ${
+                    isMessageOverLimit ? "text-red-600 font-bold" : "text-ink-faint"
+                  }`}
+                >
+                  {messageCount}/{MAX_MESSAGE_LENGTH}
+                </span>
+              </div>
+              <textarea
+                id="contact-message"
+                rows={5}
+                name="message"
+                className={`mt-1.5 px-4 py-2.5 rounded-lg border bg-white text-ink text-sm placeholder:text-ink-faint focus:outline-none focus:border-copper focus:ring-1 focus:ring-copper/30 transition-colors ${
+                  fieldErrors.message || isMessageOverLimit ? "border-red-500 focus:border-red-500" : "border-ink/15"
+                }`}
+                placeholder="Ceritakan gambaran proyek, target waktu, atau hal yang ingin Anda bangun..."
+                required
+                value={form.message}
+                onChange={handleInputChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+              {fieldErrors.message && (
+                <span className="text-xs text-red-600 font-sans mt-1">
+                  {fieldErrors.message}
+                </span>
+              )}
+            </label>
+
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-ink text-cream hover:bg-ink-soft transition-colors font-sans text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer self-start mt-2"
+              disabled={isTransmitting || isMessageOverLimit}
               onFocus={handleFocus}
               onBlur={handleBlur}
-            />
-            {fieldErrors.name && (
-              <span className="text-xs text-red-500 font-mono mt-1 block">
-                {fieldErrors.name}
-              </span>
-            )}
-          </label>
+            >
+              {isTransmitting ? "Mengirim pesan..." : "Kirim Pesan"}
+            </button>
+          </form>
+        </div>
 
-          <label htmlFor="contact-email" className="text-black-500 font-semibold text-sm">
-            Email Endpoint
-            <input
-              id="contact-email"
-              type="email"
-              name="email"
-              className={`input ${fieldErrors.email ? "border-red-500 focus:border-red-500" : ""}`}
-              placeholder="alex@example.com"
-              required
-              value={form.email}
-              onChange={handleInputChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-            />
-            {fieldErrors.email && (
-              <span className="text-xs text-red-500 font-mono mt-1 block">
-                {fieldErrors.email}
-              </span>
-            )}
-          </label>
-
-          <label htmlFor="contact-message" className="text-black-500 font-semibold text-sm">
-            <div className="flex justify-between items-center">
-              <span>Your Message Payload</span>
+        <div
+          className={`lg:w-1/2 w-full flex-col justify-between p-6 sm:p-8 rounded-2xl border border-ink/10 bg-white/70 text-ink shadow-sm transition-all duration-200 ${
+            isInputFocused ? "hidden lg:flex" : "flex"
+          }`}
+        >
+          <div>
+            <div className="border-b border-ink/10 pb-4 mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-copper" />
+                <span className="text-xs font-sans font-semibold uppercase tracking-wider text-ink">
+                  Status Pengiriman
+                </span>
+              </div>
               <span
-                data-testid="char-counter"
-                className={`text-xs font-mono ${
-                  isMessageOverLimit ? "text-red-500 font-bold" : "text-slate-500"
+                className={`text-xs px-2.5 py-0.5 rounded-full font-sans font-medium capitalize ${
+                  terminalState.stateType === "success"
+                    ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                    : terminalState.stateType === "error"
+                    ? "bg-rose-100 text-rose-800 border border-rose-200"
+                    : terminalState.stateType === "transmitting"
+                    ? "bg-amber-100 text-amber-800 border border-amber-200"
+                    : "bg-cream-deep text-ink-soft"
                 }`}
               >
-                {messageCount}/{MAX_MESSAGE_LENGTH}
+                {terminalState.stateType === "idle"
+                  ? "Siap"
+                  : terminalState.stateType === "typing"
+                  ? "Menulis"
+                  : terminalState.stateType === "transmitting"
+                  ? "Mengirim"
+                  : terminalState.stateType === "success"
+                  ? "Terkirim"
+                  : "Gagal"}
               </span>
             </div>
-            <textarea
-              id="contact-message"
-              rows={5}
-              name="message"
-              className={`textarea ${
-                fieldErrors.message || isMessageOverLimit ? "border-red-500 focus:border-red-500" : ""
-              }`}
-              placeholder="Transmit inquiry, collaboration brief, or system telemetry..."
-              required
-              value={form.message}
-              onChange={handleInputChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-            />
-            {fieldErrors.message && (
-              <span className="text-xs text-red-500 font-mono mt-1 block">
-                {fieldErrors.message}
-              </span>
-            )}
-          </label>
 
-          <button
-            type="submit"
-            className="btn disabled:opacity-60 disabled:cursor-not-allowed"
-            disabled={isTransmitting || isMessageOverLimit}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-          >
-            {isTransmitting ? "TRANSMITTING..." : "Send Dispatch"}
-          </button>
-        </form>
-      </div>
+            <div className="min-h-[160px] flex flex-col justify-between py-2">
+              <div>
+                <h3 className="font-serif text-xl font-semibold text-ink mb-2">
+                  {terminalState.statusTitle}
+                </h3>
+                <p className="font-sans text-sm text-ink-soft leading-relaxed">
+                  {terminalState.statusDesc}
+                </p>
+              </div>
 
-      {/* Right Column: Decorative Transmission Console (no WebGL canvas) */}
-      <div
-        className={`lg:w-1/2 w-full flex-col justify-between terminal-card p-6 border border-slate-800 bg-cyber-dark text-slate-200 font-mono rounded-xl shadow-2xl transition-all duration-200 ${
-          isInputFocused ? "hidden lg:flex" : "flex"
-        }`}
-      >
-        <div className="border-b border-slate-800 pb-4 mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
-            <span className="text-xs text-slate-400 font-mono ml-2 tracking-wider">
-              TRANSMISSION CONSOLE v2.4
+              <div className="pt-6 border-t border-ink/10 mt-6 space-y-2.5 text-xs font-sans text-ink-faint">
+                <div className="flex items-center justify-between">
+                  <span>Email Tujuan:</span>
+                  <span className="font-mono text-ink-soft">rakafantinoo@gmail.com</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Jumlah Karakter:</span>
+                  <span className="font-mono text-ink-soft">{messageCount} / {MAX_MESSAGE_LENGTH}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Kanal Layanan:</span>
+                  <span className="font-mono text-ink-soft">
+                    {import.meta.env?.VITE_APP_EMAILJS_SERVICE_ID
+                      ? "EmailJS Gateway"
+                      : "Mode demo (tanpa EmailJS)"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-ink/10 text-[11px] font-sans text-ink-faint flex justify-between">
+            <span>Privasi terjaga</span>
+            <span>
+              {lastSendModeRef.current === "mock"
+                ? "Simulasi demo aktif"
+                : "Langsung ke kotak masuk"}
             </span>
           </div>
-          <span
-            className={`text-xs px-2 py-0.5 rounded font-mono uppercase tracking-wide ${
-              terminalState.stateType === "success"
-                ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
-                : terminalState.stateType === "error"
-                ? "bg-rose-950 text-rose-400 border border-rose-800"
-                : terminalState.stateType === "transmitting"
-                ? "bg-cyan-950 text-cyan-400 border border-cyan-800 animate-pulse"
-                : "bg-slate-800 text-slate-300"
-            }`}
-          >
-            {terminalState.stateType}
-          </span>
         </div>
-
-        <div className="flex-1 min-h-[220px] flex flex-col justify-between py-2 text-xs leading-relaxed">
-          <div className="space-y-2 text-slate-300">
-            {terminalState.lines.map((line, idx) => (
-              <p key={idx} className="flex items-start gap-2">
-                <span className="text-cyan-400 select-none">&gt;</span>
-                <span>{line}</span>
-              </p>
-            ))}
-          </div>
-
-          <div className="pt-6 border-t border-slate-800/80 mt-6">
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-              <span>STATUS LINE</span>
-              <span>CARRIER: {import.meta.env?.VITE_APP_EMAILJS_SERVICE_ID ? "ONLINE" : "MOCK-LOCAL"}</span>
-            </div>
-            <div className="bg-black/60 p-3 rounded border border-slate-800 text-emerald-400 font-mono flex items-center justify-between">
-              <span className="font-semibold text-xs tracking-wide">
-                {terminalState.statusText}
-              </span>
-              <span className="w-2 h-4 bg-emerald-400 inline-block animate-pulse" />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 pt-3 border-t border-slate-800/60 text-[10px] text-slate-500 flex justify-between">
-          <span>PACKET BUFFER: {messageCount}/1000</span>
-          <span>
-            LATENCY: ~800MS
-            {lastSendModeRef.current === "mock" ? " SIMULATED" : ""}
-          </span>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 

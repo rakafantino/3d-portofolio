@@ -3,7 +3,7 @@ import { render, screen, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Projects from "./Projects";
 
-describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
+describe("Projects Page - Warm Editorial Bento Grid & Project Drawer", () => {
   const renderProjects = () => {
     return render(
       <MemoryRouter>
@@ -12,10 +12,11 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     );
   };
 
-  it("renders the cyber header and telemetry kicker", () => {
+  it("renders the warm editorial header and human kicker", () => {
     renderProjects();
-    expect(screen.getByText(/\/\/ PROJECT_LOG/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/projects/i);
+    expect(screen.getByText("Portofolio")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/proyek pilihan|featured projects/i);
+    expect(screen.queryByText(/\/\/ PROJECT_LOG/i)).not.toBeInTheDocument();
   });
 
   it("renders all 7 projects from constants on initial load", () => {
@@ -37,7 +38,7 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
 
   it("renders category filter pills with display labels and live counts from data", () => {
     renderProjects();
-    expect(screen.getByRole("button", { name: /all\s*\(7\)/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /semua\s*\(7\)|all\s*\(7\)/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /web3 & crypto\s*\(5\)/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /fullstack & saas\s*\(2\)/i })).toBeInTheDocument();
   });
@@ -54,7 +55,7 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     expect(screen.queryByText("Feedly App")).not.toBeInTheDocument();
     expect(screen.getByText("NinjaPump.ai")).toBeInTheDocument();
 
-    const allFilter = screen.getByRole("button", { name: /all\s*\(7\)/i });
+    const allFilter = screen.getByRole("button", { name: /semua\s*\(7\)|all\s*\(7\)/i });
     fireEvent.click(allFilter);
 
     expect(screen.getByText("Diklik.co")).toBeInTheDocument();
@@ -66,7 +67,7 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     renderProjects();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    const cardButton = screen.getByRole("button", { name: /view details for ninjapump\.ai/i });
+    const cardButton = screen.getByRole("button", { name: /detail proyek ninjapump\.ai|view details for ninjapump\.ai/i });
     fireEvent.click(cardButton);
 
     const drawer = screen.getByRole("dialog");
@@ -76,12 +77,12 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     const drawerScope = within(drawer);
     expect(drawerScope.getByText("NinjaPump.ai")).toBeInTheDocument();
     expect(drawerScope.getByText(/solana trading toolkit and dashboard/i)).toBeInTheDocument();
-    expect(drawerScope.getByRole("link", { name: /open in new tab/i })).toHaveAttribute("href", "https://ninjapump.ai");
+    expect(drawerScope.getByRole("link", { name: /buka tautan|open in new tab/i })).toHaveAttribute("href", "https://ninjapump.ai");
   });
 
   it("closes the ProjectDrawer when Escape key is pressed", () => {
     renderProjects();
-    const cardButton = screen.getByRole("button", { name: /view details for ninjapump\.ai/i });
+    const cardButton = screen.getByRole("button", { name: /detail proyek ninjapump\.ai|view details for ninjapump\.ai/i });
     fireEvent.click(cardButton);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -93,7 +94,7 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
 
   it("closes the ProjectDrawer when backdrop is clicked", () => {
     renderProjects();
-    const cardButton = screen.getByRole("button", { name: /view details for ninjapump\.ai/i });
+    const cardButton = screen.getByRole("button", { name: /detail proyek ninjapump\.ai|view details for ninjapump\.ai/i });
     fireEvent.click(cardButton);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
@@ -104,10 +105,10 @@ describe("Projects Page - Cyber Bento Grid & Mission Drawer", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("renders the unified inline cyber callout linking to /contact", () => {
+  it("renders the warm editorial callout linking to /contact", () => {
     renderProjects();
-    expect(screen.getByText(/have a project in orbit\?/i)).toBeInTheDocument();
-    const contactLink = screen.getByRole("link", { name: /initiate contact/i });
+    expect(screen.getByText(/punya proyek atau ide kolaborasi\?|have a project in mind\?/i)).toBeInTheDocument();
+    const contactLink = screen.getByRole("link", { name: /hubungi saya|kontak/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
