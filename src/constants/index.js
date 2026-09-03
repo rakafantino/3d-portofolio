@@ -1,6 +1,10 @@
-import { meta, shopify, starbucks, tesla } from "../assets/images";
 import {
-  car,
+  meta,
+  shopify,
+  starbucks,
+  tesla,
+} from "../assets/images";
+import {
   contact,
   css,
   estate,
@@ -12,13 +16,11 @@ import {
   linkedin,
   mongodb,
   motion,
-  bootstrap,
   nextjs,
   nodejs,
   pricewise,
   react,
   redux,
-  storybook,
   snapgram,
   summiz,
   tailwindcss,
@@ -28,28 +30,18 @@ import {
 
 export const skills = [
   {
+    imageUrl: html,
+    name: "HTML5",
+    type: "Frontend",
+  },
+  {
     imageUrl: css,
     name: "CSS",
     type: "Frontend",
   },
   {
-    imageUrl: express,
-    name: "Express",
-    type: "Backend",
-  },
-  {
-    imageUrl: git,
-    name: "Git",
-    type: "Version Control",
-  },
-  {
-    imageUrl: github,
-    name: "GitHub",
-    type: "Version Control",
-  },
-  {
-    imageUrl: html,
-    name: "HTML",
+    imageUrl: tailwindcss,
+    name: "Tailwind CSS",
     type: "Frontend",
   },
   {
@@ -58,18 +50,13 @@ export const skills = [
     type: "Frontend",
   },
   {
-    imageUrl: mongodb,
-    name: "MongoDB",
-    type: "Database",
+    imageUrl: typescript,
+    name: "TypeScript",
+    type: "Frontend",
   },
   {
-    imageUrl: motion,
-    name: "Motion",
-    type: "Animation",
-  },
-  {
-    imageUrl: bootstrap,
-    name: "Bootstrap",
+    imageUrl: react,
+    name: "React",
     type: "Frontend",
   },
   {
@@ -83,9 +70,9 @@ export const skills = [
     type: "Backend",
   },
   {
-    imageUrl: react,
-    name: "React",
-    type: "Frontend",
+    imageUrl: express,
+    name: "Express",
+    type: "Backend",
   },
   {
     imageUrl: redux,
@@ -93,73 +80,97 @@ export const skills = [
     type: "State Management",
   },
   {
-    imageUrl: storybook,
-    name: "Storybook",
-    type: "Frontend",
+    imageUrl: motion,
+    name: "Motion",
+    type: "Animation",
   },
   {
-    imageUrl: tailwindcss,
-    name: "Tailwind CSS",
-    type: "Frontend",
+    imageUrl: git,
+    name: "Git",
+    type: "Version Control",
   },
   {
-    imageUrl: typescript,
-    name: "TypeScript",
-    type: "Frontend",
+    imageUrl: github,
+    name: "GitHub",
+    type: "Version Control",
+  },
+  {
+    imageUrl: mongodb,
+    name: "MongoDB",
+    type: "Database",
   },
 ];
 
 export const experiences = [
   {
-    title: "React.js Developer",
-    company_name: "Starbucks",
-    icon: starbucks,
-    iconBg: "#accbe1",
-    date: "March 2020 - April 2021",
-    points: [
-      "Developing and maintaining web applications using React.js and other related technologies.",
-      "Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.",
-      "Implementing responsive design and ensuring cross-browser compatibility.",
-      "Participating in code reviews and providing constructive feedback to other developers.",
-    ],
-  },
-  {
-    title: "React Native Developer",
-    company_name: "Tesla",
-    icon: tesla,
-    iconBg: "#fbc3bc",
-    date: "Jan 2021 - Feb 2022",
-    points: [
-      "Developing and maintaining web applications using React.js and other related technologies.",
-      "Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.",
-      "Implementing responsive design and ensuring cross-browser compatibility.",
-      "Participating in code reviews and providing constructive feedback to other developers.",
-    ],
-  },
-  {
-    title: "Web Developer",
-    company_name: "Shopify",
-    icon: shopify,
-    iconBg: "#b7e4c7",
-    date: "Jan 2022 - Jan 2023",
-    points: [
-      "Developing and maintaining web applications using React.js and other related technologies.",
-      "Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.",
-      "Implementing responsive design and ensuring cross-browser compatibility.",
-      "Participating in code reviews and providing constructive feedback to other developers.",
-    ],
-  },
-  {
-    title: "Full stack Developer",
-    company_name: "Meta",
+    title: "Fullstack Developer (Freelance)",
+    company_name: "Meraki Warna Teknologi",
     icon: meta,
-    iconBg: "#a2d2ff",
-    date: "Jan 2023 - Present",
+    iconBg: "#10b981",
+    date: "May 2025 - Present",
+    category: "tech",
     points: [
-      "Developing and maintaining web applications using React.js and other related technologies.",
-      "Collaborating with cross-functional teams including designers, product managers, and other developers to create high-quality products.",
-      "Implementing responsive design and ensuring cross-browser compatibility.",
-      "Participating in code reviews and providing constructive feedback to other developers.",
+      "Led full-cycle development for numerous client projects, managing front-end and back-end architectures.",
+      "Built scalable API services using Node.js/Express/Hono with serverless PostgreSQL solutions (Supabase and Neon).",
+      "Delivered responsive, high-performance web applications leveraging React.js, Next.js, and TypeScript.",
+      "Winner of Pan-SEA AI Developer Challenge 2025 - Education Path Certification by AI Singapore.",
+      "Winner of Google Gemma 3n Impact Challenge - The Ollama Prize on Kaggle.",
+    ],
+  },
+  {
+    title: "Frontend Developer (Software Engineer)",
+    company_name: "Loka Mining",
+    icon: tesla,
+    iconBg: "#06b6d4",
+    date: "May 2024 - May 2025",
+    category: "tech",
+    points: [
+      "Developed Roshambo Multi-Chain Game (ICP/BTC/Solana) using React.js, TailwindCSS, Framer Motion, and Jotai with on-chain randomness.",
+      "Built Telegram Mini App for wallet-less login via Telegram and text-based gameplay via custom bot.",
+      "Created Over Under Dice Game (Solana) provably fair prediction platform deployed at goatofgamblers.com.",
+      "Engineered trading dashboard UI for Solana toolkit NinjaPump.ai and upgraded suite at suite.ninjapump.ai.",
+      "Built PupsBot (Telegram Trading Bot) using Node.js/Express for Runes trading on Odin.Fun.",
+    ],
+  },
+  {
+    title: "Content Creator",
+    company_name: "Pemerintah Kota Pekanbaru",
+    icon: starbucks,
+    iconBg: "#f59e0b",
+    date: "May 2023 - Jun 2024",
+    category: "creative",
+    points: [
+      "Produced and edited documentary-style video content for the spouse of Pekanbaru's Interim Mayor (PJ Walikota).",
+      "Filmed high-quality documentation of community engagements, events, and behind-the-scenes moments.",
+      "Crafted polished social media content (Reels, Stories) with aesthetic consistency, subtitles, and narrative pacing.",
+      "Handled sensitive executive documentation with strict confidentiality and discretion.",
+    ],
+  },
+  {
+    title: "Head Operation, Engineer",
+    company_name: "PT Alga Jaya Solusi",
+    icon: shopify,
+    iconBg: "#3b82f6",
+    date: "Sep 2021 - Dec 2021",
+    category: "operations",
+    points: [
+      "Led operational division and reduced corporate client complaints by 50% through workflow optimization.",
+      "Architected and deployed point-to-point network infrastructure between Dumai and Rupat islands in 4 days.",
+      "Managed field technician schedules, workflows, and compliance with Standard Operating Procedures.",
+      "Handled direct resolution of complex client escalations across corporate and individual installations.",
+    ],
+  },
+  {
+    title: "Sales Promotion Boy (SPB)",
+    company_name: "PT Mitra Cahaya Sentosa",
+    icon: shopify,
+    iconBg: "#ec4899",
+    date: "Apr 2022 - May 2022",
+    category: "operations",
+    points: [
+      "Assisted Ramadan bazaar retail operations at Pekanbaru Mall representing Pakalolo and Deisler footwear.",
+      "Achieved top sales honors for the month, generating Rp97,409,300 across 549 pairs of sandals.",
+      "Managed customer engagement, product upselling, and retail inventory reconciliation.",
     ],
   },
 ];
@@ -186,43 +197,95 @@ export const projects = [
   {
     iconUrl: pricewise,
     theme: "btn-back-red",
-    name: "Amazon Price Tracker",
-    description: "Developed a web application that tracks and notifies users of price changes for products on Amazon, helping users find the best deals.",
-    link: "#",
+    name: "NinjaPump.ai",
+    description:
+      "Solana trading toolkit and dashboard for stealth wallet coordination, volume campaigns, and token management processing 1K+ transactions monthly.",
+    link: "https://ninjapump.ai",
+    tags: ["React.js", "TailwindCSS", "Solana", "Web3"],
+    category: "web3-crypto",
   },
   {
     iconUrl: threads,
     theme: "btn-back-green",
-    name: "Full Stack Threads Clone",
-    description: 'Created a full-stack replica of the popular discussion platform "Threads," enabling users to post and engage in threaded conversations.',
-    link: "#",
-  },
-  {
-    iconUrl: car,
-    theme: "btn-back-blue",
-    name: "Car Finding App",
-    description: "Designed and built a mobile app for finding and comparing cars on the market, streamlining the car-buying process.",
-    link: "#",
+    name: "Ninja Suite",
+    description:
+      "Advanced enterprise upgrade to NinjaPump platform providing enhanced market-making frameworks and multi-wallet management on Solana.",
+    link: "https://suite.ninjapump.ai",
+    tags: ["React.js", "TypeScript", "Solana", "Trading"],
+    category: "web3-crypto",
   },
   {
     iconUrl: snapgram,
     theme: "btn-back-pink",
-    name: "Full Stack Instagram Clone",
-    description: "Built a complete clone of Instagram, allowing users to share photos and connect with friends in a familiar social media environment.",
-    link: "#",
+    name: "Roshambo (DragonEyes)",
+    description:
+      "Decentralized multi-chain Rock-Paper-Scissors game on ICP, Bitcoin, and Solana with Telegram Mini App integration, featured on the DFINITY Forum.",
+    link: "https://dragoneyes.xyz",
+    tags: ["React.js", "ICP", "Solana", "Telegram API", "Framer Motion"],
+    category: "web3-crypto",
   },
   {
     iconUrl: estate,
     theme: "btn-back-black",
-    name: "Real-Estate Application",
-    description: "Developed a web application for real estate listings, facilitating property searches and connecting buyers with sellers.",
-    link: "#",
+    name: "Goat of Gamblers",
+    description:
+      "Provably fair Over Under dice prediction game on Solana supporting real-time multiplayer participation and on-chain payouts.",
+    link: "https://goatofgamblers.com",
+    tags: ["React.js", "TailwindCSS", "Solana", "GameFi"],
+    category: "web3-crypto",
   },
   {
     iconUrl: summiz,
     theme: "btn-back-yellow",
-    name: "AI Summarizer Application",
-    description: "App that leverages AI to automatically generate concise & informative summaries from lengthy text content, or blogs.",
-    link: "#",
+    name: "PupsBot",
+    description:
+      "High-speed Telegram trading bot built with Node.js and Express for Runes trading on Odin.Fun with automated order routing.",
+    link: "https://pupsbot.com",
+    tags: ["Node.js", "Express", "Telegram Bot API", "Runes"],
+    category: "web3-crypto",
+  },
+  {
+    iconUrl: estate,
+    theme: "btn-back-blue",
+    name: "Diklik.co",
+    description:
+      "Comprehensive digital news platform built for client publishing, featuring responsive article feeds, editorial CMS, and social distribution.",
+    link: "https://diklik.co",
+    tags: ["Next.js", "React.js", "TailwindCSS", "PostgreSQL"],
+    category: "fullstack-saas",
+  },
+  {
+    iconUrl: threads,
+    theme: "btn-back-green",
+    name: "Feedly App",
+    description:
+      "E-commerce livestock and cat feed inventory and sales management application built for personal business operations.",
+    link: "https://github.com/rakafantino",
+    tags: ["React.js", "Node.js", "Inventory Management"],
+    category: "fullstack-saas",
+  },
+];
+
+export const awards = [
+  {
+    title: "PAN-SEA AI Developer Challenge 2025 - Winner",
+    issuer: "AI Singapore",
+    date: "Oct 2025",
+    description:
+      "Winner of Education Path Certification in Southeast Asia developer challenge for building innovative AI applications.",
+  },
+  {
+    title: "Google - The Gemma 3n Impact Challenge (The Ollama Prize)",
+    issuer: "Kaggle",
+    date: "Nov 2025",
+    description:
+      "Selected as winner of The Ollama Prize for impactful edge AI application development with Google Gemma 3n.",
+  },
+  {
+    title: "Basic Web Programming",
+    issuer: "Dicoding",
+    date: "May 2020",
+    description:
+      "Foundational certification in semantic web standards, responsive design, and modern front-end web development.",
   },
 ];
