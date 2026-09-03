@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 
-describe("Navbar (Cyber Dock)", () => {
+describe("Navbar", () => {
   const renderNavbar = (props = {}) => {
     return render(
       <MemoryRouter>
@@ -11,12 +11,12 @@ describe("Navbar (Cyber Dock)", () => {
     );
   };
 
-  it("renders brand monogram linking to home page with RF // 01 text", () => {
+  it("renders brand monogram / wordmark linking to home page with Raka Fantino text", () => {
     renderNavbar();
-    const brandLink = screen.getByRole("link", { name: /RF/i });
+    const brandLink = screen.getByRole("link", { name: /Raka Fantino/i });
     expect(brandLink).toBeInTheDocument();
     expect(brandLink).toHaveAttribute("href", "/");
-    expect(brandLink).toHaveTextContent(/RF\s*\/\/\s*01/i);
+    expect(brandLink).toHaveTextContent(/Raka Fantino/i);
   });
 
   it("renders primary navigation links to about, projects, and contact", () => {
@@ -35,18 +35,18 @@ describe("Navbar (Cyber Dock)", () => {
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
 
-  it("renders live status telemetry pill with operational indicator text", () => {
+  it("renders available for work status pill indicator", () => {
     renderNavbar();
-    const telemetryPill = screen.getByText(/STATUS:\s*OPERATIONAL/i);
-    expect(telemetryPill).toBeInTheDocument();
+    const statusPill = screen.getByText(/Available for work/i);
+    expect(statusPill).toBeInTheDocument();
   });
 
-  it("renders command palette quick launcher button and triggers onOpenCommandPalette", () => {
+  it("renders quick navigation command palette button and triggers onOpenCommandPalette", () => {
     const handleOpen = vi.fn();
     renderNavbar({ onOpenCommandPalette: handleOpen });
 
     const cmdKBtn = screen.getByRole("button", {
-      name: /command palette|quick launch/i,
+      name: /open quick navigation/i,
     });
     expect(cmdKBtn).toBeInTheDocument();
 
@@ -58,7 +58,7 @@ describe("Navbar (Cyber Dock)", () => {
     renderNavbar();
 
     const cmdKBtn = screen.getByRole("button", {
-      name: /command palette|quick launch/i,
+      name: /open quick navigation/i,
     });
     expect(() => fireEvent.click(cmdKBtn)).not.toThrow();
   });

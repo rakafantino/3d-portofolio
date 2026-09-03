@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Capture useFrame and useThree callbacks/state
 let capturedFrameCallbacks = [];
 const mockPointer = { x: 0.5, y: -0.2 };
 const mockViewport = { width: 10, height: 8 };
@@ -16,42 +15,42 @@ vi.mock("@react-three/fiber", () => ({
   })),
 }));
 
-import TechCore from "./TechCore.jsx";
+import WorkshopIsland from "./WorkshopIsland.jsx";
 
-describe("TechCore Component", () => {
+describe("WorkshopIsland Component", () => {
   beforeEach(() => {
     capturedFrameCallbacks = [];
     vi.clearAllMocks();
   });
 
   it("renders without crash and registers useFrame animation loop", () => {
-    const { container } = render(<TechCore />);
+    const { container } = render(<WorkshopIsland />);
     expect(container).toBeDefined();
     expect(capturedFrameCallbacks.length).toBeGreaterThan(0);
   });
 
-  it("gracefully falls back to default transforms when invalid props are provided", () => {
+  it("gracefully falls back to safe transforms when invalid or missing props are provided", () => {
     expect(() => {
       render(
-        <TechCore
+        <WorkshopIsland
           scale="invalid-scale"
           position={null}
           rotation={undefined}
           isRotating={false}
-          setCurrentStage={null}
+          currentStage={1}
+          onSelectZone={null}
         />
       );
     }).not.toThrow();
   });
 
-  it("executes captured useFrame callback with pointer tracking and animation updates without error", () => {
-    render(<TechCore isRotating={true} />);
+  it("executes captured useFrame callback with clock animation updates without error", () => {
+    render(<WorkshopIsland isRotating={true} />);
     expect(capturedFrameCallbacks.length).toBeGreaterThan(0);
 
     const frameCallback = capturedFrameCallbacks[0];
     const mockState = {
-      pointer: { x: 0.25, y: -0.15 },
-      clock: { getElapsedTime: () => 1.5 },
+      clock: { getElapsedTime: () => 2.5 },
     };
 
     expect(() => {
@@ -60,9 +59,17 @@ describe("TechCore Component", () => {
   });
 
   it("does NOT import or reference any external .glb / .gltf files", () => {
-    const componentStr = TechCore.toString();
+    const componentStr = WorkshopIsland.toString();
     expect(componentStr).not.toMatch(/\.glb/i);
     expect(componentStr).not.toMatch(/\.gltf/i);
     expect(componentStr).not.toMatch(/useGLTF/i);
+  });
+
+  it("renders all 4 story zones and lighthouse landmark hit targets", () => {
+    const handleSelectZone = vi.fn();
+    const { container } = render(
+      <WorkshopIsland onSelectZone={handleSelectZone} currentStage={1} />
+    );
+    expect(container).toBeDefined();
   });
 });

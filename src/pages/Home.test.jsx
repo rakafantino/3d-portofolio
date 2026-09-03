@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock @react-three/fiber Canvas & hooks to test DOM orchestration without WebGL crash in jsdom
+// Mock @react-three/fiber Canvas & hooks
 vi.mock("@react-three/fiber", () => ({
   Canvas: ({ children, className, ...props }) => (
     <div data-testid="mock-canvas" className={className} {...props}>
@@ -17,24 +17,27 @@ vi.mock("@react-three/fiber", () => ({
 }));
 
 vi.mock("@react-three/drei", () => ({
+  Sky: (props) => <div data-testid="mock-sky" data-props={JSON.stringify(props)} />,
   Html: ({ children }) => <div data-testid="mock-html">{children}</div>,
   useGLTF: vi.fn(() => ({ nodes: {}, materials: {} })),
   useAnimations: vi.fn(() => ({ actions: {}, ref: { current: null } })),
 }));
 
-// Mock AudioController to isolate Home DOM testing
+// Mock AudioController
 vi.mock("../components/AudioController", () => ({
   default: () => <div data-testid="audio-controller">AUDIO_CONTROLLER_MOCK</div>,
 }));
 
-// Mock TechCore to verify it is mounted inside Canvas with expected props
-vi.mock("../models/TechCore", () => ({
-  default: (props) => <div data-testid="tech-core-model" data-props={JSON.stringify(props)} />,
+// Mock WorkshopIsland
+vi.mock("../models/WorkshopIsland", () => ({
+  default: (props) => (
+    <div data-testid="workshop-island-model" data-props={JSON.stringify(props)} />
+  ),
 }));
 
 import Home from "./Home";
 
-describe("Home Page - Hero Canvas & Dual-Control Orbit Scrubber HUD", () => {
+describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -47,73 +50,90 @@ describe("Home Page - Hero Canvas & Dual-Control Orbit Scrubber HUD", () => {
     );
   };
 
-  it("renders with mobile-friendly min-h-[100dvh] section layout and mounts TechCore in Canvas", () => {
+  it("renders with mobile-friendly min-h-[100dvh] section layout and mounts WorkshopIsland & Sunset Sky in Canvas", () => {
     renderHome();
 
-    const homeSection = screen.getByRole("region", { name: /hero-terminal|home/i }) || document.querySelector("section");
+    const homeSection = screen.getByRole("region", { name: /workshop-island/i });
     expect(homeSection).toBeInTheDocument();
     expect(homeSection.className).toMatch(/min-h-\[100dvh\]/);
 
     expect(screen.getByTestId("mock-canvas")).toBeInTheDocument();
-    expect(screen.getByTestId("tech-core-model")).toBeInTheDocument();
+    expect(screen.getByTestId("mock-sky")).toBeInTheDocument();
+    expect(screen.getByTestId("workshop-island-model")).toBeInTheDocument();
   });
 
-  it("renders Stage 1 intro telemetry callout by default on initial mount", () => {
+  it("renders Zone 1 intro card by default on initial mount with human language", () => {
     renderHome();
 
-    // Raka Fantino / Fullstack Engineer / AI & Web3 Builder
     expect(screen.getByText(/Raka Fantino/i)).toBeInTheDocument();
-    expect(screen.getByText(/Fullstack Engineer/i)).toBeInTheDocument();
-    expect(screen.getByText(/SYSTEM_READY/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/SYS_INIT/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/Frontend & Fullstack Engineer/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Lihat Proyek/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Hubungi/i })).toBeInTheDocument();
+
+    // No legacy cyber strings
+    expect(screen.queryByText(/SYS_INIT/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/TELEMETRY_FEED/i)).not.toBeInTheDocument();
   });
 
-  it("renders 4 HUD scrubber buttons matching the required stage nodes", () => {
+  it("renders 5 zone navigator buttons matching story landmarks", () => {
     renderHome();
 
-    expect(screen.getByRole("button", { name: /01 \/\/ SYS_INIT/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /02 \/\/ AI_AWARDS/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /03 \/\/ WEB3_ARSENAL/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /04 \/\/ COMMS_LINK/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Awal/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /AI & Awards/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Web3 & Kripto/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Fullstack/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Kontak/i })).toBeInTheDocument();
   });
 
-  it("switches to Stage 2 (AI_AWARDS) on button click, displaying link to /about", () => {
+  it("switches to Zone 2 (AI & Awards) on button click, displaying link to /about", () => {
     renderHome();
 
-    const stage2Btn = screen.getByRole("button", { name: /02 \/\/ AI_AWARDS/i });
-    fireEvent.click(stage2Btn);
+    const aiAwardsBtn = screen.getByRole("button", { name: /AI & Awards/i });
+    fireEvent.click(aiAwardsBtn);
 
-    const aboutLink = screen.getByRole("link", { name: /VIEW PERSONNEL FILE/i });
+    const aboutLink = screen.getByRole("link", { name: /Buka halaman About/i });
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
+    expect(screen.getByText(/AI Singapore & Google Gemma Challenge/i)).toBeInTheDocument();
   });
 
-  it("switches to Stage 3 (WEB3_ARSENAL) on button click, displaying link to /projects", () => {
+  it("switches to Zone 3 (Web3 & Kripto) on button click, displaying link to /projects", () => {
     renderHome();
 
-    const stage3Btn = screen.getByRole("button", { name: /03 \/\/ WEB3_ARSENAL/i });
-    fireEvent.click(stage3Btn);
+    const web3Btn = screen.getByRole("button", { name: /Web3 & Kripto/i });
+    fireEvent.click(web3Btn);
 
-    const projectsLink = screen.getByRole("link", { name: /VIEW PROJECT LOG/i });
+    const projectsLink = screen.getByRole("link", { name: /Lihat Proyek Web3/i });
+    expect(projectsLink).toBeInTheDocument();
+    expect(projectsLink).toHaveAttribute("href", "/projects");
+    expect(screen.getByText(/NinjaPump\.ai/i)).toBeInTheDocument();
+  });
+
+  it("switches to Zone 4 (Fullstack) on button click, displaying portofolio link", () => {
+    renderHome();
+
+    const fullstackBtn = screen.getByRole("button", { name: /Fullstack/i });
+    fireEvent.click(fullstackBtn);
+
+    const projectsLink = screen.getByRole("link", { name: /Lihat Portofolio/i });
     expect(projectsLink).toBeInTheDocument();
     expect(projectsLink).toHaveAttribute("href", "/projects");
   });
 
-  it("switches to Stage 4 (COMMS_LINK) on button click, displaying link to /contact", () => {
+  it("switches to Zone 5 (Mercusuar Kontak) on button click, displaying contact link", () => {
     renderHome();
 
-    const stage4Btn = screen.getByRole("button", { name: /04 \/\/ COMMS_LINK/i });
-    fireEvent.click(stage4Btn);
+    const contactBtn = screen.getByRole("button", { name: /Kontak/i });
+    fireEvent.click(contactBtn);
 
-    const commsLink = screen.getByRole("link", { name: /OPEN COMMS CHANNEL/i });
-    expect(commsLink).toBeInTheDocument();
-    expect(commsLink).toHaveAttribute("href", "/contact");
+    const contactLink = screen.getByRole("link", { name: /Kirim Pesan/i });
+    expect(contactLink).toBeInTheDocument();
+    expect(contactLink).toHaveAttribute("href", "/contact");
   });
 
-  it("mounts AudioController in bottom left zone without legacy audio elements or sound icons", () => {
+  it("mounts AudioController in bottom left zone", () => {
     renderHome();
 
     expect(screen.getByTestId("audio-controller")).toBeInTheDocument();
-    expect(screen.queryByAltText(/sound/i)).not.toBeInTheDocument();
   });
 });

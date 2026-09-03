@@ -1,26 +1,28 @@
 import { Suspense, useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Canvas, useFrame } from "@react-three/fiber";
+import { Sky } from "@react-three/drei";
 import Loader from "../components/Loader";
-import TechCore from "../models/TechCore";
+import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
 import AudioController from "../components/AudioController";
 import { STAGE_CENTERS, getStageFromAngle } from "../core/stageCalculator";
 
-const STAGE_NODES = [
-  { stage: 1, code: "01", label: "SYS_INIT" },
-  { stage: 2, code: "02", label: "AI_AWARDS" },
-  { stage: 3, code: "03", label: "WEB3_ARSENAL" },
-  { stage: 4, code: "04", label: "COMMS_LINK" },
+const ZONE_BUTTONS = [
+  { stage: 1, name: "Awal", title: "Zona A: Masuk" },
+  { stage: 2, name: "AI & Awards", title: "Zona B: Observatorium" },
+  { stage: 3, name: "Web3 & Kripto", title: "Zona C: Reaktor" },
+  { stage: 4, name: "Fullstack", title: "Zona D: Bengkel" },
+  { stage: 5, name: "Kontak", title: "Mercusuar" },
 ];
 
 /**
- * HeroRig
- * Inner 3D group container hosting TechCore.
- * Provides smooth rotation damping, dual-control tracking (pointer drag + stage snap),
- * and automatic stage calculation without DOM scroll interference.
+ * IslandWorldRig
+ * Inner 3D group container hosting the Workshop Island.
+ * Dual-control tracking: pointer drag rotation + stage snapping with damping.
+ * No DOM scroll interference (no preventDefault), safe touch handling.
  */
-const HeroRig = ({
+const IslandWorldRig = ({
   scale,
   isRotating,
   setIsRotating,
@@ -34,14 +36,16 @@ const HeroRig = ({
   const pointerDownRef = useRef(false);
   const lastPointerXRef = useRef(0);
 
-  // Sync initial target angle with stage 1
+  // Sync target angle when currentStage changes externally
   useEffect(() => {
     if (STAGE_CENTERS[currentStage] !== undefined) {
       targetAngleRef.current = STAGE_CENTERS[currentStage];
+    } else if (currentStage === 5) {
+      // Lighthouse is positioned on the edge
+      targetAngleRef.current = 3.14;
     }
   }, [currentStage, targetAngleRef]);
 
-  // Pointer drag event handlers on the 3D group (Zero preventDefault, keeps page mobile scroll intact)
   const handlePointerDown = useCallback(
     (e) => {
       e.stopPropagation();
@@ -70,34 +74,36 @@ const HeroRig = ({
       const deltaX = e.clientX - lastPointerXRef.current;
       lastPointerXRef.current = e.clientX;
 
-      // Sensitivity factor
-      const rotationSpeed = 0.006;
+      // Smooth drag sensitivity
+      const rotationSpeed = 0.005;
       targetAngleRef.current += deltaX * rotationSpeed;
     },
     [targetAngleRef]
   );
 
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (!groupRef.current) return;
 
     // Smooth lerp damping toward target angle
     const damping = isSnappingRef.current ? 0.08 : 0.12;
     currentAngleRef.current += (targetAngleRef.current - currentAngleRef.current) * damping;
 
-    // Apply Y-axis rotation to the 3D group
+    // Gentle auto-rotate drift when idle
+    if (!pointerDownRef.current && !isSnappingRef.current && !isRotating) {
+      targetAngleRef.current += (delta || 0.016) * 0.035;
+    }
+
+    // Apply Y-axis rotation to the island world
     groupRef.current.rotation.y = currentAngleRef.current;
 
-    // Derive active stage from angle dynamically during free rotation
+    // Derive active stage dynamically during free rotation
     if (!isSnappingRef.current) {
       const derivedStage = getStageFromAngle(currentAngleRef.current);
-      if (derivedStage && derivedStage !== currentStage) {
+      if (derivedStage && derivedStage !== currentStage && currentStage !== 5) {
         setCurrentStage(derivedStage);
       }
-    } else {
-      // Check if snapped close enough to target
-      if (Math.abs(targetAngleRef.current - currentAngleRef.current) < 0.005) {
-        isSnappingRef.current = false;
-      }
+    } else if (Math.abs(targetAngleRef.current - currentAngleRef.current) < 0.005) {
+      isSnappingRef.current = false;
     }
   });
 
@@ -109,12 +115,26 @@ const HeroRig = ({
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerUp}
     >
-      <TechCore scale={scale} isRotating={isRotating} />
+      <WorkshopIsland
+        scale={scale}
+        isRotating={isRotating}
+        currentStage={currentStage}
+        onSelectZone={(zoneId) => {
+          setCurrentStage(zoneId);
+          if (STAGE_CENTERS[zoneId] !== undefined) {
+            targetAngleRef.current = STAGE_CENTERS[zoneId];
+            isSnappingRef.current = true;
+          } else if (zoneId === 5) {
+            targetAngleRef.current = 3.14;
+            isSnappingRef.current = true;
+          }
+        }}
+      />
     </group>
   );
 };
 
-HeroRig.propTypes = {
+IslandWorldRig.propTypes = {
   scale: PropTypes.arrayOf(PropTypes.number).isRequired,
   isRotating: PropTypes.bool.isRequired,
   setIsRotating: PropTypes.func.isRequired,
@@ -127,11 +147,12 @@ HeroRig.propTypes = {
 const Home = () => {
   const [isRotating, setIsRotating] = useState(false);
   const [currentStage, setCurrentStage] = useState(1);
-  const [techCoreScale, setTechCoreScale] = useState(() => {
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [islandScale, setIslandScale] = useState(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
-      return [0.85, 0.85, 0.85];
+      return [0.75, 0.75, 0.75];
     }
-    return [1, 1, 1];
+    return [0.95, 0.95, 0.95];
   });
 
   const targetAngleRef = useRef(STAGE_CENTERS[1]);
@@ -142,9 +163,9 @@ const Home = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setTechCoreScale([0.85, 0.85, 0.85]);
+        setIslandScale([0.75, 0.75, 0.75]);
       } else {
-        setTechCoreScale([1, 1, 1]);
+        setIslandScale([0.95, 0.95, 0.95]);
       }
     };
 
@@ -152,7 +173,7 @@ const Home = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Clear any pending stage-select rotation reset on unmount
+  // Clear timers on unmount
   useEffect(() => {
     return () => {
       if (snapResetTimerRef.current !== null) {
@@ -162,18 +183,20 @@ const Home = () => {
     };
   }, []);
 
-  // Handler for HUD Stage Scrubber clicks
-  const handleStageSelect = (stageNum) => {
-    if (STAGE_CENTERS[stageNum] === undefined) return;
+  const handleZoneSelect = (stageNum) => {
+    setHasInteracted(true);
     setCurrentStage(stageNum);
-    targetAngleRef.current = STAGE_CENTERS[stageNum];
+    if (STAGE_CENTERS[stageNum] !== undefined) {
+      targetAngleRef.current = STAGE_CENTERS[stageNum];
+    } else if (stageNum === 5) {
+      targetAngleRef.current = 3.14;
+    }
     isSnappingRef.current = true;
     setIsRotating(true);
-    // Clear any pending reset from a previous select before arming a new one
+
     if (snapResetTimerRef.current !== null) {
       clearTimeout(snapResetTimerRef.current);
     }
-    // Smooth reset of rotating flag after transition
     snapResetTimerRef.current = setTimeout(() => {
       snapResetTimerRef.current = null;
       setIsRotating(false);
@@ -183,24 +206,37 @@ const Home = () => {
   return (
     <section
       role="region"
-      aria-label="hero-terminal"
-      className="w-full min-h-[100dvh] relative bg-cyber-black overflow-hidden flex flex-col justify-between"
+      aria-label="workshop-island"
+      className="w-full min-h-[100dvh] relative bg-island-black overflow-hidden flex flex-col justify-between select-none"
     >
-      {/* Top telemetry HUD callout zone */}
-      <div className="absolute top-24 sm:top-28 left-0 right-0 z-10 flex items-center justify-center pointer-events-auto">
+      {/* Top Story Callout Card Overlay */}
+      <div className="absolute top-20 sm:top-24 left-0 right-0 z-10 flex items-center justify-center px-4 pointer-events-auto">
         {currentStage && <Homeinfo currentStage={currentStage} />}
       </div>
 
-      {/* R3F 3D Hero Canvas */}
+      {/* R3F 3D Island Canvas */}
       <Canvas
         className={`w-full h-full absolute inset-0 bg-transparent touch-pan-y ${
           isRotating ? "cursor-grabbing" : "cursor-grab"
         }`}
-        camera={{ position: [0, 0, 5], fov: 60, near: 0.1, far: 1000 }}
+        camera={{ position: [0, 3.4, 7.2], fov: 50, near: 0.1, far: 1000 }}
+        onPointerDown={() => setHasInteracted(true)}
       >
         <Suspense fallback={<Loader />}>
-          <HeroRig
-            scale={techCoreScale}
+          {/* Warm Dusk/Sunset Sky */}
+          <Sky
+            distance={450000}
+            sunPosition={[10, 1.8, -15]}
+            inclination={0.49}
+            azimuth={0.25}
+            turbidity={8}
+            rayleigh={2.5}
+            mieCoefficient={0.005}
+            mieDirectionalG={0.8}
+          />
+
+          <IslandWorldRig
+            scale={islandScale}
             isRotating={isRotating}
             setIsRotating={setIsRotating}
             currentStage={currentStage}
@@ -211,27 +247,39 @@ const Home = () => {
         </Suspense>
       </Canvas>
 
-      {/* Bottom Orbit Scrubber HUD */}
-      <div className="absolute bottom-16 sm:bottom-12 left-0 right-0 z-20 flex justify-center px-4 pointer-events-auto">
+      {/* Bottom Hint Text (fades after first interaction) */}
+      <div
+        className={`absolute bottom-20 sm:bottom-16 left-0 right-0 z-10 flex justify-center pointer-events-none transition-opacity duration-700 ${
+          hasInteracted ? "opacity-0" : "opacity-80"
+        }`}
+      >
+        <span className="px-3 py-1 rounded-full bg-island-dark/80 border border-island-border/70 text-cream/70 text-[11px] sm:text-xs font-sans tracking-wide shadow-lg">
+          Geser untuk memutar pulau · Klik landmark untuk detail
+        </span>
+      </div>
+
+      {/* Bottom Zone Navigator Dock */}
+      <div className="absolute bottom-5 sm:bottom-6 left-0 right-0 z-20 flex justify-center px-4 pointer-events-auto">
         <nav
-          aria-label="Orbit stage scrubber"
-          className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-1.5 rounded-lg border border-cyber-border bg-cyber-black/85 backdrop-blur-md shadow-2xl max-w-full"
+          aria-label="Navigasi zona pulau"
+          className="inline-flex flex-wrap items-center justify-center gap-1 sm:gap-2 p-1.5 rounded-full border border-island-border/80 bg-island-dark/85 backdrop-blur-md shadow-2xl max-w-full"
         >
-          {STAGE_NODES.map((node) => {
-            const isActive = currentStage === node.stage;
+          {ZONE_BUTTONS.map((btn) => {
+            const isActive = currentStage === btn.stage;
             return (
               <button
-                key={node.stage}
+                key={btn.stage}
                 type="button"
-                onClick={() => handleStageSelect(node.stage)}
+                onClick={() => handleZoneSelect(btn.stage)}
                 aria-current={isActive ? "step" : undefined}
-                className={`px-2.5 py-1 text-[11px] sm:text-xs font-mono font-semibold tracking-wider rounded transition-all duration-200 border focus:outline-none focus:ring-1 focus:ring-cyber-cyan ${
+                title={btn.title}
+                className={`px-3 py-1.5 text-xs font-sans rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper ${
                   isActive
-                    ? "bg-cyber-slate text-cyber-cyan border-cyber-cyan shadow-[0_0_8px_rgba(0,240,255,0.3)]"
-                    : "bg-cyber-dark/60 text-gray-400 border-cyber-border/70 hover:text-gray-200 hover:border-cyber-border"
+                    ? "bg-copper text-cream font-medium shadow-md shadow-black/20"
+                    : "text-cream/65 hover:text-cream hover:bg-island-border/40"
                 }`}
               >
-                {`[${node.code} // ${node.label}]`}
+                {btn.name}
               </button>
             );
           })}
@@ -239,7 +287,7 @@ const Home = () => {
       </div>
 
       {/* Bottom-left Audio Controller zone */}
-      <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-20 pointer-events-auto">
+      <div className="absolute bottom-4 left-4 z-20 pointer-events-auto">
         <AudioController />
       </div>
     </section>
