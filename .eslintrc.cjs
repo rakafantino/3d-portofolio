@@ -22,5 +22,24 @@ module.exports = {
         "react-refresh/only-export-components": "off",
       },
     },
+    {
+      files: ["src/**/*.test.{js,jsx}", "src/test/**/*.js"],
+      env: {
+        browser: true,
+        es2020: true,
+        node: false,
+      },
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        vi: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+      },
+    },
   ],
 };
