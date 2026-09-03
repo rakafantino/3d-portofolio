@@ -1,0 +1,74 @@
+TASK 5 VERIFICATION EVIDENCE
+=============================
+Plan: cyber-terminal-portfolio-redesign
+Task: 5 - Additive Cyber-Industrial Design Tokens & Typography
+Date: 2026-09-03
+Session ID: worker:task5
+
+1. CHANGED FILES SUMMARY
+- tailwind.config.js:
+  * Added cyber palette tokens: cyber-black (#0A0B0E), cyber-dark (#12141A), cyber-slate (#1A1D26), cyber-border (#262A36), cyber-cyan (#00F0FF), cyber-amber (#FFB800) under colors (both flat and nested).
+  * Retained all existing colors: gray.200, black.DEFAULT, black.500, blue.500.
+  * Added font families: mono: ["JetBrains Mono", "monospace"] and sans: ["Plus Jakarta Sans", "Work Sans", "sans-serif"].
+  * Retained all existing font families (worksans, poppins) and boxShadow (card).
+- src/index.css:
+  * Added Google Fonts @import for JetBrains Mono and Plus Jakarta Sans on line 1 (preceding existing Google Fonts @import).
+  * Added CSS custom properties in :root (--cyber-black, --cyber-dark, --cyber-slate, --cyber-border, --cyber-cyan, --cyber-amber).
+  * Added additive utility classes in @layer utilities: .terminal-card, .cyber-border-glow, .telemetry-badge.
+  * Retained all existing legacy utility classes untouched (.max-container, .head-text, .subhead-text, .blue-gradient_text, .input, .textarea, .btn, .header, .footer, .footer-container, .info-box, .neo-btn, .cta, .cta-text, .glassmorphism, .logo, .block-container, .btn-back*, .btn-front, .neo-brutalism-*).
+
+2. PRODUCTION BUILD VERIFICATION
+Command: npm run build
+Exit code: 0
+Output tail:
+dist/index.html                          0.49 kB │ gzip:   0.33 kB
+dist/assets/tesla-weNJuekE.png           6.43 kB
+dist/assets/meta-wwPXefW1.png            7.75 kB
+dist/assets/shopify-fb2A323g.png         8.00 kB
+dist/assets/summiz-f4uRwSbw.svg         12.19 kB │ gzip:   5.30 kB
+dist/assets/favicon-4Bc2SXwJ.ico        15.41 kB
+dist/assets/starbucks-Y_GH9OfM.png      17.28 kB
+dist/assets/soundon-OBiR5jo4.png        20.36 kB
+dist/assets/soundoff-f3VS7Hxn.png       21.29 kB
+dist/assets/fox-FuRos4rq.glb           104.50 kB
+dist/assets/sky-dANZL6D7.glb           329.42 kB
+dist/assets/island-Te-uwlMA.glb        356.40 kB
+dist/assets/plane-5N2wQY0V.glb       1,474.58 kB
+dist/assets/bird-_WCJ2UsO.glb        1,630.36 kB
+dist/assets/sakura-4eoYaH2-.mp3      5,120.84 kB
+dist/assets/hero-_Sk9UN1l.jpg       27,101.83 kB
+dist/assets/index-oVgjj_1-.css          25.24 kB │ gzip:   5.36 kB
+dist/assets/index-6GwML505.js        1,135.17 kB │ gzip: 327.44 kB
+✓ built in 3.34s
+
+3. BUNDLE TOKEN GREP VERIFICATION
+Command: grep -i -l "#0a0b0e" dist/assets/*.css && grep -i -l "#00f0ff" dist/assets/*.css
+Exit code: 0
+Output:
+dist/assets/index-oVgjj_1-.css
+dist/assets/index-oVgjj_1-.css
+
+Full regex grep for all cyber hexes:
+Command: grep -iE "#0a0b0e|#12141a|#1a1d26|#262a36|#00f0ff|#ffb800" dist/assets/*.css
+Matches confirmed inside compiled bundle :root declaration:
+--cyber-black: #0A0B0E; --cyber-dark: #12141A; --cyber-slate: #1A1D26; --cyber-border: #262A36; --cyber-cyan: #00F0FF; --cyber-amber: #FFB800
+
+4. TEST SUITE VERIFICATION
+Command: npm test
+Exit code: 0
+Output:
+ RUN  v3.2.7 /Users/rakafantino/Documents/Personal Project/3d-portofolio
+ ✓ src/core/stageCalculator.test.js (23 tests) 7ms
+ ✓ src/constants/index.test.js (8 tests) 6ms
+ ✓ src/test/smoke.test.js (2 tests) 13ms
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+
+5. LINT VERIFICATION
+Command: npm run lint
+Exit code: 0
+Output: 0 errors, 0 warnings
+
+6. ADVERSARIAL CLASSES PROBING
+- stale_state: probed - legacy classes (.max-container, .head-text, .subhead-text, .blue-gradient_text, .input, .textarea, .btn, .header, .footer, .info-box, .neo-btn, .cta, .block-container, .btn-back*, .btn-front, .neo-brutalism-*) verified still present by grep on src/index.css (30 matches found).
+- misleading_success_output: probed - dist CSS grep directly inspected and verified that the compiled CSS bundle in dist/assets/ contains the authentic cyber hexes (#0A0B0E, #00F0FF, etc.) and font @import declaration.
