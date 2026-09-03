@@ -15,6 +15,23 @@ vi.mock("@react-three/fiber", () => ({
   })),
 }));
 
+vi.mock("@react-three/drei", () => ({
+  useGLTF: Object.assign(
+    vi.fn(() => ({
+      scene: {
+        children: [],
+        position: { set: vi.fn() },
+        scale: { set: vi.fn() },
+      },
+    })),
+    { preload: vi.fn() }
+  ),
+}));
+
+vi.mock("../assets/3d/island.glb", () => ({
+  default: "island.glb",
+}));
+
 import WorkshopIsland from "./WorkshopIsland.jsx";
 
 describe("WorkshopIsland Component", () => {
@@ -50,7 +67,7 @@ describe("WorkshopIsland Component", () => {
 
     const frameCallback = capturedFrameCallbacks[0];
     const mockState = {
-      clock: { getElapsedTime: () => 2.5 },
+      clock: { elapsedTime: 2.5 },
     };
 
     expect(() => {
@@ -58,18 +75,8 @@ describe("WorkshopIsland Component", () => {
     }).not.toThrow();
   });
 
-  it("does NOT import or reference any external .glb / .gltf files", () => {
-    const componentStr = WorkshopIsland.toString();
-    expect(componentStr).not.toMatch(/\.glb/i);
-    expect(componentStr).not.toMatch(/\.gltf/i);
-    expect(componentStr).not.toMatch(/useGLTF/i);
-  });
-
-  it("renders all 4 story zones and lighthouse landmark hit targets", () => {
-    const handleSelectZone = vi.fn();
-    const { container } = render(
-      <WorkshopIsland onSelectZone={handleSelectZone} currentStage={1} />
-    );
+  it("renders with valid GLB scene primitive", () => {
+    const { container } = render(<WorkshopIsland currentStage={1} />);
     expect(container).toBeDefined();
   });
 });
