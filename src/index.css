@@ -1,27 +1,41 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Work+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Cyber-Industrial tokens (Task 5) ===== */
+/* ===== Workshop Island palette tokens ===== */
 :root {
   --blue-rgb: 237 245 255;
   --green-rgb: 125 161 35;
 
-  /* Cyber-Industrial design tokens */
-  --cyber-black: #0A0B0E;
-  --cyber-dark: #12141A;
-  --cyber-slate: #1A1D26;
-  --cyber-border: #262A36;
-  --cyber-cyan: #00F0FF;
-  --cyber-amber: #FFB800;
+  /* Island (Home / 3D world) — warm dusk, no cyan */
+  --island-black: #17130e;
+  --island-dark: #211b14;
+  --island-dusk: #2a2119;
+  --island-border: #3a2f24;
+  --island-copper: #c56b3b;
+  --island-sand: #e7d9bf;
+
+  /* Light editorial pages */
+  --cream: #faf5ec;
+  --cream-deep: #f3eadb;
+  --ink: #241d15;
+  --ink-soft: #4a4034;
+  --ink-faint: #7a6e5e;
+  --copper: #b4552d;
 }
 
 body {
-  background-color: var(--cyber-black);
-  font-family: "Work Sans", sans-serif;
+  background-color: var(--island-black);
+  font-family: "Plus Jakarta Sans", "Work Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+html {
+  overflow-x: clip;
 }
 
 body:has(.card[data-color="blue"]:hover) {
@@ -37,6 +51,7 @@ body:has(.card[data-color="green"]:hover) {
     @apply max-w-5xl mx-auto sm:p-16 pb-12 !pt-[126px] px-8 min-h-[calc(100vh-80px)];
   }
 
+  /* Legacy JSM classes — retained for reference but no longer used by pages */
   .head-text {
     @apply sm:text-5xl text-3xl font-semibold sm:leading-snug font-poppins;
   }
@@ -89,17 +104,18 @@ body:has(.card[data-color="green"]:hover) {
     @apply text-black-500 font-extrabold flex-1 text-3xl max-md:text-center;
   }
 
-  /* Additive Cyber-Industrial utilities */
+  /* Deprecated cyber utilities — kept only so legacy class names never throw;
+     pages are being migrated off these. */
   .terminal-card {
-    background-color: var(--cyber-dark);
-    border: 1px solid var(--cyber-border);
+    background-color: var(--island-dark);
+    border: 1px solid var(--island-border);
     border-radius: 0.5rem;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
   }
 
   .cyber-border-glow {
-    border: 1px solid var(--cyber-cyan);
-    box-shadow: 0 0 12px rgba(0, 240, 255, 0.15), inset 0 0 12px rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0);
+    box-shadow: none;
   }
 
   .telemetry-badge {
@@ -109,7 +125,7 @@ body:has(.card[data-color="green"]:hover) {
     font-size: 0.75rem;
     line-height: 1rem;
     border-left-width: 2px;
-    border-left-color: var(--cyber-cyan);
+    border-left-color: transparent;
     padding-left: 0.5rem;
   }
 }

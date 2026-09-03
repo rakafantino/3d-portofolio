@@ -17,7 +17,6 @@ vi.mock("@react-three/fiber", () => ({
 }));
 
 vi.mock("@react-three/drei", () => ({
-  Sky: (props) => <div data-testid="mock-sky" data-props={JSON.stringify(props)} />,
   Html: ({ children }) => <div data-testid="mock-html">{children}</div>,
   useGLTF: vi.fn(() => ({ nodes: {}, materials: {} })),
   useAnimations: vi.fn(() => ({ actions: {}, ref: { current: null } })),
@@ -50,15 +49,14 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     );
   };
 
-  it("renders with mobile-friendly min-h-[100dvh] section layout and mounts WorkshopIsland & Sunset Sky in Canvas", () => {
+  it("renders full-viewport h-[100dvh] section layout and mounts WorkshopIsland & Sunset Sky in Canvas", () => {
     renderHome();
 
     const homeSection = screen.getByRole("region", { name: /workshop-island/i });
     expect(homeSection).toBeInTheDocument();
-    expect(homeSection.className).toMatch(/min-h-\[100dvh\]/);
+    expect(homeSection.className).toMatch(/h-\[100dvh\]/);
 
     expect(screen.getByTestId("mock-canvas")).toBeInTheDocument();
-    expect(screen.getByTestId("mock-sky")).toBeInTheDocument();
     expect(screen.getByTestId("workshop-island-model")).toBeInTheDocument();
   });
 
@@ -131,9 +129,9 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
 
-  it("mounts AudioController in bottom left zone", () => {
+  it("does not mount a duplicate AudioController in Home (navbar owns audio control)", () => {
     renderHome();
 
-    expect(screen.getByTestId("audio-controller")).toBeInTheDocument();
+    expect(screen.queryByTestId("audio-controller")).not.toBeInTheDocument();
   });
 });

@@ -9,7 +9,7 @@ const App = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   return (
-    <main className="min-h-[100dvh] bg-cyber-black text-slate-200 font-sans">
+    <main className="min-h-[100dvh] bg-island-black font-sans text-cream">
       <Router>
         <Navbar onOpenCommandPalette={() => setPaletteOpen(true)} />
         <CommandPalette

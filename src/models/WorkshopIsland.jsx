@@ -149,17 +149,18 @@ const WorkshopIsland = ({
       {...props}
     >
       {/* Warm Ambient & Sunset Directional Lighting */}
-      <ambientLight color="#FFEBD4" intensity={0.85} />
+      <ambientLight color="#FFE3C2" intensity={1.15} />
       <directionalLight
         position={[6, 8, 4]}
-        color="#F8B179"
-        intensity={2.0}
+        color="#FFC08A"
+        intensity={2.6}
         castShadow={false}
       />
+      <hemisphereLight args={["#E8B98A", "#3A2A1C", 0.9]} />
       <directionalLight
         position={[-5, 4, -4]}
-        color="#594034"
-        intensity={0.65}
+        color="#6B4A33"
+        intensity={0.8}
       />
 
       {/* Water disc around island */}

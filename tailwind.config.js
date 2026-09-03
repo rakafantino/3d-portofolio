@@ -14,19 +14,26 @@ export default {
         blue: {
           500: "#2b77e7",
         },
-        "cyber-black": "#0A0B0E",
-        "cyber-dark": "#12141A",
-        "cyber-slate": "#1A1D26",
-        "cyber-border": "#262A36",
-        "cyber-cyan": "#00F0FF",
-        "cyber-amber": "#FFB800",
-        cyber: {
-          black: "#0A0B0E",
-          dark: "#12141A",
-          slate: "#1A1D26",
-          border: "#262A36",
-          cyan: "#00F0FF",
-          amber: "#FFB800",
+        /* Warm "Workshop Island" palette — replaces cyber cyan/dark tokens */
+        "island-black": "#17130E",
+        "island-dark": "#211B14",
+        "island-dusk": "#2A2119",
+        "island-border": "#3A2F24",
+        "island-copper": "#C56B3B",
+        "island-sand": "#E7D9BF",
+        /* Light editorial page tokens */
+        cream: {
+          DEFAULT: "#FAF5EC",
+          deep: "#F3EADB",
+        },
+        ink: {
+          DEFAULT: "#241D15",
+          soft: "#4A4034",
+          faint: "#7A6E5E",
+        },
+        copper: {
+          DEFAULT: "#B4552D",
+          deep: "#8F3E1F",
         },
       },
       fontFamily: {
@@ -34,6 +41,7 @@ export default {
         poppins: ["Poppins", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
         sans: ["Plus Jakarta Sans", "Work Sans", "sans-serif"],
+        serif: ["Fraunces", "Georgia", "serif"],
       },
       boxShadow: {
         card: "0px 1px 2px 0px rgba(0, 0, 0, 0.05)",

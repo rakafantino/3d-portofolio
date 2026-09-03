@@ -1,11 +1,9 @@
 import { Suspense, useState, useEffect, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sky } from "@react-three/drei";
 import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
-import AudioController from "../components/AudioController";
 import { STAGE_CENTERS, getStageFromAngle } from "../core/stageCalculator";
 
 const ZONE_BUTTONS = [
@@ -207,7 +205,7 @@ const Home = () => {
     <section
       role="region"
       aria-label="workshop-island"
-      className="w-full min-h-[100dvh] relative bg-island-black overflow-hidden flex flex-col justify-between select-none"
+      className="relative h-[100dvh] w-full overflow-hidden bg-island-black select-none"
     >
       {/* Top Story Callout Card Overlay */}
       <div className="absolute top-20 sm:top-24 left-0 right-0 z-10 flex items-center justify-center px-4 pointer-events-auto">
@@ -216,24 +214,19 @@ const Home = () => {
 
       {/* R3F 3D Island Canvas */}
       <Canvas
-        className={`w-full h-full absolute inset-0 bg-transparent touch-pan-y ${
+        gl={{ alpha: false, antialias: true }}
+        className={`absolute inset-0 h-full w-full touch-pan-y ${
           isRotating ? "cursor-grabbing" : "cursor-grab"
         }`}
-        camera={{ position: [0, 3.4, 7.2], fov: 50, near: 0.1, far: 1000 }}
+        camera={{ position: [0, 4.2, 8.4], fov: 45, near: 0.1, far: 2000 }}
         onPointerDown={() => setHasInteracted(true)}
       >
         <Suspense fallback={<Loader />}>
-          {/* Warm Dusk/Sunset Sky */}
-          <Sky
-            distance={450000}
-            sunPosition={[10, 1.8, -15]}
-            inclination={0.49}
-            azimuth={0.25}
-            turbidity={8}
-            rayleigh={2.5}
-            mieCoefficient={0.005}
-            mieDirectionalG={0.8}
-          />
+          {/* Warm dusk atmosphere: flat dusk background + matching fog (drei <Sky> shader
+              renders a narrow warm band with pale everywhere else — documented behavior,
+              so we use a solid dusk tone + fog for a cohesive warm environment). */}
+          <color attach="background" args={["#4A3421"]} />
+          <fog attach="fog" args={["#4A3421", 18, 46]} />
 
           <IslandWorldRig
             scale={islandScale}
@@ -249,7 +242,7 @@ const Home = () => {
 
       {/* Bottom Hint Text (fades after first interaction) */}
       <div
-        className={`absolute bottom-20 sm:bottom-16 left-0 right-0 z-10 flex justify-center pointer-events-none transition-opacity duration-700 ${
+        className={`absolute bottom-24 sm:bottom-20 left-0 right-0 z-10 flex justify-center pointer-events-none transition-opacity duration-700 ${
           hasInteracted ? "opacity-0" : "opacity-80"
         }`}
       >
@@ -284,11 +277,6 @@ const Home = () => {
             );
           })}
         </nav>
-      </div>
-
-      {/* Bottom-left Audio Controller zone */}
-      <div className="absolute bottom-4 left-4 z-20 pointer-events-auto">
-        <AudioController />
       </div>
     </section>
   );
