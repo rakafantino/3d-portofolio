@@ -4,7 +4,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
-import { STAGE_CENTERS, getStageFromAngle } from "../core/stageCalculator";
+import { STAGE_CENTERS, getStageFromAngle, getNearestStageTarget } from "../core/stageCalculator";
 
 const ZONE_BUTTONS = [
   { stage: 1, name: "Awal", title: "Zona A: Masuk" },
@@ -23,7 +23,6 @@ const ZONE_BUTTONS = [
 const IslandWorldRig = ({
   scale,
   isRotating,
-  setIsRotating,
   currentStage,
   setCurrentStage,
   targetAngleRef,
@@ -31,70 +30,14 @@ const IslandWorldRig = ({
 }) => {
   const groupRef = useRef(null);
   const currentAngleRef = useRef(STAGE_CENTERS[1]);
-  const pointerDownRef = useRef(false);
-  const lastPointerXRef = useRef(0);
 
-  // Sync target angle when currentStage changes externally
-  useEffect(() => {
-    if (STAGE_CENTERS[currentStage] !== undefined) {
-      targetAngleRef.current = STAGE_CENTERS[currentStage];
-    } else if (currentStage === 5) {
-      // Lighthouse is positioned on the edge
-      targetAngleRef.current = 3.14;
-    }
-  }, [currentStage, targetAngleRef]);
-
-  const handlePointerDown = useCallback(
-    (e) => {
-      e.stopPropagation();
-      pointerDownRef.current = true;
-      isSnappingRef.current = false;
-      setIsRotating(true);
-      lastPointerXRef.current = e.clientX;
-    },
-    [setIsRotating, isSnappingRef]
-  );
-
-  const handlePointerUp = useCallback(
-    (e) => {
-      e.stopPropagation();
-      pointerDownRef.current = false;
-      setIsRotating(false);
-    },
-    [setIsRotating]
-  );
-
-  const handlePointerMove = useCallback(
-    (e) => {
-      if (!pointerDownRef.current) return;
-      e.stopPropagation();
-
-      const deltaX = e.clientX - lastPointerXRef.current;
-      lastPointerXRef.current = e.clientX;
-
-      // Smooth drag sensitivity
-      const rotationSpeed = 0.005;
-      targetAngleRef.current += deltaX * rotationSpeed;
-    },
-    [targetAngleRef]
-  );
-
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (!groupRef.current) return;
 
-    // Smooth lerp damping toward target angle
-    const damping = isSnappingRef.current ? 0.08 : 0.12;
+    const damping = isSnappingRef.current ? 0.1 : 0.16;
     currentAngleRef.current += (targetAngleRef.current - currentAngleRef.current) * damping;
-
-    // Gentle auto-rotate drift when idle
-    if (!pointerDownRef.current && !isSnappingRef.current && !isRotating) {
-      targetAngleRef.current += (delta || 0.016) * 0.035;
-    }
-
-    // Apply Y-axis rotation to the island world
     groupRef.current.rotation.y = currentAngleRef.current;
 
-    // Derive active stage dynamically during free rotation
     if (!isSnappingRef.current) {
       const derivedStage = getStageFromAngle(currentAngleRef.current);
       if (derivedStage && derivedStage !== currentStage && currentStage !== 5) {
@@ -106,13 +49,7 @@ const IslandWorldRig = ({
   });
 
   return (
-    <group
-      ref={groupRef}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerUp}
-    >
+    <group ref={groupRef}>
       <WorkshopIsland
         scale={scale}
         isRotating={isRotating}
@@ -135,7 +72,6 @@ const IslandWorldRig = ({
 IslandWorldRig.propTypes = {
   scale: PropTypes.arrayOf(PropTypes.number).isRequired,
   isRotating: PropTypes.bool.isRequired,
-  setIsRotating: PropTypes.func.isRequired,
   currentStage: PropTypes.number.isRequired,
   setCurrentStage: PropTypes.func.isRequired,
   targetAngleRef: PropTypes.shape({ current: PropTypes.number }).isRequired,
@@ -155,9 +91,10 @@ const Home = () => {
 
   const targetAngleRef = useRef(STAGE_CENTERS[1]);
   const isSnappingRef = useRef(false);
-  const snapResetTimerRef = useRef(null);
+  const currentAngleRef = useRef(STAGE_CENTERS[1]);
+  const draggingRef = useRef(false);
+  const lastPointerXRef = useRef(0);
 
-  // Responsive scale listener
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
@@ -171,18 +108,54 @@ const Home = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Clear timers on unmount
+  const markInteracted = useCallback(() => {
+    if (!hasInteracted) setHasInteracted(true);
+  }, [hasInteracted]);
+
+  const handleCanvasPointerDown = useCallback(
+    (e) => {
+      draggingRef.current = true;
+      isSnappingRef.current = false;
+      lastPointerXRef.current = e.clientX;
+      setIsRotating(true);
+      markInteracted();
+    },
+    [isSnappingRef, markInteracted]
+  );
+
+  const handleWindowPointerMove = useCallback(
+    (e) => {
+      if (!draggingRef.current) return;
+      const deltaX = e.clientX - lastPointerXRef.current;
+      lastPointerXRef.current = e.clientX;
+      targetAngleRef.current += deltaX * 0.006;
+      currentAngleRef.current = targetAngleRef.current;
+    },
+    [targetAngleRef]
+  );
+
+  const handleWindowPointerUp = useCallback(() => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    setIsRotating(false);
+    const target = getNearestStageTarget(currentAngleRef.current);
+    if (target !== undefined) {
+      targetAngleRef.current = target;
+      isSnappingRef.current = true;
+    }
+  }, [isSnappingRef]);
+
   useEffect(() => {
+    window.addEventListener("pointermove", handleWindowPointerMove);
+    window.addEventListener("pointerup", handleWindowPointerUp);
     return () => {
-      if (snapResetTimerRef.current !== null) {
-        clearTimeout(snapResetTimerRef.current);
-        snapResetTimerRef.current = null;
-      }
+      window.removeEventListener("pointermove", handleWindowPointerMove);
+      window.removeEventListener("pointerup", handleWindowPointerUp);
     };
-  }, []);
+  }, [handleWindowPointerMove, handleWindowPointerUp]);
 
   const handleZoneSelect = (stageNum) => {
-    setHasInteracted(true);
+    markInteracted();
     setCurrentStage(stageNum);
     if (STAGE_CENTERS[stageNum] !== undefined) {
       targetAngleRef.current = STAGE_CENTERS[stageNum];
@@ -190,15 +163,6 @@ const Home = () => {
       targetAngleRef.current = 3.14;
     }
     isSnappingRef.current = true;
-    setIsRotating(true);
-
-    if (snapResetTimerRef.current !== null) {
-      clearTimeout(snapResetTimerRef.current);
-    }
-    snapResetTimerRef.current = setTimeout(() => {
-      snapResetTimerRef.current = null;
-      setIsRotating(false);
-    }, 450);
   };
 
   return (
@@ -207,19 +171,14 @@ const Home = () => {
       aria-label="workshop-island"
       className="relative h-[100dvh] w-full overflow-hidden bg-island-black select-none"
     >
-      {/* Top Story Callout Card Overlay */}
-      <div className="absolute top-20 sm:top-24 left-0 right-0 z-10 flex items-center justify-center px-4 pointer-events-auto">
-        {currentStage && <Homeinfo currentStage={currentStage} />}
-      </div>
-
       {/* R3F 3D Island Canvas */}
       <Canvas
         gl={{ alpha: false, antialias: true }}
         className={`absolute inset-0 h-full w-full touch-pan-y ${
-          isRotating ? "cursor-grabbing" : "cursor-grab"
+          draggingRef.current ? "cursor-grabbing" : "cursor-grab"
         }`}
         camera={{ position: [0, 4.2, 8.4], fov: 45, near: 0.1, far: 2000 }}
-        onPointerDown={() => setHasInteracted(true)}
+        onPointerDown={handleCanvasPointerDown}
       >
         <Suspense fallback={<Loader />}>
           {/* Warm dusk atmosphere: flat dusk background + matching fog (drei <Sky> shader
@@ -231,7 +190,6 @@ const Home = () => {
           <IslandWorldRig
             scale={islandScale}
             isRotating={isRotating}
-            setIsRotating={setIsRotating}
             currentStage={currentStage}
             setCurrentStage={setCurrentStage}
             targetAngleRef={targetAngleRef}
@@ -277,6 +235,11 @@ const Home = () => {
             );
           })}
         </nav>
+      </div>
+
+      {/* Compact zone story card above the dock */}
+      <div className="absolute bottom-[4.25rem] sm:bottom-[4.5rem] left-0 right-0 z-10 flex justify-center px-4 pointer-events-none">
+        <div className="pointer-events-auto">{currentStage && <Homeinfo currentStage={currentStage} />}</div>
       </div>
     </section>
   );

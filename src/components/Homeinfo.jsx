@@ -8,38 +8,29 @@ import { Link } from "react-router-dom";
  * No cyber/cyan, no mono system labels, no "//", no "[01]" brackets.
  */
 const StoryCard = ({ title, tag, headline, subline, links }) => (
-  <div className="w-[min(32rem,calc(100vw-2rem))] mx-auto rounded-2xl border border-island-border/80 bg-island-dark/85 backdrop-blur-md px-5 sm:px-6 py-4 sm:py-5 shadow-2xl shadow-black/50 text-left transition-all duration-300">
-    <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-island-border/60 text-xs">
-      <span className="font-serif font-medium text-island-sand text-sm">
-        {title}
-      </span>
+  <div className="w-[min(30rem,calc(100vw-2rem))] mx-auto rounded-2xl border border-island-border/80 bg-island-dark/90 backdrop-blur-md px-4 sm:px-5 py-3 shadow-2xl shadow-black/50 text-left">
+    <div className="flex items-baseline justify-between gap-3">
+      <span className="font-serif font-medium text-island-sand">{title}</span>
       {tag && (
-        <span className="text-[11px] font-mono text-copper/80 tracking-wider">
-          {tag}
-        </span>
+        <span className="text-[10px] font-mono text-copper/80 tracking-wider shrink-0">{tag}</span>
       )}
     </div>
 
-    <p className="text-cream text-sm sm:text-base font-normal leading-snug mb-1.5">
-      {headline}
-    </p>
-
+    <p className="text-cream text-sm leading-snug mt-1">{headline}</p>
     {subline && (
-      <p className="text-cream/65 text-xs sm:text-[13px] leading-relaxed mb-3">
-        {subline}
-      </p>
+      <p className="text-cream/60 text-xs leading-snug mt-0.5">{subline}</p>
     )}
 
     {links && links.length > 0 && (
-      <div className="pt-2.5 border-t border-island-border/50 flex flex-wrap items-center justify-end gap-2.5">
+      <div className="mt-2 flex flex-wrap items-center justify-end gap-2">
         {links.map((action) => (
           <Link
             key={action.to}
             to={action.to}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper ${
+            className={`inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs font-medium transition-all duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper ${
               action.primary
-                ? "bg-copper hover:bg-copper-deep text-cream shadow-md shadow-black/20"
-                : "border border-island-border text-cream/70 hover:text-cream hover:border-island-copper/60 bg-island-black/40"
+                ? "bg-copper hover:bg-copper-deep text-cream shadow-sm shadow-black/30"
+                : "border border-island-border/70 text-cream/70 hover:text-cream hover:border-island-copper/60"
             }`}
           >
             <span>{action.label}</span>
@@ -68,33 +59,33 @@ StoryCard.propTypes = {
 const renderContent = {
   // Zone 1: Intro / Identity
   1: (
-    <div className="w-[min(32rem,calc(100vw-2rem))] mx-auto rounded-2xl border border-island-border/80 bg-island-dark/85 backdrop-blur-md px-6 py-5 shadow-2xl shadow-black/50 text-center">
-      <p className="text-xs font-mono tracking-widest uppercase text-copper/90 mb-1">
-        Workshop Island · Riau, ID
+    <div className="w-[min(30rem,calc(100vw-2rem))] mx-auto rounded-2xl border border-island-border/80 bg-island-dark/90 backdrop-blur-md px-4 sm:px-5 py-3.5 shadow-2xl shadow-black/50">
+      <p className="text-[10px] font-mono tracking-widest uppercase text-copper/90">
+        Workshop Island
       </p>
-      <h1 className="font-serif text-2xl sm:text-3xl text-cream font-semibold tracking-tight leading-tight">
+      <h1 className="font-serif text-xl sm:text-2xl text-cream font-semibold tracking-tight leading-tight mt-0.5">
         Raka Fantino
       </h1>
-      <p className="text-island-sand/90 text-sm sm:text-base font-normal mt-1 leading-relaxed">
-        Frontend & Fullstack Engineer · AI & Web3 Builder
+      <p className="text-island-sand/90 text-sm mt-0.5">
+        Frontend &amp; Fullstack Engineer · AI &amp; Web3 Builder
       </p>
-      <p className="text-cream/55 text-xs mt-2.5 pt-2.5 border-t border-island-border/60">
-        Putar dunia ini untuk menjelajahi karya, atau langsung kunjungi halaman di bawah.
-      </p>
-      <div className="mt-3.5 flex items-center justify-center gap-2.5">
-        <Link
-          to="/projects"
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-copper hover:bg-copper-deep text-cream text-xs font-medium transition-colors shadow-md shadow-black/20 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
-        >
-          <span>Lihat Proyek</span>
-          <span aria-hidden="true">→</span>
-        </Link>
-        <Link
-          to="/contact"
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-island-border text-cream/70 hover:text-cream hover:border-island-copper/60 bg-island-black/40 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
-        >
-          <span>Hubungi</span>
-        </Link>
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-cream/55 text-[11px]">Putar dunia untuk menjelajahi karyaku.</span>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/projects"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-copper hover:bg-copper-deep text-cream text-xs font-medium transition-colors shadow-sm shadow-black/30 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
+          >
+            <span>Lihat Proyek</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-1 px-3 py-1 rounded-md border border-island-border/70 text-cream/70 hover:text-cream hover:border-island-copper/60 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
+          >
+            Hubungi
+          </Link>
+        </div>
       </div>
     </div>
   ),
