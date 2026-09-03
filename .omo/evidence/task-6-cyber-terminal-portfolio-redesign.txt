@@ -1,0 +1,58 @@
+================================================================================
+EVIDENCE: Task 6 - Zero-Asset Procedural Web Audio Engine
+Plan: cyber-terminal-portfolio-redesign
+Timestamp: 2026-09-03
+================================================================================
+
+1. SUMMARY OF IMPLEMENTATION
+- Created `src/core/audioEngine.js`:
+  - Procedural Web Audio ambient synthesizer producing low-frequency sci-fi drone
+    using dual detuned sine oscillators (~55 Hz and ~55.5 Hz) connected to a shared gain node (~0.04).
+  - Mechanical click SFX generator (~1200 Hz, fast decay ramp to 0.0001 in 80ms) for UI interactions.
+  - Zero assets imported (pure procedural Web Audio API synthesis).
+  - Lazy AudioContext instantiation on first explicit user gesture (toggle unmute).
+  - Clean error recovery & fail-safe: if AudioContext is missing, unavailable, or throws, the engine
+    stays safely muted without throwing errors.
+  - Idempotent dispose() stopping oscillators, disconnecting nodes, and closing context cleanly.
+  - Mute persistence with `STORAGE_KEY = "cyber-audio-muted"`, defaulting to muted when empty.
+  - Respects Web Audio mock capabilities: handles suspend() when available, while gracefully
+    ramping gain to ~0.0001 (silence simulation) when suspend() is not supported.
+- Created `src/core/audioEngine.test.js`:
+  - Strict TDD implementation with 10 behavior-named unit tests covering:
+    (a) does not construct AudioContext before first unmute toggle
+    (b) starts drone on first unmute and calls resume inside toggle
+    (c) ramps gain and suspends on mute
+    (d) persists muted state to injected localStorage on toggle
+    (e) defaults to muted when localStorage is empty
+    (f) playClick before initialization is a silent no-op
+    (g) playClick after unmute creates a short oscillator with fast decay
+    (h) dispose stops and closes without throwing
+    (i) dispose is idempotent
+    (j) tolerates missing AudioContext without throwing
+- Created `src/components/AudioController.jsx`:
+  - Cyber-terminal soundwave visualizer button with 5 animated equalizer bars.
+  - Staggered pulse animations active only when unmuted; flat muted indicator when off.
+  - Lazy AudioContext creation inside click handler via `createAudioEngine()` (never in render, never in useEffect).
+  - Accessible button attributes: `aria-pressed`, dynamic `aria-label`, and informative terminal `title`.
+  - Pure component with zero page wiring (ready for Task 7 Navbar integration).
+
+2. TDD RED PHASE
+- Command: `npm test src/core/audioEngine.test.js > .omo/evidence/task-6-red.txt 2>&1`
+- Captured failure: Unresolved import `./audioEngine.js` before implementation file existed.
+
+3. TDD GREEN PHASE & VERIFICATION GATES
+- Gate 1: `npm test`
+  - Result: 4 test suites passed (src/core/audioEngine.test.js, src/core/stageCalculator.test.js, src/constants/index.test.js, src/test/smoke.test.js), 43 tests passed, 0 failed.
+- Gate 2: `npm run lint`
+  - Result: Exit 0 with zero warnings (`--max-warnings 0`).
+- Gate 3: `npm run build`
+  - Result: Exit 0 (`vite build` production build completed in 3.47s).
+
+4. ADVERSARIAL ANALYSIS & FAILURE MODES CONSIDERED
+- Autoplay Policy Block:
+  - Addressed by strictly avoiding AudioContext creation at file load time, React component mount time, or inside useEffect. AudioContext is only created inside user click handler (`handleToggle`).
+- Missing Web Audio / SSR / Mock Environment:
+  - `AudioContextImpl` and `localStorage` are dependency-injected with safe fallback checks. If `AudioContextImpl` is missing or throws during creation, `muted` remains `true` and the engine continues without throwing.
+- Memory Leaks:
+  - Singletons / long-lived contexts are held in component refs and can be cleanly disposed with `engine.dispose()`.
+  - Mechanical click audio nodes disconnect and stop after duration window expires.
