@@ -1,0 +1,28 @@
+TASK 11 EVIDENCE: feat(projects): build cyber bento grid with technical mission drawer
+========================================================================================
+
+CONTEXT:
+- Recovered from interrupted parallel batch.
+- Implementation verified by orchestrator; this session finalized gates + commit.
+- Files: src/pages/Projects.jsx overhauled + src/components/ProjectDrawer.jsx created + src/pages/Projects.test.jsx (8 tests).
+
+COMMANDS & GATES:
+1. Captured RED baseline:
+   .omo/evidence/task-11-red.txt documented prior test failure before implementation.
+2. Verified implementation:
+   - Bento grid layout with asymmetric featured card span for top project.
+   - Dynamic category filter pills derived from project constants with exact counts.
+   - Slide-over Technical Mission Drawer with keyboard trap, ESC listener, backdrop blur, and full architecture breakdown.
+   - Authentic technical project data (Roshambo, NinjaPump, PupsBot, Diklik.co, Feedly).
+   - Clean linting: wrapped "// PROJECT_LOG", "// SPEC", "// TRANSMISSION_OPEN" in JSX braces.
+3. Verified GREEN:
+   $ npm test src/pages/Projects.test.jsx
+   Output: 8/8 tests passed.
+4. Repo-wide verification:
+   - npm test -> 78/78 tests passed
+   - npm run lint -> exit 0
+   - npm run build -> exit 0
+
+ADVERSARIAL CLASSES & HYGIENE:
+- Accessibility: Drawer traps focus on open, returns focus on close, supports ESC key.
+- Authentic data: Sourced from CV, zero dead '#' links.
