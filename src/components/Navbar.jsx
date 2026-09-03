@@ -1,67 +1,65 @@
 import { NavLink } from "react-router-dom";
+import PropTypes from "prop-types";
 import AudioController from "./AudioController";
 
 /**
- * Floating dark-glass navigation dock.
- * Dark glass stays intentional on both the dark hero and light content pages.
- * No terminal costume: brand is a plain serif wordmark, links are human labels,
- * ⌘K is the only "system" affordance (functional, not decorative).
- *
- * Mobile: links hidden below md — primary mobile nav flows through the island
- * zones (Home) and the ⌘K palette.
+ * Navbar - Clean Architectural Header
+ * Replaces the floating capsule dock with an elegant, grounded header
+ * matching the warm editorial craftsmanship theme.
  */
 const Navbar = ({ onOpenCommandPalette }) => {
   const linkClass = ({ isActive }) =>
-    `text-[0.95rem] transition-colors pb-0.5 border-b ${
+    `text-xs sm:text-sm font-sans tracking-wide transition-colors py-1 relative ${
       isActive
-        ? "text-island-sand border-island-copper font-medium"
-        : "text-cream/60 border-transparent hover:text-cream hover:border-island-copper/40"
+        ? "text-island-sand font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-island-copper"
+        : "text-cream/65 hover:text-cream"
     }`;
 
   return (
-    <header className="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-50 w-[min(56rem,calc(100vw-1.25rem))] px-1.5">
-      <div className="flex items-center justify-between gap-3 sm:gap-5 rounded-full border border-white/10 bg-[#1B150E]/80 backdrop-blur-md px-4 sm:px-6 py-2.5 shadow-lg shadow-black/30">
-        {/* Wordmark */}
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-island-border/40 bg-island-black/85 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between gap-4">
+        {/* Brand & Identity */}
         <NavLink
           to="/"
-          className="flex items-baseline gap-2 group focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper rounded"
+          className="flex flex-col group focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper rounded pr-2"
         >
-          <span className="font-serif text-lg sm:text-xl font-semibold tracking-tight text-cream leading-none group-hover:text-island-sand transition-colors">
+          <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-cream group-hover:text-island-sand transition-colors leading-tight">
             Raka Fantino
           </span>
-          <span className="hidden sm:inline text-[10px] font-mono uppercase tracking-[0.2em] text-copper/80">
-            Riau · ID
+          <span className="text-[10px] font-sans text-cream/50 tracking-wider">
+            Frontend &amp; Fullstack Engineer
           </span>
         </NavLink>
 
-        {/* Primary links */}
-        <nav className="hidden md:flex items-center gap-6 font-sans" aria-label="Primary">
+        {/* Primary Navigation */}
+        <nav className="hidden md:flex items-center gap-8 font-sans" aria-label="Navigasi Utama">
           <NavLink to="/about" className={linkClass}>
-            About
+            Tentang
           </NavLink>
           <NavLink to="/projects" className={linkClass}>
-            Projects
+            Proyek
           </NavLink>
           <NavLink to="/contact" className={linkClass}>
-            Contact
+            Kontak
           </NavLink>
         </nav>
 
-        {/* Right cluster */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <span className="hidden lg:inline-flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-cream/50">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#7BC87F]" aria-hidden="true" />
-            Available for work
-          </span>
+        {/* Action & Status Controls */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="hidden lg:flex items-center gap-2 text-[11px] font-sans text-cream/60 px-2.5 py-1 rounded-full bg-island-dark/60 border border-island-border/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+            <span>Tersedia untuk kerja</span>
+          </div>
 
           <button
             type="button"
             onClick={() => onOpenCommandPalette?.()}
-            aria-label="Open quick navigation"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1.5 text-[11px] font-mono text-cream/60 hover:text-cream hover:border-white/25 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
+            aria-label="Open command palette"
+            title="Buka Navigasi Cepat (Cmd+K)"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-island-border/70 bg-island-dark/80 text-cream/70 hover:text-cream hover:border-island-copper/60 text-xs font-mono transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
           >
-            <span className="hidden xs:inline sm:inline">⌘K</span>
-            <span className="sm:hidden">⌘</span>
+            <span className="text-[10px] text-cream/40">CMD</span>
+            <span>⌘K</span>
           </button>
 
           <AudioController />
@@ -69,6 +67,10 @@ const Navbar = ({ onOpenCommandPalette }) => {
       </div>
     </header>
   );
+};
+
+Navbar.propTypes = {
+  onOpenCommandPalette: PropTypes.func,
 };
 
 export default Navbar;

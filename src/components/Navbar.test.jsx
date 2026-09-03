@@ -21,9 +21,9 @@ describe("Navbar", () => {
 
   it("renders primary navigation links to about, projects, and contact", () => {
     renderNavbar();
-    const aboutLink = screen.getByRole("link", { name: /about/i });
-    const projectsLink = screen.getByRole("link", { name: /projects/i });
-    const contactLink = screen.getByRole("link", { name: /contact/i });
+    const aboutLink = screen.getByRole("link", { name: /tentang/i });
+    const projectsLink = screen.getByRole("link", { name: /proyek/i });
+    const contactLink = screen.getByRole("link", { name: /kontak/i });
 
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
@@ -37,7 +37,7 @@ describe("Navbar", () => {
 
   it("renders available for work status pill indicator", () => {
     renderNavbar();
-    const statusPill = screen.getByText(/Available for work/i);
+    const statusPill = screen.getByText(/Tersedia untuk kerja/i);
     expect(statusPill).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("Navbar", () => {
     renderNavbar({ onOpenCommandPalette: handleOpen });
 
     const cmdKBtn = screen.getByRole("button", {
-      name: /open quick navigation/i,
+      name: /open command palette/i,
     });
     expect(cmdKBtn).toBeInTheDocument();
 
@@ -58,7 +58,7 @@ describe("Navbar", () => {
     renderNavbar();
 
     const cmdKBtn = screen.getByRole("button", {
-      name: /open quick navigation/i,
+      name: /open command palette/i,
     });
     expect(() => fireEvent.click(cmdKBtn)).not.toThrow();
   });
