@@ -39,16 +39,16 @@ const CAMERA_FRAMINGS = {
     cardAlignment: "left",
   },
   4: {
-    pos: [1.15, 1.55, 2.8],
-    target: [0.8, 1.05, 0],
-    islandRotY: 0,
-    cardAlignment: "right",
-  },
-  5: {
     pos: [0.05, 1.4, 2.55],
     target: [1.9, 0.75, 0],
     islandRotY: -1.09,
     cardAlignment: "left",
+  },
+  5: {
+    pos: [1.15, 1.55, 2.8],
+    target: [0.8, 1.05, 0],
+    islandRotY: 0,
+    cardAlignment: "right",
   },
 };
 
