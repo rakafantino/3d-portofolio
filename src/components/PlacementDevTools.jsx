@@ -49,9 +49,8 @@ RangeRow.propTypes = {
   unit: PropTypes.string,
 };
 
-const PlacementDevTools = ({ config, onUpdate, onReset }) => {
+const PlacementDevTools = ({ device, config, onUpdate, onReset }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const [device, setDevice] = useState("desktop");
   const [zone, setZone] = useState(1);
   const [copyFeedback, setCopyFeedback] = useState("");
 
@@ -137,18 +136,17 @@ const PlacementDevTools = ({ config, onUpdate, onReset }) => {
           { id: "desktop", label: "🖥 Desktop" },
           { id: "mobile", label: "📱 Mobile" },
         ].map((d) => (
-          <button
+          <div
             key={d.id}
-            type="button"
-            onClick={() => setDevice(d.id)}
             className={`py-1 rounded text-center transition-colors ${
               device === d.id
-                ? "bg-copper text-cream font-bold shadow"
-                : "bg-island-border/30 text-cream/70 hover:bg-island-border/70"
+                ? "bg-copper/20 text-copper font-bold border border-copper/60"
+                : "bg-island-border/20 text-cream/40 border border-transparent"
             }`}
           >
             {d.label}
-          </button>
+            {device === d.id && " ●"}
+          </div>
         ))}
       </div>
 
@@ -316,6 +314,7 @@ const PlacementDevTools = ({ config, onUpdate, onReset }) => {
 };
 
 PlacementDevTools.propTypes = {
+  device: PropTypes.oneOf(["desktop", "mobile"]).isRequired,
   config: PropTypes.object.isRequired,
   onUpdate: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,

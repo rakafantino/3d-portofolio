@@ -153,12 +153,12 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     expect(props.scale).toEqual([1.2, 1.2, 1.2]);
   });
 
-  it("renders placement devtools with device tabs and copy-all action", () => {
+  it("renders placement devtools with device status and copy-all action", () => {
     renderHome();
 
     expect(screen.getByText(/Placement Tool/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Desktop/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Mobile/i })).toBeInTheDocument();
+    expect(screen.getByText(/🖥 Desktop/)).toBeInTheDocument();
+    expect(screen.getByText(/📱 Mobile/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Copy Semua Konfigurasi/i })).toBeInTheDocument();
   });
 

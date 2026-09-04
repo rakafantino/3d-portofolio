@@ -107,37 +107,25 @@ const MOBILE_BREAKPOINT = 768;
 const isBrowserMobile = () =>
   typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
 
-const CameraRig = ({ stage, layout, onMovementStateChange }) => {
+const CameraRig = ({ stage, layout }) => {
   const framing = layout.zones[stage] || layout.zones[1];
   const baseFov = layout.fov[stage] || 45;
   const currentPosRef = useRef(new THREE.Vector3(...framing.pos));
   const currentLookAtRef = useRef(new THREE.Vector3(...framing.target));
-  const isMovingRef = useRef(false);
   const fovRef = useRef(baseFov);
 
   useFrame((state) => {
-    const targetPos = new THREE.Vector3(...framing.pos);
-    const targetLookAt = new THREE.Vector3(...framing.target);
-
     if (fovRef.current !== baseFov) {
       fovRef.current = baseFov;
       state.camera.fov = baseFov;
       state.camera.updateProjectionMatrix();
     }
 
-    currentPosRef.current.lerp(targetPos, 0.06);
-    currentLookAtRef.current.lerp(targetLookAt, 0.06);
+    currentPosRef.current.set(...framing.pos);
+    currentLookAtRef.current.set(...framing.target);
 
     state.camera.position.copy(currentPosRef.current);
     state.camera.lookAt(currentLookAtRef.current);
-
-    const dist = currentPosRef.current.distanceTo(targetPos);
-    const moving = dist > 0.04;
-
-    if (moving !== isMovingRef.current) {
-      isMovingRef.current = moving;
-      onMovementStateChange(moving);
-    }
   });
 
   return null;
@@ -146,20 +134,15 @@ const CameraRig = ({ stage, layout, onMovementStateChange }) => {
 CameraRig.propTypes = {
   stage: PropTypes.number.isRequired,
   layout: PropTypes.object.isRequired,
-  onMovementStateChange: PropTypes.func.isRequired,
 };
 
 const IslandWorldRig = ({ scale, stage, layout }) => {
   const groupRef = useRef(null);
-  const currentAngleRef = useRef(0);
 
   useFrame(() => {
     if (!groupRef.current) return;
     const framing = layout.zones[stage] || layout.zones[1];
-    const targetAngle = framing.islandRotY;
-
-    currentAngleRef.current += (targetAngle - currentAngleRef.current) * 0.06;
-    groupRef.current.rotation.y = currentAngleRef.current;
+    groupRef.current.rotation.y = framing.islandRotY;
   });
 
   return (
@@ -177,8 +160,6 @@ IslandWorldRig.propTypes = {
 
 const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
-  const [displayedStage, setDisplayedStage] = useState(1);
-  const [isCardVisible, setIsCardVisible] = useState(true);
   const [layout, setLayout] = useState(DEFAULT_SCENE_CONFIG);
   const [isMobile, setIsMobile] = useState(isBrowserMobile);
 
@@ -190,28 +171,56 @@ const Home = () => {
     return () => mq.removeEventListener("change", handleChange);
   }, []);
 
-  const handleMovementChange = (isMoving) => {
-    if (isMoving) {
-      setIsCardVisible(false);
-    } else {
-      setDisplayedStage(currentStage);
-      setIsCardVisible(true);
-    }
+  const handleZoneSelect = (stageNum) => setCurrentStage(stageNum);
+
+  const cardDragRef = useRef(null);
+
+  const updateActiveCard = (offsetX, offsetY) => {
+    setLayout((prev) => {
+      const dev = isMobile ? "mobile" : "desktop";
+      const zoneCfg = prev[dev].zones[currentStage];
+      return {
+        ...prev,
+        [dev]: {
+          ...prev[dev],
+          zones: {
+            ...prev[dev].zones,
+            [currentStage]: {
+              ...zoneCfg,
+              card: { ...zoneCfg.card, offsetX, offsetY },
+            },
+          },
+        },
+      };
+    });
   };
 
-  const handleZoneSelect = (stageNum) => {
-    if (stageNum === currentStage) return;
-    setIsCardVisible(false);
-    setCurrentStage(stageNum);
-    window.setTimeout(() => {
-      setDisplayedStage(stageNum);
-      setIsCardVisible(true);
-    }, 350);
+  const handleCardPointerDown = (e) => {
+    cardDragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: card.offsetX || 0,
+      baseY: card.offsetY || 0,
+    };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleCardPointerMove = (e) => {
+    if (!cardDragRef.current) return;
+    const { startX, startY, baseX, baseY } = cardDragRef.current;
+    updateActiveCard(
+      Math.round(e.clientX - startX) + baseX,
+      Math.round(e.clientY - startY) + baseY
+    );
+  };
+
+  const handleCardPointerUp = () => {
+    cardDragRef.current = null;
   };
 
   const activeLayout = layout[isMobile ? "mobile" : "desktop"];
-  const activeZone = displayedStage;
-  const framing = activeLayout.zones[activeZone] || activeLayout.zones[1];
+  const activeDevice = isMobile ? "mobile" : "desktop";
+  const framing = activeLayout.zones[currentStage] || activeLayout.zones[1];
   const card = framing.card;
   const isBottomCard = card.vAlign === "bottom";
 
@@ -244,6 +253,7 @@ const Home = () => {
       className="relative h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-island-black select-none"
     >
       <PlacementDevTools
+        device={activeDevice}
         config={layout}
         onUpdate={(device, nextDeviceConfig) =>
           setLayout((prev) => ({ ...prev, [device]: nextDeviceConfig }))
@@ -256,7 +266,7 @@ const Home = () => {
         className="absolute inset-0 h-full w-full"
         camera={{
           position: framing.pos,
-          fov: activeLayout.fov[activeZone] || 45,
+          fov: activeLayout.fov[currentStage] || 45,
           near: 0.1,
           far: 2000,
         }}
@@ -264,11 +274,7 @@ const Home = () => {
         <Suspense fallback={<Loader />}>
           <ambientLight intensity={0.4} />
 
-          <CameraRig
-            stage={currentStage}
-            layout={activeLayout}
-            onMovementStateChange={handleMovementChange}
-          />
+          <CameraRig stage={currentStage} layout={activeLayout} />
 
           <IslandWorldRig
             scale={activeLayout.islandScale}
@@ -279,22 +285,21 @@ const Home = () => {
       </Canvas>
 
       <div
-        className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-500 ease-out ${cardPositionClass} ${
-          isCardVisible
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-95 translate-y-6 pointer-events-none duration-200"
-        }`}
+        className={`absolute inset-0 z-10 flex pointer-events-none ${cardPositionClass}`}
       >
         <div
           className={`w-full flex ${cardHorizontalClass} ${cardPaddingClass}`}
         >
           <div
-            className="pointer-events-auto w-full max-w-[20rem] sm:max-w-sm"
+            className="pointer-events-auto w-full max-w-[20rem] sm:max-w-sm cursor-move touch-none"
             style={{
               transform: `translate(${card.offsetX || 0}px, ${card.offsetY || 0}px)`,
             }}
+            onPointerDown={handleCardPointerDown}
+            onPointerMove={handleCardPointerMove}
+            onPointerUp={handleCardPointerUp}
           >
-            {displayedStage && <Homeinfo currentStage={displayedStage} />}
+            <Homeinfo currentStage={currentStage} />
           </div>
         </div>
       </div>
