@@ -16,6 +16,13 @@ const safeVector3 = (val, fallback = [0, 0, 0]) => {
   return fallback;
 };
 
+const DEFAULT_LIGHTING = {
+  ambient: { color: "#FFE3C2", intensity: 1.2 },
+  sun: { color: "#FFC08A", intensity: 2.8, position: [6, 8, 4] },
+  hemi: { skyColor: "#E8B98A", groundColor: "#3A2A1C", intensity: 0.9 },
+  fill: { color: "#6B4A33", intensity: 0.8, position: [-5, 4, -4] },
+};
+
 /**
  * WorkshopIsland
  * Loads the custom 3D low-poly island diorama created with AI (Meshy)
@@ -28,6 +35,7 @@ const WorkshopIsland = ({
   isRotating = false,
   currentStage = 1,
   onSelectZone = null,
+  lighting = null,
   ...props
 }) => {
   const rootGroupRef = useRef(null);
@@ -39,6 +47,8 @@ const WorkshopIsland = ({
   const safeScaleValue = safeVector3(scale, [1, 1, 1]);
   const safePosValue = safeVector3(position, [0, 0, 0]);
   const safeRotValue = safeVector3(rotation, [0, 0, 0]);
+
+  const activeLight = lighting || DEFAULT_LIGHTING;
 
   useFrame((state, delta) => {
     // Subtle breathing floating motion for the whole island
@@ -63,18 +73,24 @@ const WorkshopIsland = ({
       {...props}
     >
       {/* Warm Ambient & Sunset Directional Lighting */}
-      <ambientLight color="#FFE3C2" intensity={1.2} />
+      <ambientLight color={activeLight.ambient.color} intensity={activeLight.ambient.intensity} />
       <directionalLight
-        position={[6, 8, 4]}
-        color="#FFC08A"
-        intensity={2.8}
+        position={activeLight.sun.position}
+        color={activeLight.sun.color}
+        intensity={activeLight.sun.intensity}
         castShadow={false}
       />
-      <hemisphereLight args={["#E8B98A", "#3A2A1C", 0.9]} />
+      <hemisphereLight
+        args={[
+          activeLight.hemi.skyColor,
+          activeLight.hemi.groundColor,
+          activeLight.hemi.intensity,
+        ]}
+      />
       <directionalLight
-        position={[-5, 4, -4]}
-        color="#6B4A33"
-        intensity={0.8}
+        position={activeLight.fill.position}
+        color={activeLight.fill.color}
+        intensity={activeLight.fill.intensity}
       />
 
       {/* Upward bounce light to illuminate dark rocks under the island */}
@@ -110,6 +126,7 @@ WorkshopIsland.propTypes = {
   isRotating: PropTypes.bool,
   currentStage: PropTypes.number,
   onSelectZone: PropTypes.func,
+  lighting: PropTypes.object,
 };
 
 export default WorkshopIsland;

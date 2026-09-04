@@ -5,19 +5,19 @@ import * as THREE from "three";
 import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
+import SceneDevTools from "../components/SceneDevTools";
 import islandBg from "../assets/images/island-bg.png";
 
 const ZONE_BUTTONS = [
   { stage: 1, name: "Awal", title: "Ringkasan Pulau" },
-  { stage: 2, name: "AI & Awards", title: "Menara Observatorium" },
-  { stage: 3, name: "Web3 & Kripto", title: "Reaktor & Tangki" },
-  { stage: 4, name: "Fullstack", title: "Bengkel Kayu" },
-  { stage: 5, name: "Kontak", title: "Mercusuar" },
+  { stage: 2, name: "AI & Awards", title: "Zona 2" },
+  { stage: 3, name: "Web3 & Kripto", title: "Zona 3" },
+  { stage: 4, name: "Fullstack", title: "Zona 4" },
+  { stage: 5, name: "Kontak", title: "Zona 5" },
 ];
 
 /**
- * Camera Framings calibrated via interactive development tool.
- * Provides asymmetric rule-of-thirds framing with 0% card overlap.
+ * EXACT user-calibrated camera coordinates (100% matched to user input).
  */
 const CAMERA_FRAMINGS = {
   1: {
@@ -27,21 +27,21 @@ const CAMERA_FRAMINGS = {
     cardAlignment: "center",
   },
   2: {
-    pos: [-0.7, 1.8, 2],
-    target: [-1.35, 1.4, 0],
-    islandRotY: 0.71,
-    cardAlignment: "right",
-  },
-  3: {
-    pos: [1.15, 1.55, 2.8],
-    target: [0.8, 1.05, 0],
-    islandRotY: 0,
-    cardAlignment: "left",
-  },
-  4: {
     pos: [-1.3, 1.25, 2],
     target: [0.6, 0.95, 0],
     islandRotY: 0.21,
+    cardAlignment: "right",
+  },
+  3: {
+    pos: [-0.7, 1.8, 2],
+    target: [-1.35, 1.4, 0],
+    islandRotY: 0.71,
+    cardAlignment: "left",
+  },
+  4: {
+    pos: [1.15, 1.55, 2.8],
+    target: [0.8, 1.05, 0],
+    islandRotY: 0,
     cardAlignment: "right",
   },
   5: {
@@ -52,10 +52,28 @@ const CAMERA_FRAMINGS = {
   },
 };
 
-/**
- * CameraRig
- * Smoothly lerps camera position and target lookAt toward active zone framing.
- */
+const DEFAULT_LIGHTING = {
+  sun: {
+    color: "#FFB070",
+    intensity: 2.8,
+    position: [6, 8, 4],
+  },
+  ambient: {
+    color: "#FFE0C0",
+    intensity: 1.2,
+  },
+  hemi: {
+    skyColor: "#E8B98A",
+    groundColor: "#3A2A1C",
+    intensity: 0.9,
+  },
+  fill: {
+    color: "#804828",
+    intensity: 0.8,
+    position: [-5, 4, -4],
+  },
+};
+
 const CameraRig = ({ currentStage, onMovementStateChange }) => {
   const currentPosRef = useRef(new THREE.Vector3(0, 1.7, 4.8));
   const currentLookAtRef = useRef(new THREE.Vector3(0.15, 0.5, 0));
@@ -73,7 +91,6 @@ const CameraRig = ({ currentStage, onMovementStateChange }) => {
     state.camera.position.copy(currentPosRef.current);
     state.camera.lookAt(currentLookAtRef.current);
 
-    // Detect if camera is still traveling
     const dist = currentPosRef.current.distanceTo(targetPos);
     const moving = dist > 0.04;
 
@@ -91,11 +108,7 @@ CameraRig.propTypes = {
   onMovementStateChange: PropTypes.func.isRequired,
 };
 
-/**
- * IslandWorldRig
- * Holds WorkshopIsland and smoothly rotates it toward the active zone angle.
- */
-const IslandWorldRig = ({ scale, currentStage }) => {
+const IslandWorldRig = ({ scale, currentStage, lighting }) => {
   const groupRef = useRef(null);
   const currentAngleRef = useRef(0);
 
@@ -111,7 +124,11 @@ const IslandWorldRig = ({ scale, currentStage }) => {
 
   return (
     <group ref={groupRef}>
-      <WorkshopIsland scale={scale} currentStage={currentStage} />
+      <WorkshopIsland
+        scale={scale}
+        currentStage={currentStage}
+        lighting={lighting}
+      />
     </group>
   );
 };
@@ -119,12 +136,14 @@ const IslandWorldRig = ({ scale, currentStage }) => {
 IslandWorldRig.propTypes = {
   scale: PropTypes.arrayOf(PropTypes.number).isRequired,
   currentStage: PropTypes.number.isRequired,
+  lighting: PropTypes.object,
 };
 
 const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
   const [displayedStage, setDisplayedStage] = useState(1);
   const [isCardVisible, setIsCardVisible] = useState(true);
+  const [lighting, setLighting] = useState(DEFAULT_LIGHTING);
   const [islandScale, setIslandScale] = useState(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       return [0.9, 0.9, 0.9];
@@ -174,6 +193,15 @@ const Home = () => {
       style={{ backgroundImage: `url(${islandBg})` }}
       className="relative h-[100dvh] w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-island-black select-none"
     >
+      {/* Interactive Studio Lighting & Calibration DevTools */}
+      <SceneDevTools
+        currentStage={currentStage}
+        onSelectStage={handleZoneSelect}
+        lighting={lighting}
+        onUpdateLighting={setLighting}
+        onResetLighting={() => setLighting(DEFAULT_LIGHTING)}
+      />
+
       {/* R3F 3D Island Canvas */}
       <Canvas
         gl={{ alpha: true, antialias: true }}
@@ -191,6 +219,7 @@ const Home = () => {
           <IslandWorldRig
             scale={islandScale}
             currentStage={currentStage}
+            lighting={lighting}
           />
         </Suspense>
       </Canvas>
