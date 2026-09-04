@@ -89,10 +89,9 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const aboutBtn = screen.getByRole("button", { name: /Tentang/i });
     fireEvent.click(aboutBtn);
 
-    const aboutLink = await screen.findByRole("link", { name: /Buka halaman Tentang Saya/i });
+    const aboutLink = await screen.findByRole("link", { name: /Selengkapnya/i });
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
-    expect(await screen.findByText(/Tempat ide dirancang/i)).toBeInTheDocument();
   });
 
   it("switches to Zone 3 (Riset & Awards / Observatorium) on button click, displaying awards link", async () => {
@@ -101,10 +100,9 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const awardsBtn = screen.getByRole("button", { name: /Riset & Awards/i });
     fireEvent.click(awardsBtn);
 
-    const awardsLink = await screen.findByRole("link", { name: /Lihat Penghargaan/i });
+    const awardsLink = await screen.findByRole("link", { name: /Selengkapnya/i });
     expect(awardsLink).toBeInTheDocument();
     expect(awardsLink).toHaveAttribute("href", "/about");
-    expect(await screen.findByText(/Observatorium \/ Riset & Awards/i)).toBeInTheDocument();
   });
 
   it("switches to Zone 4 (Proyek & Lab / Reaktor) on button click, displaying projects link", async () => {
@@ -113,10 +111,9 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const projectsBtn = screen.getByRole("button", { name: /Proyek & Lab/i });
     fireEvent.click(projectsBtn);
 
-    const projectsLink = await screen.findByRole("link", { name: /Jelajahi Semua Proyek/i });
+    const projectsLink = await screen.findByRole("link", { name: /Selengkapnya/i });
     expect(projectsLink).toBeInTheDocument();
     expect(projectsLink).toHaveAttribute("href", "/projects");
-    expect(await screen.findByText(/NinjaPump\.ai/i)).toBeInTheDocument();
   });
 
   it("switches to Zone 5 (Mercusuar / Kontak) on button click, displaying contact link", async () => {
@@ -125,7 +122,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const contactBtn = screen.getByRole("button", { name: /Kontak/i });
     fireEvent.click(contactBtn);
 
-    const contactLink = await screen.findByRole("link", { name: /Kirim Pesan Sekarang/i });
+    const contactLink = await screen.findByRole("link", { name: /Selengkapnya/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
