@@ -173,8 +173,6 @@ const Home = () => {
 
   const handleZoneSelect = (stageNum) => setCurrentStage(stageNum);
 
-  const cardDragRef = useRef(null);
-
   const updateActiveCard = (offsetX, offsetY) => {
     setLayout((prev) => {
       const dev = isMobile ? "mobile" : "desktop";
@@ -196,27 +194,33 @@ const Home = () => {
   };
 
   const handleCardPointerDown = (e) => {
-    cardDragRef.current = {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const start = {
       startX: e.clientX,
       startY: e.clientY,
       baseX: card.offsetX || 0,
       baseY: card.offsetY || 0,
     };
-    e.currentTarget.setPointerCapture(e.pointerId);
+
+    const onMove = (ev) => {
+      ev.preventDefault();
+      updateActiveCard(
+        Math.round(ev.clientX - start.startX) + start.baseX,
+        Math.round(ev.clientY - start.startY) + start.baseY
+      );
+    };
+    const onEnd = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onEnd);
+      window.removeEventListener("pointercancel", onEnd);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("pointerup", onEnd);
+    window.addEventListener("pointercancel", onEnd);
   };
 
-  const handleCardPointerMove = (e) => {
-    if (!cardDragRef.current) return;
-    const { startX, startY, baseX, baseY } = cardDragRef.current;
-    updateActiveCard(
-      Math.round(e.clientX - startX) + baseX,
-      Math.round(e.clientY - startY) + baseY
-    );
-  };
-
-  const handleCardPointerUp = () => {
-    cardDragRef.current = null;
-  };
+  const handleCardDragStart = (e) => e.preventDefault();
 
   const activeLayout = layout[isMobile ? "mobile" : "desktop"];
   const activeDevice = isMobile ? "mobile" : "desktop";
@@ -296,8 +300,7 @@ const Home = () => {
               transform: `translate(${card.offsetX || 0}px, ${card.offsetY || 0}px)`,
             }}
             onPointerDown={handleCardPointerDown}
-            onPointerMove={handleCardPointerMove}
-            onPointerUp={handleCardPointerUp}
+            onDragStart={handleCardDragStart}
           >
             <Homeinfo currentStage={currentStage} />
           </div>
