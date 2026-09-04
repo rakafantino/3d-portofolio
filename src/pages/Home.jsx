@@ -6,6 +6,7 @@ import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
 import UltimatePlacementDevTools from "../components/UltimatePlacementDevTools";
+import MobileSmartDock from "../components/MobileSmartDock";
 import islandBg from "../assets/images/island-bg.png";
 
 const ZONE_BUTTONS = [
@@ -246,13 +247,20 @@ const Home = () => {
         </Suspense>
       </Canvas>
 
-      {/* Free-Placement Story Card (Positioned via 100% customizable X% and Y% coordinates) */}
+      {/* Mobile: Ultra-compact Unified Smart Dock (Uses <12% screen, 90% view remains clean) */}
+      <MobileSmartDock
+        currentStage={currentStage}
+        onSelectStage={handleZoneSelect}
+        isCameraMoving={isCardVisible === false}
+      />
+
+      {/* Desktop: Free-Placement Story Card */}
       <div
         style={{
           left: `${cardPos[0]}%`,
           top: `${cardPos[1]}%`,
         }}
-        className={`absolute z-10 pointer-events-none -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out w-[min(21rem,calc(100vw-2.5rem))] ${
+        className={`hidden md:block absolute z-10 pointer-events-none -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out w-[min(21rem,calc(100vw-2.5rem))] ${
           isCardVisible
             ? "opacity-100 scale-100"
             : "opacity-0 scale-90 pointer-events-none duration-200"
@@ -263,15 +271,11 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Bottom Zone Navigator Dock */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-3 pointer-events-auto">
+      {/* Desktop: Bottom Zone Navigator Dock */}
+      <div className="hidden md:flex absolute bottom-0 left-0 right-0 z-20 pb-[max(1rem,env(safe-area-inset-bottom))] px-3 pointer-events-auto justify-center">
         <nav
           aria-label="Navigasi zona pulau"
-          className={`flex items-center gap-1 p-1.5 rounded-full border border-island-border/80 bg-island-dark/90 backdrop-blur-md shadow-2xl mx-auto ${
-            isMobile
-              ? "max-w-full overflow-x-auto no-scrollbar whitespace-nowrap"
-              : "inline-flex flex-wrap justify-center gap-1.5 sm:gap-2 p-2"
-          }`}
+          className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-2 rounded-full border border-island-border/80 bg-island-dark/90 backdrop-blur-md shadow-2xl mx-auto"
         >
           {ZONE_BUTTONS.map((btn) => {
             const isActive = currentStage === btn.stage;
@@ -282,9 +286,7 @@ const Home = () => {
                 onClick={() => handleZoneSelect(btn.stage)}
                 aria-current={isActive ? "step" : undefined}
                 title={btn.title}
-                className={`shrink-0 font-sans rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper ${
-                  isMobile ? "px-3 py-1.5 text-[11px]" : "px-3.5 py-1.5 text-xs"
-                } ${
+                className={`shrink-0 font-sans rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper px-3.5 py-1.5 text-xs ${
                   isActive
                     ? "bg-copper text-cream font-medium shadow-md shadow-black/30"
                     : "text-cream/65 hover:text-cream hover:bg-island-border/40"

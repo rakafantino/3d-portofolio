@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
@@ -64,7 +64,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
   it("renders Zone 1 intro card by default on initial mount with human language", () => {
     renderHome();
 
-    expect(screen.getByText(/Raka Fantino/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Raka Fantino/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Frontend & Fullstack Engineer/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Lihat Proyek/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Hubungi/i })).toBeInTheDocument();
@@ -77,17 +77,19 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
   it("renders 5 zone navigator buttons matching story landmarks", () => {
     renderHome();
 
-    expect(screen.getByRole("button", { name: /Awal/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Tentang/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Riset & Awards/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Proyek & Lab/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Kontak/i })).toBeInTheDocument();
+    const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
+    expect(within(desktopNav).getByRole("button", { name: /Awal/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByRole("button", { name: /Tentang/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByRole("button", { name: /Riset & Awards/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByRole("button", { name: /Proyek & Lab/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByRole("button", { name: /Kontak/i })).toBeInTheDocument();
   });
 
   it("switches to Zone 2 (Tentang / Kabin Kerja) on button click, displaying link to /about", async () => {
     renderHome();
 
-    const aboutBtn = screen.getByRole("button", { name: /Tentang/i });
+    const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
+    const aboutBtn = within(desktopNav).getByRole("button", { name: /Tentang/i });
     fireEvent.click(aboutBtn);
 
     const aboutLink = await screen.findByRole("link", { name: /Selengkapnya/i });
@@ -98,7 +100,8 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
   it("switches to Zone 3 (Riset & Awards / Observatorium) on button click, displaying awards link", async () => {
     renderHome();
 
-    const awardsBtn = screen.getByRole("button", { name: /Riset & Awards/i });
+    const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
+    const awardsBtn = within(desktopNav).getByRole("button", { name: /Riset & Awards/i });
     fireEvent.click(awardsBtn);
 
     const awardsLink = await screen.findByRole("link", { name: /Selengkapnya/i });
@@ -109,7 +112,8 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
   it("switches to Zone 4 (Proyek & Lab / Reaktor) on button click, displaying projects link", async () => {
     renderHome();
 
-    const projectsBtn = screen.getByRole("button", { name: /Proyek & Lab/i });
+    const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
+    const projectsBtn = within(desktopNav).getByRole("button", { name: /Proyek & Lab/i });
     fireEvent.click(projectsBtn);
 
     const projectsLink = await screen.findByRole("link", { name: /Selengkapnya/i });
@@ -120,7 +124,8 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
   it("switches to Zone 5 (Mercusuar / Kontak) on button click, displaying contact link", async () => {
     renderHome();
 
-    const contactBtn = screen.getByRole("button", { name: /Kontak/i });
+    const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
+    const contactBtn = within(desktopNav).getByRole("button", { name: /Kontak/i });
     fireEvent.click(contactBtn);
 
     const contactLink = await screen.findByRole("link", { name: /Selengkapnya/i });
@@ -128,11 +133,13 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
 
-  it("lays out story card as bottom sheet on mobile viewport", () => {
+  it("renders MobileSmartDock with micro-pill and 5 mobile buttons on mobile viewport", () => {
+    window.innerWidth = 375;
     renderHome();
 
-    const cardContainer = document.querySelector(".pointer-events-auto.w-full");
-    expect(cardContainer).not.toBeNull();
+    const mobileNav = screen.getByRole("navigation", { name: /Navigasi zona mobile/i });
+    expect(mobileNav).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Buka Fullstack & Web3/i })).toBeInTheDocument();
   });
 
   it("uses mobile island scale and collapsed devtools on small viewport", () => {
