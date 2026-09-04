@@ -12,8 +12,9 @@ const SceneDevTools = ({
   lighting,
   onUpdateLighting,
   onResetLighting,
+  defaultCollapsed = false,
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(!defaultCollapsed);
   const [copyFeedback, setCopyFeedback] = useState("");
 
   const updateLight = (lightType, key, value) => {
@@ -323,6 +324,7 @@ SceneDevTools.propTypes = {
   lighting: PropTypes.object.isRequired,
   onUpdateLighting: PropTypes.func.isRequired,
   onResetLighting: PropTypes.func.isRequired,
+  defaultCollapsed: PropTypes.bool,
 };
 
 export default SceneDevTools;

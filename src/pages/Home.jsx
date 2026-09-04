@@ -74,15 +74,23 @@ const DEFAULT_LIGHTING = {
   },
 };
 
-const CameraRig = ({ currentStage, onMovementStateChange }) => {
+const CameraRig = ({ currentStage, onMovementStateChange, baseFov }) => {
   const currentPosRef = useRef(new THREE.Vector3(0, 1.7, 4.8));
   const currentLookAtRef = useRef(new THREE.Vector3(0.15, 0.5, 0));
   const isMovingRef = useRef(false);
+  const baseFovRef = useRef(baseFov);
 
   useFrame((state) => {
     const framing = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
     const targetPos = new THREE.Vector3(...framing.pos);
     const targetLookAt = new THREE.Vector3(...framing.target);
+
+    // Keep projection FOV in sync when the viewport crosses the mobile breakpoint
+    if (baseFovRef.current !== baseFov) {
+      baseFovRef.current = baseFov;
+      state.camera.fov = baseFov;
+      state.camera.updateProjectionMatrix();
+    }
 
     // Smooth cinematic lerp
     currentPosRef.current.lerp(targetPos, 0.06);
@@ -106,6 +114,7 @@ const CameraRig = ({ currentStage, onMovementStateChange }) => {
 CameraRig.propTypes = {
   currentStage: PropTypes.number.isRequired,
   onMovementStateChange: PropTypes.func.isRequired,
+  baseFov: PropTypes.number,
 };
 
 const IslandWorldRig = ({ scale, currentStage, lighting }) => {
@@ -139,29 +148,31 @@ IslandWorldRig.propTypes = {
   lighting: PropTypes.object,
 };
 
+const MOBILE_BREAKPOINT = 768;
+const isBrowserMobile = () =>
+  typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
+
 const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
   const [displayedStage, setDisplayedStage] = useState(1);
   const [isCardVisible, setIsCardVisible] = useState(true);
   const [lighting, setLighting] = useState(DEFAULT_LIGHTING);
-  const [islandScale, setIslandScale] = useState(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      return [0.9, 0.9, 0.9];
-    }
-    return [1.2, 1.2, 1.2];
-  });
+  const [isMobile, setIsMobile] = useState(isBrowserMobile);
+  const [islandScale, setIslandScale] = useState(() =>
+    isBrowserMobile() ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]
+  );
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIslandScale([0.9, 0.9, 0.9]);
-      } else {
-        setIslandScale([1.2, 1.2, 1.2]);
-      }
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const handleChange = () => {
+      const mobile = mq.matches;
+      setIsMobile(mobile);
+      setIslandScale(mobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]);
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    handleChange();
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
   }, []);
 
   const handleMovementChange = (isMoving) => {
@@ -177,7 +188,7 @@ const Home = () => {
     if (stageNum === currentStage) return;
     setIsCardVisible(false);
     setCurrentStage(stageNum);
-    setTimeout(() => {
+    window.setTimeout(() => {
       setDisplayedStage(stageNum);
       setIsCardVisible(true);
     }, 350);
@@ -191,7 +202,7 @@ const Home = () => {
       role="region"
       aria-label="workshop-island"
       style={{ backgroundImage: `url(${islandBg})` }}
-      className="relative h-[100dvh] w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-island-black select-none"
+      className="relative h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-island-black select-none"
     >
       {/* Interactive Studio Lighting & Calibration DevTools */}
       <SceneDevTools
@@ -200,13 +211,14 @@ const Home = () => {
         lighting={lighting}
         onUpdateLighting={setLighting}
         onResetLighting={() => setLighting(DEFAULT_LIGHTING)}
+        defaultCollapsed={isMobile}
       />
 
       {/* R3F 3D Island Canvas */}
       <Canvas
         gl={{ alpha: true, antialias: true }}
         className="absolute inset-0 h-full w-full"
-        camera={{ position: [0, 1.7, 4.8], fov: 45, near: 0.1, far: 2000 }}
+        camera={{ position: [0, 1.7, 4.8], fov: isMobile ? 62 : 45, near: 0.1, far: 2000 }}
       >
         <Suspense fallback={<Loader />}>
           <ambientLight intensity={0.4} />
@@ -214,6 +226,7 @@ const Home = () => {
           <CameraRig
             currentStage={currentStage}
             onMovementStateChange={handleMovementChange}
+            baseFov={isMobile ? 62 : 45}
           />
 
           <IslandWorldRig
@@ -226,8 +239,8 @@ const Home = () => {
 
       <div
         className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-500 ease-out ${
-          cardAlignment === "center"
-            ? "items-end justify-center pb-24 sm:pb-28"
+          cardAlignment === "center" || isMobile
+            ? "items-end justify-center pb-[calc(5.25rem+env(safe-area-inset-bottom))] md:pb-28"
             : "items-center"
         } ${
           isCardVisible
@@ -237,24 +250,30 @@ const Home = () => {
       >
         <div
           className={`w-full flex ${
-            cardAlignment === "left"
+            isMobile
+              ? "justify-center px-4 pb-1"
+              : cardAlignment === "left"
               ? "justify-start pl-4 sm:pl-8 md:pl-12"
               : cardAlignment === "right"
               ? "justify-end pr-4 sm:pr-8 md:pr-12"
               : "justify-center"
           }`}
         >
-          <div className="pointer-events-auto max-w-[18.5rem] sm:max-w-sm w-full">
+          <div className="pointer-events-auto w-full max-w-[20rem] sm:max-w-sm">
             {displayedStage && <Homeinfo currentStage={displayedStage} />}
           </div>
         </div>
       </div>
 
       {/* Bottom Zone Navigator Dock */}
-      <div className="absolute bottom-6 sm:bottom-8 left-0 right-0 z-20 flex justify-center px-4 pointer-events-auto">
+      <div className="absolute bottom-0 left-0 right-0 z-20 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-3 pointer-events-auto">
         <nav
           aria-label="Navigasi zona pulau"
-          className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-2 rounded-full border border-island-border/80 bg-island-dark/90 backdrop-blur-md shadow-2xl max-w-full"
+          className={`flex items-center gap-1 p-1.5 rounded-full border border-island-border/80 bg-island-dark/90 backdrop-blur-md shadow-2xl mx-auto ${
+            isMobile
+              ? "max-w-full overflow-x-auto no-scrollbar whitespace-nowrap"
+              : "inline-flex flex-wrap justify-center gap-1.5 sm:gap-2 p-2"
+          }`}
         >
           {ZONE_BUTTONS.map((btn) => {
             const isActive = currentStage === btn.stage;
@@ -265,7 +284,9 @@ const Home = () => {
                 onClick={() => handleZoneSelect(btn.stage)}
                 aria-current={isActive ? "step" : undefined}
                 title={btn.title}
-                className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper ${
+                className={`shrink-0 font-sans rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper ${
+                  isMobile ? "px-3 py-1.5 text-[11px]" : "px-3.5 py-1.5 text-xs"
+                } ${
                   isActive
                     ? "bg-copper text-cream font-medium shadow-md shadow-black/30"
                     : "text-cream/65 hover:text-cream hover:bg-island-border/40"

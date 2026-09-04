@@ -1,5 +1,21 @@
 import "@testing-library/jest-dom/vitest";
 
+if (typeof window.matchMedia !== "function") {
+  const makeQuery = (query) => ({
+    matches:
+      query.includes("max-width") &&
+      window.innerWidth < parseInt(query.match(/\(max-width: (\d+)px\)/)?.[1] || "768", 10),
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  });
+  window.matchMedia = makeQuery;
+}
+
 // Minimal Web Audio API mock for jsdom environment (consumed by audioEngine in Task 6)
 if (typeof globalThis.AudioContext === "undefined") {
   class MockAudioContext {
