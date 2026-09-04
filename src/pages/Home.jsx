@@ -5,7 +5,7 @@ import * as THREE from "three";
 import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
-import { STAGE_CENTERS } from "../core/stageCalculator";
+import CameraDevTools from "../components/CameraDevTools";
 
 const ZONE_BUTTONS = [
   { stage: 1, name: "Awal", title: "Ringkasan Pulau" },
@@ -15,12 +15,7 @@ const ZONE_BUTTONS = [
   { stage: 5, name: "Kontak", title: "Mercusuar" },
 ];
 
-/**
- * Camera Framings with Asymmetric Rule of Thirds:
- * Zooms in tight on the target landmark and offsets it to one side,
- * leaving intentional negative space on the opposite side for the card.
- */
-const CAMERA_FRAMINGS = {
+const DEFAULT_CAMERA_FRAMINGS = {
   1: {
     pos: [0, 2.9, 6.2],
     target: [0, 0.2, 0],
@@ -28,26 +23,26 @@ const CAMERA_FRAMINGS = {
     cardAlignment: "center",
   },
   2: {
-    pos: [1.2, 1.8, 3.2],
-    target: [0.6, 0.85, 0],
+    pos: [1.8, 2.0, 3.8],
+    target: [0.9, 1.0, 0],
     islandRotY: -0.65,
     cardAlignment: "right",
   },
   3: {
-    pos: [-1.2, 1.7, 3.2],
-    target: [-0.6, 0.7, 0],
+    pos: [-1.8, 2.0, 3.8],
+    target: [-0.9, 0.8, 0],
     islandRotY: 0.85,
     cardAlignment: "left",
   },
   4: {
-    pos: [1.1, 1.4, 2.9],
-    target: [0.5, 0.45, 0],
+    pos: [1.6, 1.6, 3.6],
+    target: [0.7, 0.5, 0],
     islandRotY: 0,
     cardAlignment: "right",
   },
   5: {
-    pos: [-1.2, 1.6, 3.1],
-    target: [-0.6, 0.65, 0],
+    pos: [-1.6, 1.8, 3.8],
+    target: [-0.8, 0.7, 0],
     islandRotY: 0.35,
     cardAlignment: "left",
   },
@@ -57,19 +52,19 @@ const CAMERA_FRAMINGS = {
  * CameraRig
  * Smoothly lerps camera position and target lookAt.
  */
-const CameraRig = ({ currentStage, onMovementStateChange }) => {
+const CameraRig = ({ currentStage, framings, onMovementStateChange }) => {
   const currentPosRef = useRef(new THREE.Vector3(0, 3.8, 8.2));
   const currentLookAtRef = useRef(new THREE.Vector3(0, 0, 0));
   const isMovingRef = useRef(false);
 
   useFrame((state) => {
-    const framing = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
+    const framing = framings[currentStage] || framings[1];
     const targetPos = new THREE.Vector3(...framing.pos);
     const targetLookAt = new THREE.Vector3(...framing.target);
 
     // Smooth cinematic lerp
-    currentPosRef.current.lerp(targetPos, 0.05);
-    currentLookAtRef.current.lerp(targetLookAt, 0.05);
+    currentPosRef.current.lerp(targetPos, 0.08);
+    currentLookAtRef.current.lerp(targetLookAt, 0.08);
 
     state.camera.position.copy(currentPosRef.current);
     state.camera.lookAt(currentLookAtRef.current);
@@ -89,6 +84,7 @@ const CameraRig = ({ currentStage, onMovementStateChange }) => {
 
 CameraRig.propTypes = {
   currentStage: PropTypes.number.isRequired,
+  framings: PropTypes.object.isRequired,
   onMovementStateChange: PropTypes.func.isRequired,
 };
 
@@ -96,17 +92,17 @@ CameraRig.propTypes = {
  * IslandWorldRig
  * Holds WorkshopIsland and smoothly rotates it toward the active zone angle.
  */
-const IslandWorldRig = ({ scale, currentStage }) => {
+const IslandWorldRig = ({ scale, currentStage, framings }) => {
   const groupRef = useRef(null);
-  const currentAngleRef = useRef(STAGE_CENTERS[1]);
+  const currentAngleRef = useRef(0);
 
   useFrame(() => {
     if (!groupRef.current) return;
-    const framing = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
+    const framing = framings[currentStage] || framings[1];
     const targetAngle = framing.islandRotY;
 
     // Smooth lerp rotation toward target
-    currentAngleRef.current += (targetAngle - currentAngleRef.current) * 0.06;
+    currentAngleRef.current += (targetAngle - currentAngleRef.current) * 0.08;
     groupRef.current.rotation.y = currentAngleRef.current;
   });
 
@@ -120,12 +116,14 @@ const IslandWorldRig = ({ scale, currentStage }) => {
 IslandWorldRig.propTypes = {
   scale: PropTypes.arrayOf(PropTypes.number).isRequired,
   currentStage: PropTypes.number.isRequired,
+  framings: PropTypes.object.isRequired,
 };
 
 const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
   const [displayedStage, setDisplayedStage] = useState(1);
   const [isCardVisible, setIsCardVisible] = useState(true);
+  const [framings, setFramings] = useState(DEFAULT_CAMERA_FRAMINGS);
   const [islandScale, setIslandScale] = useState(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) {
       return [0.9, 0.9, 0.9];
@@ -165,7 +163,18 @@ const Home = () => {
     }, 350);
   };
 
-  const activeFraming = CAMERA_FRAMINGS[displayedStage] || CAMERA_FRAMINGS[1];
+  const handleUpdateFraming = (stage, newFraming) => {
+    setFramings((prev) => ({
+      ...prev,
+      [stage]: newFraming,
+    }));
+  };
+
+  const handleResetFramings = () => {
+    setFramings(DEFAULT_CAMERA_FRAMINGS);
+  };
+
+  const activeFraming = framings[displayedStage] || framings[1];
   const cardAlignment = activeFraming.cardAlignment;
 
   return (
@@ -174,6 +183,15 @@ const Home = () => {
       aria-label="workshop-island"
       className="relative h-[100dvh] w-full overflow-hidden bg-island-black select-none"
     >
+      {/* Temporary Interactive Camera DevTools */}
+      <CameraDevTools
+        currentStage={currentStage}
+        onSelectStage={handleZoneSelect}
+        framings={framings}
+        onUpdateFraming={handleUpdateFraming}
+        onResetFramings={handleResetFramings}
+      />
+
       {/* R3F 3D Island Canvas */}
       <Canvas
         gl={{ alpha: false, antialias: true }}
@@ -186,10 +204,15 @@ const Home = () => {
 
           <CameraRig
             currentStage={currentStage}
+            framings={framings}
             onMovementStateChange={handleMovementChange}
           />
 
-          <IslandWorldRig scale={islandScale} currentStage={currentStage} />
+          <IslandWorldRig
+            scale={islandScale}
+            currentStage={currentStage}
+            framings={framings}
+          />
         </Suspense>
       </Canvas>
 
