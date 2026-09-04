@@ -5,7 +5,6 @@ import * as THREE from "three";
 import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
-import UltimatePlacementDevTools from "../components/UltimatePlacementDevTools";
 import MobileSmartDock from "../components/MobileSmartDock";
 import islandBg from "../assets/images/island-bg.png";
 
@@ -56,32 +55,32 @@ const INITIAL_CONFIG = {
   },
   mobile: {
     1: {
-      pos: [0, 2.2, 5.8],
-      target: [0.15, 0.6, 0],
+      pos: [0, 2.2, 4.35],
+      target: [-0.05, 0.6, 0],
       islandRotY: 0,
       cardPos: [50, 76],
     },
     2: {
-      pos: [-1.1, 1.4, 2.8],
-      target: [0.5, 0.9, 0],
+      pos: [-1.2, 1.1, 1.85],
+      target: [0.15, 0.9, 0],
       islandRotY: 0.21,
       cardPos: [50, 74],
     },
     3: {
-      pos: [-0.6, 1.9, 2.8],
-      target: [-1.1, 1.3, 0],
+      pos: [-0.65, 1.15, 1.5],
+      target: [-0.9, 1, 0],
       islandRotY: 0.71,
       cardPos: [50, 74],
     },
     4: {
-      pos: [0.05, 1.5, 3.1],
-      target: [1.6, 0.8, 0],
+      pos: [0.05, 1, 2.15],
+      target: [1.05, 0.8, 0],
       islandRotY: -1.09,
       cardPos: [50, 74],
     },
     5: {
-      pos: [1.0, 1.7, 3.4],
-      target: [0.7, 1.0, 0],
+      pos: [-0.15, 0.95, 1.8],
+      target: [1.8, 0.5, 0],
       islandRotY: 0,
       cardPos: [50, 74],
     },
@@ -164,7 +163,7 @@ const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
   const [displayedStage, setDisplayedStage] = useState(1);
   const [isCardVisible, setIsCardVisible] = useState(true);
-  const [config, setConfig] = useState(INITIAL_CONFIG);
+  const config = INITIAL_CONFIG;
   const [isMobile, setIsMobile] = useState(isBrowserMobile);
   const [islandScale, setIslandScale] = useState(() =>
     isBrowserMobile() ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]
@@ -213,16 +212,6 @@ const Home = () => {
       style={{ backgroundImage: `url(${islandBg})` }}
       className="relative h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-island-black select-none"
     >
-      {/* Universal Placement & Card DevTool */}
-      <UltimatePlacementDevTools
-        currentStage={currentStage}
-        onSelectStage={handleZoneSelect}
-        config={config}
-        onUpdateConfig={setConfig}
-        onResetConfig={() => setConfig(INITIAL_CONFIG)}
-        defaultCollapsed={isMobile}
-      />
-
       {/* R3F 3D Island Canvas */}
       <Canvas
         gl={{ alpha: true, antialias: true }}

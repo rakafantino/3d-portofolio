@@ -142,27 +142,22 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     expect(screen.getByRole("link", { name: /Buka Fullstack & Web3/i })).toBeInTheDocument();
   });
 
-  it("uses mobile island scale and collapsed devtools on small viewport", () => {
+  it("uses mobile island scale on small viewport", () => {
     window.innerWidth = 375;
     renderHome();
 
     const islandMock = screen.getByTestId("workshop-island-model");
     const props = JSON.parse(islandMock.getAttribute("data-props"));
     expect(props.scale).toEqual([0.72, 0.72, 0.72]);
-
-    expect(screen.queryByText(/Placement & Card Tuner/i)).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Placement DevTool/i })).toBeInTheDocument();
   });
 
-  it("uses desktop island scale and expanded devtools on wide viewport", () => {
+  it("uses desktop island scale on wide viewport", () => {
     window.innerWidth = 1280;
     renderHome();
 
     const islandMock = screen.getByTestId("workshop-island-model");
     const props = JSON.parse(islandMock.getAttribute("data-props"));
     expect(props.scale).toEqual([1.2, 1.2, 1.2]);
-
-    expect(screen.getByText(/Placement & Card Tuner/i)).toBeInTheDocument();
   });
 
   it("does not mount a duplicate AudioController in Home (navbar owns audio control)", () => {
