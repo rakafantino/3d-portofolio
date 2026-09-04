@@ -74,71 +74,66 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     expect(screen.queryByText(/TELEMETRY_FEED/i)).not.toBeInTheDocument();
   });
 
-  it("renders 5 zone navigator buttons matching story landmarks", () => {
+  it("renders carousel navigation controls with previous and next buttons", () => {
     renderHome();
 
     const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
-    expect(within(desktopNav).getByRole("button", { name: /Awal/i })).toBeInTheDocument();
-    expect(within(desktopNav).getByRole("button", { name: /Tentang/i })).toBeInTheDocument();
-    expect(within(desktopNav).getByRole("button", { name: /Riset & Awards/i })).toBeInTheDocument();
-    expect(within(desktopNav).getByRole("button", { name: /Proyek & Lab/i })).toBeInTheDocument();
-    expect(within(desktopNav).getByRole("button", { name: /Kontak/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByRole("button", { name: /Sebelumnya/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByRole("button", { name: /Selanjutnya/i })).toBeInTheDocument();
+    expect(within(desktopNav).getByText(/01/i)).toBeInTheDocument();
   });
 
-  it("switches to Zone 2 (Tentang / Kabin Kerja) on button click, displaying link to /about", async () => {
+  it("advances to Zone 2 on next button click, displaying link to /about", async () => {
     renderHome();
 
     const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
-    const aboutBtn = within(desktopNav).getByRole("button", { name: /Tentang/i });
-    fireEvent.click(aboutBtn);
+    const nextBtn = within(desktopNav).getByRole("button", { name: /Selanjutnya/i });
+    fireEvent.click(nextBtn);
 
     const aboutLink = await screen.findByRole("link", { name: /Buka Halaman Tentang Saya/i });
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
   });
 
-  it("switches to Zone 3 (Riset & Awards / Observatorium) on button click, displaying awards link", async () => {
+  it("advances through zones sequentially on repeated next button clicks", async () => {
     renderHome();
 
     const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
-    const awardsBtn = within(desktopNav).getByRole("button", { name: /Riset & Awards/i });
-    fireEvent.click(awardsBtn);
+    const nextBtn = within(desktopNav).getByRole("button", { name: /Selanjutnya/i });
 
-    const awardsLink = await screen.findByRole("link", { name: /Lihat Kredensial & Penghargaan/i });
-    expect(awardsLink).toBeInTheDocument();
-    expect(awardsLink).toHaveAttribute("href", "/about");
+    fireEvent.click(nextBtn);
+    expect(await screen.findByRole("link", { name: /Buka Halaman Tentang Saya/i })).toBeInTheDocument();
+
+    fireEvent.click(nextBtn);
+    expect(await screen.findByRole("link", { name: /Lihat Kredensial & Penghargaan/i })).toBeInTheDocument();
+
+    fireEvent.click(nextBtn);
+    expect(await screen.findByRole("link", { name: /Jelajahi Arsip Proyek Lengkap/i })).toBeInTheDocument();
+
+    fireEvent.click(nextBtn);
+    expect(await screen.findByRole("link", { name: /Kirim Pesan Sekarang/i })).toBeInTheDocument();
   });
 
-  it("switches to Zone 4 (Proyek & Lab / Reaktor) on button click, displaying projects link", async () => {
+  it("wraps around to Zone 5 on previous button click from Zone 1", async () => {
     renderHome();
 
     const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
-    const projectsBtn = within(desktopNav).getByRole("button", { name: /Proyek & Lab/i });
-    fireEvent.click(projectsBtn);
-
-    const projectsLink = await screen.findByRole("link", { name: /Jelajahi Arsip Proyek Lengkap/i });
-    expect(projectsLink).toBeInTheDocument();
-    expect(projectsLink).toHaveAttribute("href", "/projects");
-  });
-
-  it("switches to Zone 5 (Mercusuar / Kontak) on button click, displaying contact link", async () => {
-    renderHome();
-
-    const desktopNav = screen.getByRole("navigation", { name: /Navigasi zona pulau/i });
-    const contactBtn = within(desktopNav).getByRole("button", { name: /Kontak/i });
-    fireEvent.click(contactBtn);
+    const prevBtn = within(desktopNav).getByRole("button", { name: /Sebelumnya/i });
+    fireEvent.click(prevBtn);
 
     const contactLink = await screen.findByRole("link", { name: /Kirim Pesan Sekarang/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
 
-  it("renders MobileSmartDock with micro-pill and 5 mobile buttons on mobile viewport", () => {
+  it("renders MobileSmartDock with micro-pill and carousel buttons on mobile viewport", () => {
     window.innerWidth = 375;
     renderHome();
 
     const mobileNav = screen.getByRole("navigation", { name: /Navigasi zona mobile/i });
     expect(mobileNav).toBeInTheDocument();
+    expect(within(mobileNav).getByRole("button", { name: /Sebelumnya/i })).toBeInTheDocument();
+    expect(within(mobileNav).getByRole("button", { name: /Selanjutnya/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Buka Raka Fantino/i })).toBeInTheDocument();
   });
 

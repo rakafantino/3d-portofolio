@@ -8,13 +8,13 @@ import Homeinfo from "../components/Homeinfo";
 import MobileSmartDock from "../components/MobileSmartDock";
 import islandBg from "../assets/images/island-bg.png";
 
-const ZONE_BUTTONS = [
-  { stage: 1, name: "Awal", title: "Ringkasan Pulau" },
-  { stage: 2, name: "Tentang", title: "Kabin Kerja" },
-  { stage: 3, name: "Riset & Awards", title: "Observatorium" },
-  { stage: 4, name: "Proyek & Lab", title: "Reaktor Mesin" },
-  { stage: 5, name: "Kontak", title: "Mercusuar" },
-];
+const ZONE_NAMES = {
+  1: "Diorama Pulau",
+  2: "Kabin Kerja",
+  3: "Observatorium",
+  4: "Reaktor Mesin",
+  5: "Mercusuar",
+};
 
 /**
  * Initial Preset Config for Desktop & Mobile
@@ -201,6 +201,16 @@ const Home = () => {
     }, 350);
   };
 
+  const handlePrevZone = () => {
+    const prev = currentStage === 1 ? 5 : currentStage - 1;
+    handleZoneSelect(prev);
+  };
+
+  const handleNextZone = () => {
+    const next = currentStage === 5 ? 1 : currentStage + 1;
+    handleZoneSelect(next);
+  };
+
   const currentDeviceFramings = isMobile ? config.mobile : config.desktop;
   const activeFraming = currentDeviceFramings[displayedStage] || currentDeviceFramings[1];
   const cardPos = activeFraming.cardPos || [50, 76];
@@ -260,31 +270,39 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Desktop: Bottom Zone Navigator Dock */}
+      {/* Desktop: Carousel Exploration Controls (Previous / Next) */}
       <div className="hidden md:flex absolute bottom-0 left-0 right-0 z-20 pb-[max(1rem,env(safe-area-inset-bottom))] px-3 pointer-events-auto justify-center">
         <nav
           aria-label="Navigasi zona pulau"
-          className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 p-2 rounded-full border border-island-border/80 bg-island-dark/90 backdrop-blur-md shadow-2xl mx-auto"
+          className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full border border-island-border/80 bg-island-dark/90 backdrop-blur-md shadow-2xl mx-auto select-none"
         >
-          {ZONE_BUTTONS.map((btn) => {
-            const isActive = currentStage === btn.stage;
-            return (
-              <button
-                key={btn.stage}
-                type="button"
-                onClick={() => handleZoneSelect(btn.stage)}
-                aria-current={isActive ? "step" : undefined}
-                title={btn.title}
-                className={`shrink-0 font-sans rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper px-3.5 py-1.5 text-xs ${
-                  isActive
-                    ? "bg-copper text-cream font-medium shadow-md shadow-black/30"
-                    : "text-cream/65 hover:text-cream hover:bg-island-border/40"
-                }`}
-              >
-                {btn.name}
-              </button>
-            );
-          })}
+          <button
+            type="button"
+            onClick={handlePrevZone}
+            aria-label="Zona Sebelumnya"
+            className="flex items-center gap-1 px-3 py-1 text-xs font-sans text-cream/70 hover:text-cream hover:bg-island-border/40 rounded-full transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Sebelumnya</span>
+          </button>
+
+          <div className="flex items-center gap-2 px-3 py-0.5 rounded-full bg-black/40 border border-island-border/40 font-mono text-xs">
+            <span className="text-copper font-bold">{`0${currentStage}`}</span>
+            <span className="text-cream/30">/</span>
+            <span className="text-cream/60">05</span>
+            <span className="text-island-border/80">·</span>
+            <span className="font-serif text-cream font-medium">{ZONE_NAMES[currentStage]}</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleNextZone}
+            aria-label="Zona Selanjutnya"
+            className="flex items-center gap-1 px-3 py-1 text-xs font-sans text-cream/70 hover:text-cream hover:bg-island-border/40 rounded-full transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper"
+          >
+            <span>Selanjutnya</span>
+            <span aria-hidden="true">→</span>
+          </button>
         </nav>
       </div>
     </section>

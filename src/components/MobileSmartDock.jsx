@@ -34,14 +34,6 @@ const ZONE_DATA = {
   },
 };
 
-const ZONE_BUTTONS = [
-  { stage: 1, name: "Awal" },
-  { stage: 2, name: "Tentang" },
-  { stage: 3, name: "Riset" },
-  { stage: 4, name: "Proyek" },
-  { stage: 5, name: "Kontak" },
-];
-
 /**
  * MobileSmartDock
  * Ultra-compact unified dock for mobile viewports.
@@ -76,26 +68,33 @@ const MobileSmartDock = ({ currentStage, onSelectStage, isCameraMoving }) => {
           </div>
         </Link>
 
-        {/* Row 2: 5-Zone Navigator Selector */}
-        <nav aria-label="Navigasi zona mobile" className="flex items-center justify-between gap-1 w-full pt-0.5">
-          {ZONE_BUTTONS.map((btn) => {
-            const isActive = currentStage === btn.stage;
-            return (
-              <button
-                key={btn.stage}
-                type="button"
-                onClick={() => onSelectStage(btn.stage)}
-                aria-current={isActive ? "step" : undefined}
-                className={`flex-1 py-1.5 text-[11px] font-sans rounded-lg transition-all duration-200 text-center ${
-                  isActive
-                    ? "bg-copper text-cream font-bold shadow-md shadow-black/40"
-                    : "text-cream/60 hover:text-cream hover:bg-island-border/30"
-                }`}
-              >
-                {btn.name}
-              </button>
-            );
-          })}
+        {/* Row 2: Carousel Navigation (Prev / Counter / Next) */}
+        <nav aria-label="Navigasi zona mobile" className="flex items-center justify-between gap-2 w-full pt-0.5">
+          <button
+            type="button"
+            onClick={() => onSelectStage(currentStage === 1 ? 5 : currentStage - 1)}
+            aria-label="Zona Sebelumnya"
+            className="flex-1 py-1.5 text-xs font-sans rounded-lg bg-island-border/30 hover:bg-island-border/60 text-cream/75 flex items-center justify-center gap-1 transition-colors"
+          >
+            <span aria-hidden="true">←</span>
+            <span>Sebelumnya</span>
+          </button>
+
+          <div className="px-3 py-1 rounded-md bg-black/40 border border-island-border/50 font-mono text-xs flex items-center gap-1.5 shrink-0">
+            <span className="text-copper font-bold">{`0${currentStage}`}</span>
+            <span className="text-cream/30">/</span>
+            <span className="text-cream/60">05</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => onSelectStage(currentStage === 5 ? 1 : currentStage + 1)}
+            aria-label="Zona Selanjutnya"
+            className="flex-1 py-1.5 text-xs font-sans rounded-lg bg-island-border/30 hover:bg-island-border/60 text-cream/75 flex items-center justify-center gap-1 transition-colors"
+          >
+            <span>Selanjutnya</span>
+            <span aria-hidden="true">→</span>
+          </button>
         </nav>
       </div>
     </div>
