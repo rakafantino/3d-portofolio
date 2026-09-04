@@ -17,10 +17,10 @@ const safeVector3 = (val, fallback = [0, 0, 0]) => {
 };
 
 const DEFAULT_LIGHTING = {
-  ambient: { color: "#FFE3C2", intensity: 1.2 },
-  sun: { color: "#FFC08A", intensity: 2.8, position: [6, 8, 4] },
-  hemi: { skyColor: "#E8B98A", groundColor: "#3A2A1C", intensity: 0.9 },
-  fill: { color: "#6B4A33", intensity: 0.8, position: [-5, 4, -4] },
+  ambient: { color: "#FFE0C0", intensity: 0.65 },
+  sun: { color: "#FFB070", intensity: 2.8, position: [11, 7.5, 8] },
+  hemi: { skyColor: "#E8B98A", groundColor: "#3A2A1C", intensity: 0.65 },
+  fill: { color: "#804828", intensity: 0.3, position: [-5, 4, -4] },
 };
 
 /**
@@ -35,7 +35,6 @@ const WorkshopIsland = ({
   isRotating = false,
   currentStage = 1,
   onSelectZone = null,
-  lighting = null,
   ...props
 }) => {
   const rootGroupRef = useRef(null);
@@ -47,8 +46,6 @@ const WorkshopIsland = ({
   const safeScaleValue = safeVector3(scale, [1, 1, 1]);
   const safePosValue = safeVector3(position, [0, 0, 0]);
   const safeRotValue = safeVector3(rotation, [0, 0, 0]);
-
-  const activeLight = lighting || DEFAULT_LIGHTING;
 
   useFrame((state, delta) => {
     // Subtle breathing floating motion for the whole island
@@ -73,24 +70,24 @@ const WorkshopIsland = ({
       {...props}
     >
       {/* Warm Ambient & Sunset Directional Lighting */}
-      <ambientLight color={activeLight.ambient.color} intensity={activeLight.ambient.intensity} />
+      <ambientLight color={DEFAULT_LIGHTING.ambient.color} intensity={DEFAULT_LIGHTING.ambient.intensity} />
       <directionalLight
-        position={activeLight.sun.position}
-        color={activeLight.sun.color}
-        intensity={activeLight.sun.intensity}
+        position={DEFAULT_LIGHTING.sun.position}
+        color={DEFAULT_LIGHTING.sun.color}
+        intensity={DEFAULT_LIGHTING.sun.intensity}
         castShadow={false}
       />
       <hemisphereLight
         args={[
-          activeLight.hemi.skyColor,
-          activeLight.hemi.groundColor,
-          activeLight.hemi.intensity,
+          DEFAULT_LIGHTING.hemi.skyColor,
+          DEFAULT_LIGHTING.hemi.groundColor,
+          DEFAULT_LIGHTING.hemi.intensity,
         ]}
       />
       <directionalLight
-        position={activeLight.fill.position}
-        color={activeLight.fill.color}
-        intensity={activeLight.fill.intensity}
+        position={DEFAULT_LIGHTING.fill.position}
+        color={DEFAULT_LIGHTING.fill.color}
+        intensity={DEFAULT_LIGHTING.fill.intensity}
       />
 
       {/* Upward bounce light to illuminate dark rocks under the island */}
@@ -126,7 +123,6 @@ WorkshopIsland.propTypes = {
   isRotating: PropTypes.bool,
   currentStage: PropTypes.number,
   onSelectZone: PropTypes.func,
-  lighting: PropTypes.object,
 };
 
 export default WorkshopIsland;

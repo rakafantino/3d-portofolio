@@ -5,7 +5,7 @@ import * as THREE from "three";
 import Loader from "../components/Loader";
 import WorkshopIsland from "../models/WorkshopIsland";
 import Homeinfo from "../components/Homeinfo";
-import SceneDevTools from "../components/SceneDevTools";
+import PlacementDevTools from "../components/PlacementDevTools";
 import islandBg from "../assets/images/island-bg.png";
 
 const ZONE_BUTTONS = [
@@ -16,83 +16,115 @@ const ZONE_BUTTONS = [
   { stage: 5, name: "Kontak", title: "Mercusuar" },
 ];
 
-/**
- * EXACT user-calibrated camera coordinates (100% matched to user input).
- */
-const CAMERA_FRAMINGS = {
-  1: {
-    pos: [0, 1.7, 4.8],
-    target: [0.15, 0.5, 0],
-    islandRotY: 0,
-    cardAlignment: "center",
+const DEFAULT_SCENE_CONFIG = {
+  desktop: {
+    islandScale: [1.2, 1.2, 1.2],
+    fov: {
+      1: 45,
+      2: 45,
+      3: 45,
+      4: 45,
+      5: 45,
+    },
+    zones: {
+      1: {
+        pos: [0, 1.7, 4.8],
+        target: [0.15, 0.5, 0],
+        islandRotY: 0,
+        card: { vAlign: "bottom", hAlign: "center", offsetX: 0, offsetY: 0 },
+      },
+      2: {
+        pos: [-1.3, 1.25, 2],
+        target: [0.6, 0.95, 0],
+        islandRotY: 0.21,
+        card: { vAlign: "center", hAlign: "right", offsetX: 0, offsetY: 0 },
+      },
+      3: {
+        pos: [-0.7, 1.8, 2],
+        target: [-1.35, 1.4, 0],
+        islandRotY: 0.71,
+        card: { vAlign: "center", hAlign: "left", offsetX: 0, offsetY: 0 },
+      },
+      4: {
+        pos: [0.05, 1.4, 2.55],
+        target: [1.9, 0.75, 0],
+        islandRotY: -1.09,
+        card: { vAlign: "center", hAlign: "left", offsetX: 0, offsetY: 0 },
+      },
+      5: {
+        pos: [1.15, 1.55, 2.8],
+        target: [0.8, 1.05, 0],
+        islandRotY: 0,
+        card: { vAlign: "center", hAlign: "right", offsetX: 0, offsetY: 0 },
+      },
+    },
   },
-  2: {
-    pos: [-1.3, 1.25, 2],
-    target: [0.6, 0.95, 0],
-    islandRotY: 0.21,
-    cardAlignment: "right",
-  },
-  3: {
-    pos: [-0.7, 1.8, 2],
-    target: [-1.35, 1.4, 0],
-    islandRotY: 0.71,
-    cardAlignment: "left",
-  },
-  4: {
-    pos: [0.05, 1.4, 2.55],
-    target: [1.9, 0.75, 0],
-    islandRotY: -1.09,
-    cardAlignment: "left",
-  },
-  5: {
-    pos: [1.15, 1.55, 2.8],
-    target: [0.8, 1.05, 0],
-    islandRotY: 0,
-    cardAlignment: "right",
+  mobile: {
+    islandScale: [0.72, 0.72, 0.72],
+    fov: {
+      1: 62,
+      2: 62,
+      3: 62,
+      4: 62,
+      5: 62,
+    },
+    zones: {
+      1: {
+        pos: [0, 1.7, 4.8],
+        target: [0.15, 0.5, 0],
+        islandRotY: 0,
+        card: { vAlign: "bottom", hAlign: "center", offsetX: 0, offsetY: 0 },
+      },
+      2: {
+        pos: [-1.3, 1.25, 2],
+        target: [0.6, 0.95, 0],
+        islandRotY: 0.21,
+        card: { vAlign: "bottom", hAlign: "center", offsetX: 0, offsetY: 0 },
+      },
+      3: {
+        pos: [-0.7, 1.8, 2],
+        target: [-1.35, 1.4, 0],
+        islandRotY: 0.71,
+        card: { vAlign: "bottom", hAlign: "center", offsetX: 0, offsetY: 0 },
+      },
+      4: {
+        pos: [0.05, 1.4, 2.55],
+        target: [1.9, 0.75, 0],
+        islandRotY: -1.09,
+        card: { vAlign: "bottom", hAlign: "center", offsetX: 0, offsetY: 0 },
+      },
+      5: {
+        pos: [1.15, 1.55, 2.8],
+        target: [0.8, 1.05, 0],
+        islandRotY: 0,
+        card: { vAlign: "bottom", hAlign: "center", offsetX: 0, offsetY: 0 },
+      },
+    },
   },
 };
 
-const DEFAULT_LIGHTING = {
-  sun: {
-    color: "#FFB070",
-    intensity: 2.8,
-    position: [11, 7.5, 8],
-  },
-  ambient: {
-    color: "#FFE0C0",
-    intensity: 0.65,
-  },
-  hemi: {
-    skyColor: "#E8B98A",
-    groundColor: "#3A2A1C",
-    intensity: 0.65,
-  },
-  fill: {
-    color: "#804828",
-    intensity: 0.3,
-    position: [-5, 4, -4],
-  },
-};
+const MOBILE_BREAKPOINT = 768;
+const isBrowserMobile = () =>
+  typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
 
-const CameraRig = ({ currentStage, onMovementStateChange, baseFov }) => {
-  const currentPosRef = useRef(new THREE.Vector3(0, 1.7, 4.8));
-  const currentLookAtRef = useRef(new THREE.Vector3(0.15, 0.5, 0));
+const CameraRig = ({ stage, layout, onMovementStateChange }) => {
+  const framing = layout.zones[stage] || layout.zones[1];
+  const baseFov = layout.fov[stage] || 45;
+  const currentPosRef = useRef(new THREE.Vector3(...framing.pos));
+  const currentLookAtRef = useRef(new THREE.Vector3(...framing.target));
   const isMovingRef = useRef(false);
-  const baseFovRef = useRef(baseFov);
+  const fovRef = useRef(baseFov);
 
   useFrame((state) => {
-    const framing = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
     const targetPos = new THREE.Vector3(...framing.pos);
     const targetLookAt = new THREE.Vector3(...framing.target);
 
-    // Keep projection FOV in sync when the viewport crosses the mobile breakpoint
-    if (baseFovRef.current !== baseFov) {
-      baseFovRef.current = baseFov;
+    if (fovRef.current !== baseFov) {
+      fovRef.current = baseFov;
       state.camera.fov = baseFov;
       state.camera.updateProjectionMatrix();
     }
 
-    // Smooth cinematic lerp
     currentPosRef.current.lerp(targetPos, 0.06);
     currentLookAtRef.current.lerp(targetLookAt, 0.06);
 
@@ -112,64 +144,47 @@ const CameraRig = ({ currentStage, onMovementStateChange, baseFov }) => {
 };
 
 CameraRig.propTypes = {
-  currentStage: PropTypes.number.isRequired,
+  stage: PropTypes.number.isRequired,
+  layout: PropTypes.object.isRequired,
   onMovementStateChange: PropTypes.func.isRequired,
-  baseFov: PropTypes.number,
 };
 
-const IslandWorldRig = ({ scale, currentStage, lighting }) => {
+const IslandWorldRig = ({ scale, stage, layout }) => {
   const groupRef = useRef(null);
   const currentAngleRef = useRef(0);
 
   useFrame(() => {
     if (!groupRef.current) return;
-    const framing = CAMERA_FRAMINGS[currentStage] || CAMERA_FRAMINGS[1];
+    const framing = layout.zones[stage] || layout.zones[1];
     const targetAngle = framing.islandRotY;
 
-    // Smooth lerp rotation toward target
     currentAngleRef.current += (targetAngle - currentAngleRef.current) * 0.06;
     groupRef.current.rotation.y = currentAngleRef.current;
   });
 
   return (
     <group ref={groupRef}>
-      <WorkshopIsland
-        scale={scale}
-        currentStage={currentStage}
-        lighting={lighting}
-      />
+      <WorkshopIsland scale={scale} currentStage={stage} />
     </group>
   );
 };
 
 IslandWorldRig.propTypes = {
   scale: PropTypes.arrayOf(PropTypes.number).isRequired,
-  currentStage: PropTypes.number.isRequired,
-  lighting: PropTypes.object,
+  stage: PropTypes.number.isRequired,
+  layout: PropTypes.object.isRequired,
 };
-
-const MOBILE_BREAKPOINT = 768;
-const isBrowserMobile = () =>
-  typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
 
 const Home = () => {
   const [currentStage, setCurrentStage] = useState(1);
   const [displayedStage, setDisplayedStage] = useState(1);
   const [isCardVisible, setIsCardVisible] = useState(true);
-  const [lighting, setLighting] = useState(DEFAULT_LIGHTING);
+  const [layout, setLayout] = useState(DEFAULT_SCENE_CONFIG);
   const [isMobile, setIsMobile] = useState(isBrowserMobile);
-  const [islandScale, setIslandScale] = useState(() =>
-    isBrowserMobile() ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]
-  );
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    const handleChange = () => {
-      const mobile = mq.matches;
-      setIsMobile(mobile);
-      setIslandScale(mobile ? [0.72, 0.72, 0.72] : [1.2, 1.2, 1.2]);
-    };
-
+    const handleChange = () => setIsMobile(mq.matches);
     handleChange();
     mq.addEventListener("change", handleChange);
     return () => mq.removeEventListener("change", handleChange);
@@ -194,8 +209,32 @@ const Home = () => {
     }, 350);
   };
 
-  const activeFraming = CAMERA_FRAMINGS[displayedStage] || CAMERA_FRAMINGS[1];
-  const cardAlignment = activeFraming.cardAlignment;
+  const activeLayout = layout[isMobile ? "mobile" : "desktop"];
+  const activeZone = displayedStage;
+  const framing = activeLayout.zones[activeZone] || activeLayout.zones[1];
+  const card = framing.card;
+  const isBottomCard = card.vAlign === "bottom";
+
+  const cardPositionClass =
+    isBottomCard || isMobile
+      ? "items-end justify-center"
+      : card.vAlign === "center" && card.hAlign === "center"
+      ? "items-center justify-center"
+      : "items-center";
+
+  const cardHorizontalClass = isMobile || card.hAlign === "center"
+      ? "justify-center"
+      : card.hAlign === "left"
+      ? "justify-start"
+      : "justify-end";
+
+  const cardPaddingClass = isBottomCard
+    ? "pb-[calc(5.25rem+env(safe-area-inset-bottom))] md:pb-28 px-4"
+    : card.hAlign === "left"
+    ? "pl-4 sm:pl-8 md:pl-12 pr-8"
+    : card.hAlign === "right"
+    ? "pr-4 sm:pr-8 md:pr-12 pl-8"
+    : "px-4";
 
   return (
     <section
@@ -204,68 +243,62 @@ const Home = () => {
       style={{ backgroundImage: `url(${islandBg})` }}
       className="relative h-screen supports-[height:100dvh]:h-[100dvh] w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-island-black select-none"
     >
-      {/* Interactive Studio Lighting & Calibration DevTools */}
-      <SceneDevTools
-        currentStage={currentStage}
-        onSelectStage={handleZoneSelect}
-        lighting={lighting}
-        onUpdateLighting={setLighting}
-        onResetLighting={() => setLighting(DEFAULT_LIGHTING)}
-        defaultCollapsed={isMobile}
+      <PlacementDevTools
+        config={layout}
+        onUpdate={(device, nextDeviceConfig) =>
+          setLayout((prev) => ({ ...prev, [device]: nextDeviceConfig }))
+        }
+        onReset={() => setLayout(DEFAULT_SCENE_CONFIG)}
       />
 
-      {/* R3F 3D Island Canvas */}
       <Canvas
         gl={{ alpha: true, antialias: true }}
         className="absolute inset-0 h-full w-full"
-        camera={{ position: [0, 1.7, 4.8], fov: isMobile ? 62 : 45, near: 0.1, far: 2000 }}
+        camera={{
+          position: framing.pos,
+          fov: activeLayout.fov[activeZone] || 45,
+          near: 0.1,
+          far: 2000,
+        }}
       >
         <Suspense fallback={<Loader />}>
           <ambientLight intensity={0.4} />
 
           <CameraRig
-            currentStage={currentStage}
+            stage={currentStage}
+            layout={activeLayout}
             onMovementStateChange={handleMovementChange}
-            baseFov={isMobile ? 62 : 45}
           />
 
           <IslandWorldRig
-            scale={islandScale}
-            currentStage={currentStage}
-            lighting={lighting}
+            scale={activeLayout.islandScale}
+            stage={currentStage}
+            layout={activeLayout}
           />
         </Suspense>
       </Canvas>
 
       <div
-        className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-500 ease-out ${
-          cardAlignment === "center" || isMobile
-            ? "items-end justify-center pb-[calc(5.25rem+env(safe-area-inset-bottom))] md:pb-28"
-            : "items-center"
-        } ${
+        className={`absolute inset-0 z-10 flex pointer-events-none transition-all duration-500 ease-out ${cardPositionClass} ${
           isCardVisible
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-95 translate-y-6 pointer-events-none duration-200"
         }`}
       >
         <div
-          className={`w-full flex ${
-            isMobile
-              ? "justify-center px-4 pb-1"
-              : cardAlignment === "left"
-              ? "justify-start pl-4 sm:pl-8 md:pl-12"
-              : cardAlignment === "right"
-              ? "justify-end pr-4 sm:pr-8 md:pr-12"
-              : "justify-center"
-          }`}
+          className={`w-full flex ${cardHorizontalClass} ${cardPaddingClass}`}
         >
-          <div className="pointer-events-auto w-full max-w-[20rem] sm:max-w-sm">
+          <div
+            className="pointer-events-auto w-full max-w-[20rem] sm:max-w-sm"
+            style={{
+              transform: `translate(${card.offsetX || 0}px, ${card.offsetY || 0}px)`,
+            }}
+          >
             {displayedStage && <Homeinfo currentStage={displayedStage} />}
           </div>
         </div>
       </div>
 
-      {/* Bottom Zone Navigator Dock */}
       <div className="absolute bottom-0 left-0 right-0 z-20 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-3 pointer-events-auto">
         <nav
           aria-label="Navigasi zona pulau"
