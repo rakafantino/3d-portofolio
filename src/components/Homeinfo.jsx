@@ -90,56 +90,53 @@ const renderContent = {
     </div>
   ),
 
-  // Zone 2: AI & Awards (Observatory Tower)
   2: (
     <StoryCard
-      title="AI & Awards"
-      tag="2025 · Prestasi Global"
-      headline="Pemenang kompetisi internasional AI Singapore & Google Gemma Challenge."
-      subline="Eksplorasi mendalam arsitektur model on-device, validasi prompt, dan aplikasi bertenaga LLM yang scalable."
+      title="Kabin Kerja / Tentang Saya"
+      tag="Profil · Perjalanan · Etos Kerja"
+      headline="Tempat ide dirancang, dibangun, dan diuji hingga ke detail terkecil."
+      subline="Eksplorasi perjalanan rekayasa perangkat lunak, peran tim, dan dedikasi membangun produk berkinerja tinggi."
       links={[
-        { to: "/about", label: "Buka halaman About", primary: true },
-        { to: "/projects", label: "Lihat karya AI" },
+        { to: "/about", label: "Buka halaman Tentang Saya", primary: true },
+        { to: "/projects", label: "Lihat Proyek" },
       ]}
     />
   ),
 
-  // Zone 3: Web3 & Crypto (Reactor Lab)
   3: (
     <StoryCard
-      title="Web3 & Crypto"
-      tag="Solana · ICP · On-chain"
-      headline="Perangkat trading presisi tinggi & game desentralisasi dengan on-chain randomness."
-      subline="Membangun ekosistem NinjaPump.ai, game multi-chain Roshambo, hingga trading bot di jaringan Bitcoin Runes."
+      title="Observatorium / Riset & Awards"
+      tag="2025 · Google Gemma & AI Singapore"
+      headline="Menembus batas eksplorasi kecerdasan buatan dan edge AI."
+      subline="Pemenang kompetisi internasional AI Singapore dan Google Gemma 3n Impact Challenge (The Ollama Prize di Kaggle)."
       links={[
-        { to: "/projects", label: "Lihat Proyek Web3", primary: true },
+        { to: "/about", label: "Lihat Penghargaan", primary: true },
+        { to: "/projects", label: "Karya AI" },
       ]}
     />
   ),
 
-  // Zone 4: Fullstack & Client (Workshop Barn)
   4: (
     <StoryCard
-      title="Fullstack & Client Systems"
-      tag="Produksi · Skalabilitas"
-      headline="Membawa produk dari sketsa ide dan purwarupa hingga deployment produksi."
-      subline="Pengalaman membangun sistem fullstack berkinerja tinggi, integrasi database serverless, dan UI responsif."
+      title="Laboratorium / Proyek Unggulan"
+      tag="Solana · Web3 · Fullstack SaaS"
+      headline="Mesin produksi teruji dengan throughput tinggi dan integrasi on-chain."
+      subline="Membangun ekosistem trading NinjaPump.ai, game desentralisasi Roshambo (ICP/Solana), hingga platform berita Diklik.co."
       links={[
-        { to: "/projects", label: "Lihat Portofolio", primary: true },
+        { to: "/projects", label: "Jelajahi Semua Proyek", primary: true },
         { to: "/contact", label: "Diskusi Proyek" },
       ]}
     />
   ),
 
-  // Zone 5: Lighthouse (Contact Outcropping)
   5: (
     <StoryCard
-      title="Mercusuar Kontak"
-      tag="Siap Kolaborasi"
+      title="Mercusuar / Terhubung"
+      tag="Kolaborasi · Peluang Terbuka"
       headline="Tertarik membangun proyek bersama atau membuka peluang kerja baru?"
-      subline="Pintu komunikasi selalu terbuka untuk diskusi teknis, kontrak lepas, maupun peran tim penuh waktu."
+      subline="Suar pemandu selalu aktif untuk diskusi teknis, kontrak lepas, maupun peran tim penuh waktu."
       links={[
-        { to: "/contact", label: "Kirim Pesan", primary: true },
+        { to: "/contact", label: "Kirim Pesan Sekarang", primary: true },
       ]}
     />
   ),

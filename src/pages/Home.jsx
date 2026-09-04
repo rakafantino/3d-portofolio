@@ -10,10 +10,10 @@ import islandBg from "../assets/images/island-bg.png";
 
 const ZONE_BUTTONS = [
   { stage: 1, name: "Awal", title: "Ringkasan Pulau" },
-  { stage: 2, name: "AI & Awards", title: "Zona 2" },
-  { stage: 3, name: "Web3 & Kripto", title: "Zona 3" },
-  { stage: 4, name: "Fullstack", title: "Zona 4" },
-  { stage: 5, name: "Kontak", title: "Zona 5" },
+  { stage: 2, name: "Tentang", title: "Kabin Kerja" },
+  { stage: 3, name: "Riset & Awards", title: "Observatorium" },
+  { stage: 4, name: "Proyek & Lab", title: "Reaktor Mesin" },
+  { stage: 5, name: "Kontak", title: "Mercusuar" },
 ];
 
 /**
@@ -56,20 +56,20 @@ const DEFAULT_LIGHTING = {
   sun: {
     color: "#FFB070",
     intensity: 2.8,
-    position: [6, 8, 4],
+    position: [11, 7.5, 8],
   },
   ambient: {
     color: "#FFE0C0",
-    intensity: 1.2,
+    intensity: 0.65,
   },
   hemi: {
     skyColor: "#E8B98A",
     groundColor: "#3A2A1C",
-    intensity: 0.9,
+    intensity: 0.65,
   },
   fill: {
     color: "#804828",
-    intensity: 0.8,
+    intensity: 0.3,
     position: [-5, 4, -4],
   },
 };

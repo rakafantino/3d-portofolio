@@ -77,54 +77,55 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     renderHome();
 
     expect(screen.getByRole("button", { name: /Awal/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /AI & Awards/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Web3 & Kripto/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Fullstack/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Tentang/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Riset & Awards/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Proyek & Lab/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Kontak/i })).toBeInTheDocument();
   });
 
-  it("switches to Zone 2 (AI & Awards) on button click, displaying link to /about", async () => {
+  it("switches to Zone 2 (Tentang / Kabin Kerja) on button click, displaying link to /about", async () => {
     renderHome();
 
-    const aiAwardsBtn = screen.getByRole("button", { name: /AI & Awards/i });
-    fireEvent.click(aiAwardsBtn);
+    const aboutBtn = screen.getByRole("button", { name: /Tentang/i });
+    fireEvent.click(aboutBtn);
 
-    const aboutLink = await screen.findByRole("link", { name: /Buka halaman About/i });
+    const aboutLink = await screen.findByRole("link", { name: /Buka halaman Tentang Saya/i });
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
-    expect(await screen.findByText(/AI Singapore & Google Gemma Challenge/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Tempat ide dirancang/i)).toBeInTheDocument();
   });
 
-  it("switches to Zone 3 (Web3 & Kripto) on button click, displaying link to /projects", async () => {
+  it("switches to Zone 3 (Riset & Awards / Observatorium) on button click, displaying awards link", async () => {
     renderHome();
 
-    const web3Btn = screen.getByRole("button", { name: /Web3 & Kripto/i });
-    fireEvent.click(web3Btn);
+    const awardsBtn = screen.getByRole("button", { name: /Riset & Awards/i });
+    fireEvent.click(awardsBtn);
 
-    const projectsLink = await screen.findByRole("link", { name: /Lihat Proyek Web3/i });
+    const awardsLink = await screen.findByRole("link", { name: /Lihat Penghargaan/i });
+    expect(awardsLink).toBeInTheDocument();
+    expect(awardsLink).toHaveAttribute("href", "/about");
+    expect(await screen.findByText(/Observatorium \/ Riset & Awards/i)).toBeInTheDocument();
+  });
+
+  it("switches to Zone 4 (Proyek & Lab / Reaktor) on button click, displaying projects link", async () => {
+    renderHome();
+
+    const projectsBtn = screen.getByRole("button", { name: /Proyek & Lab/i });
+    fireEvent.click(projectsBtn);
+
+    const projectsLink = await screen.findByRole("link", { name: /Jelajahi Semua Proyek/i });
     expect(projectsLink).toBeInTheDocument();
     expect(projectsLink).toHaveAttribute("href", "/projects");
     expect(await screen.findByText(/NinjaPump\.ai/i)).toBeInTheDocument();
   });
 
-  it("switches to Zone 4 (Fullstack) on button click, displaying portofolio link", async () => {
-    renderHome();
-
-    const fullstackBtn = screen.getByRole("button", { name: /Fullstack/i });
-    fireEvent.click(fullstackBtn);
-
-    const projectsLink = await screen.findByRole("link", { name: /Lihat Portofolio/i });
-    expect(projectsLink).toBeInTheDocument();
-    expect(projectsLink).toHaveAttribute("href", "/projects");
-  });
-
-  it("switches to Zone 5 (Mercusuar Kontak) on button click, displaying contact link", async () => {
+  it("switches to Zone 5 (Mercusuar / Kontak) on button click, displaying contact link", async () => {
     renderHome();
 
     const contactBtn = screen.getByRole("button", { name: /Kontak/i });
     fireEvent.click(contactBtn);
 
-    const contactLink = await screen.findByRole("link", { name: /Kirim Pesan/i });
+    const contactLink = await screen.findByRole("link", { name: /Kirim Pesan Sekarang/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
