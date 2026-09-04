@@ -66,8 +66,8 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
 
     expect(screen.getAllByText(/Raka Fantino/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Frontend & Fullstack Engineer/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Lihat Proyek/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Hubungi/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Semua Proyek/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Tentang Saya/i })).toBeInTheDocument();
 
     // No legacy cyber strings
     expect(screen.queryByText(/SYS_INIT/i)).not.toBeInTheDocument();
@@ -92,7 +92,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const aboutBtn = within(desktopNav).getByRole("button", { name: /Tentang/i });
     fireEvent.click(aboutBtn);
 
-    const aboutLink = await screen.findByRole("link", { name: /Selengkapnya/i });
+    const aboutLink = await screen.findByRole("link", { name: /Buka Halaman Tentang Saya/i });
     expect(aboutLink).toBeInTheDocument();
     expect(aboutLink).toHaveAttribute("href", "/about");
   });
@@ -104,7 +104,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const awardsBtn = within(desktopNav).getByRole("button", { name: /Riset & Awards/i });
     fireEvent.click(awardsBtn);
 
-    const awardsLink = await screen.findByRole("link", { name: /Selengkapnya/i });
+    const awardsLink = await screen.findByRole("link", { name: /Lihat Kredensial & Penghargaan/i });
     expect(awardsLink).toBeInTheDocument();
     expect(awardsLink).toHaveAttribute("href", "/about");
   });
@@ -116,7 +116,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const projectsBtn = within(desktopNav).getByRole("button", { name: /Proyek & Lab/i });
     fireEvent.click(projectsBtn);
 
-    const projectsLink = await screen.findByRole("link", { name: /Selengkapnya/i });
+    const projectsLink = await screen.findByRole("link", { name: /Jelajahi Arsip Proyek Lengkap/i });
     expect(projectsLink).toBeInTheDocument();
     expect(projectsLink).toHaveAttribute("href", "/projects");
   });
@@ -128,7 +128,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
     const contactBtn = within(desktopNav).getByRole("button", { name: /Kontak/i });
     fireEvent.click(contactBtn);
 
-    const contactLink = await screen.findByRole("link", { name: /Selengkapnya/i });
+    const contactLink = await screen.findByRole("link", { name: /Kirim Pesan Sekarang/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
   });
@@ -139,7 +139,7 @@ describe("Home Page - Workshop Island 3D World & Zone Story Cards", () => {
 
     const mobileNav = screen.getByRole("navigation", { name: /Navigasi zona mobile/i });
     expect(mobileNav).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Buka Fullstack & Web3/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Buka Raka Fantino/i })).toBeInTheDocument();
   });
 
   it("uses mobile island scale on small viewport", () => {

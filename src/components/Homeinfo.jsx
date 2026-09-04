@@ -2,129 +2,138 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 /**
- * Minimal StoryCard for Workshop Island zones.
- * Structure: eyebrow (landmark) -> title -> one-line description -> slim arrow link.
- * Uses warm dusk palette tokens only (island-dark/island-border/copper/cream).
+ * Noticeable & Clear StoryCard for Workshop Island.
+ * Features prominent, high-contrast action buttons so visitors instantly
+ * understand how to navigate deeper into the portfolio without confusion.
  */
-const StoryCard = ({ eyebrow, title, description, to, cta }) => (
-  <div className="w-full rounded-xl border border-island-border/60 bg-island-dark/85 backdrop-blur-md px-4 py-3 text-left shadow-lg shadow-black/20">
-    {eyebrow && (
-      <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-copper/90">
+const StoryCard = ({ eyebrow, title, description, to, ctaText }) => (
+  <div className="w-full rounded-2xl border border-island-border bg-[#18120C]/95 backdrop-blur-md p-4 sm:p-5 text-left shadow-2xl shadow-black/80 transition-all">
+    {/* Eyebrow / Landmark indicator */}
+    <div className="flex items-center gap-2 mb-1">
+      <span className="w-1.5 h-1.5 rounded-full bg-copper" aria-hidden="true" />
+      <span className="font-mono text-[10px] uppercase tracking-wider text-copper font-medium">
         {eyebrow}
-      </p>
-    )}
-    <h2 className="mt-0.5 font-serif text-lg leading-tight text-cream">
+      </span>
+    </div>
+
+    {/* Title */}
+    <h2 className="font-serif text-lg sm:text-xl font-bold text-cream tracking-tight leading-snug">
       {title}
     </h2>
+
+    {/* Crisp description */}
     {description && (
-      <p className="mt-1 text-xs leading-relaxed text-cream/70">{description}</p>
+      <p className="mt-1 text-xs text-cream/75 leading-relaxed">
+        {description}
+      </p>
     )}
-    {to && cta && (
-      <Link
-        to={to}
-        className="group mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-copper hover:text-copper-deep transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper rounded-sm"
-      >
-        <span>{cta}</span>
-        <span
-          aria-hidden="true"
-          className="transition-transform group-hover:translate-x-0.5"
+
+    {/* Prominent Action Button (Unmissable affordance) */}
+    {to && ctaText && (
+      <div className="mt-3.5 pt-2.5 border-t border-island-border/50">
+        <Link
+          to={to}
+          className="w-full inline-flex items-center justify-between px-3.5 py-2 rounded-lg bg-copper hover:bg-copper-deep text-cream text-xs font-medium tracking-wide shadow-md shadow-black/40 transition-all duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-island-copper"
         >
-          →
-        </span>
-      </Link>
+          <span>{ctaText}</span>
+          <span
+            aria-hidden="true"
+            className="text-island-sand text-sm transition-transform duration-200 group-hover:translate-x-1"
+          >
+            →
+          </span>
+        </Link>
+      </div>
     )}
   </div>
 );
 
 StoryCard.propTypes = {
-  eyebrow: PropTypes.string,
+  eyebrow: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
-  to: PropTypes.string,
-  cta: PropTypes.string,
-};
-
-const ArrowLink = ({ to, children, primary = false }) => (
-  <Link
-    to={to}
-    className={`group inline-flex items-center gap-1.5 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-island-copper rounded-sm ${
-      primary ? "text-copper hover:text-copper-deep" : "text-cream/70 hover:text-cream"
-    }`}
-  >
-    <span>{children}</span>
-    <span
-      aria-hidden="true"
-      className="transition-transform group-hover:translate-x-0.5"
-    >
-      →
-    </span>
-  </Link>
-);
-
-ArrowLink.propTypes = {
   to: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-  primary: PropTypes.bool,
+  ctaText: PropTypes.string.isRequired,
 };
 
 const renderContent = {
+  // Zone 1: Overview Awal
   1: (
-    <div className="w-full rounded-xl border border-island-border/60 bg-island-dark/85 backdrop-blur-md px-4 py-3 text-left shadow-lg shadow-black/20">
-      <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-copper/90">
-        Workshop Island
-      </p>
-      <h1 className="mt-0.5 font-serif text-lg leading-tight text-cream">
+    <div className="w-full rounded-2xl border border-island-border bg-[#18120C]/95 backdrop-blur-md p-4 sm:p-5 text-left shadow-2xl shadow-black/80">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-copper" aria-hidden="true" />
+        <span className="font-mono text-[10px] uppercase tracking-wider text-copper font-medium">
+          Diorama Pulau
+        </span>
+      </div>
+
+      <h1 className="font-serif text-xl sm:text-2xl font-bold text-cream tracking-tight leading-snug">
         Raka Fantino
       </h1>
-      <p className="mt-1 text-xs leading-relaxed text-cream/70">
-        Frontend &amp; Fullstack Engineer · AI &amp; Web3 Builder
+
+      <p className="mt-1 text-xs text-cream/75 leading-relaxed">
+        Frontend &amp; Fullstack Engineer · Spesialis AI &amp; Web3 Systems.
       </p>
-      <div className="mt-2 flex items-center gap-3">
-        <ArrowLink to="/projects" primary>
-          Lihat Proyek
-        </ArrowLink>
-        <ArrowLink to="/contact">Hubungi</ArrowLink>
+
+      <div className="mt-3.5 pt-2.5 border-t border-island-border/50 grid grid-cols-2 gap-2">
+        <Link
+          to="/projects"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-copper hover:bg-copper-deep text-cream text-xs font-medium shadow-md shadow-black/40 transition-all duration-200 group"
+        >
+          <span>Semua Proyek</span>
+          <span aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform">→</span>
+        </Link>
+        <Link
+          to="/about"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-island-border/80 bg-island-dark/60 hover:bg-island-dark text-cream/80 hover:text-cream text-xs font-medium transition-all duration-200"
+        >
+          <span>Tentang Saya</span>
+        </Link>
       </div>
     </div>
   ),
 
+  // Zone 2: Kabin Kerja -> Tentang Saya
   2: (
     <StoryCard
       eyebrow="Kabin Kerja"
       title="Tentang Saya"
-      description="Perjalanan, pengalaman & etos kerja di balik workshop ini."
+      description="Profil lengkap, perjalanan rekayasa sistem, pengalaman kerja, dan etos kerja di balik workshop ini."
       to="/about"
-      cta="Selengkapnya"
+      ctaText="Buka Halaman Tentang Saya"
     />
   ),
 
+  // Zone 3: Observatorium -> Riset AI & Penghargaan
   3: (
     <StoryCard
       eyebrow="Observatorium"
       title="Riset & Awards"
-      description="Pemenang kompetisi AI Singapore & Google Gemma 3n Impact."
+      description="Eksplorasi kecerdasan buatan, pemenang AI Singapore 2025 dan Google Gemma 3n Challenge di Kaggle."
       to="/about"
-      cta="Selengkapnya"
+      ctaText="Lihat Kredensial & Penghargaan"
     />
   ),
 
+  // Zone 4: Reaktor Mesin -> Proyek Unggulan
   4: (
     <StoryCard
       eyebrow="Reaktor Mesin"
       title="Proyek & Lab"
-      description="NinjaPump, Roshambo & proyek pilihan lainnya."
+      description="Arsitektur trading bot Solana NinjaPump.ai, game desentralisasi multi-chain, dan aplikasi produksi."
       to="/projects"
-      cta="Selengkapnya"
+      ctaText="Jelajahi Arsip Proyek Lengkap"
     />
   ),
 
+  // Zone 5: Mercusuar -> Kontak
   5: (
     <StoryCard
-      eyebrow="Mercusuar"
-      title="Kontak"
-      description="Terbuka untuk diskusi, kolaborasi, atau peran baru."
+      eyebrow="Mercusuar Pantai"
+      title="Hubungi Saya"
+      description="Saluran komunikasi terbuka untuk peluang kerja, kontrak proyek, atau kolaborasi teknis baru."
       to="/contact"
-      cta="Selengkapnya"
+      ctaText="Kirim Pesan Sekarang"
     />
   ),
 };
