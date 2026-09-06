@@ -16,6 +16,21 @@ if (typeof window.matchMedia !== "function") {
   window.matchMedia = makeQuery;
 }
 
+if (typeof globalThis.AnimationEvent === "undefined") {
+  class MockAnimationEvent extends Event {
+    constructor(type, eventInitDict = {}) {
+      super(type, eventInitDict);
+      this.animationName = eventInitDict.animationName || "";
+      this.elapsedTime = eventInitDict.elapsedTime || 0;
+      this.pseudoElement = eventInitDict.pseudoElement || "";
+    }
+  }
+  globalThis.AnimationEvent = MockAnimationEvent;
+  if (typeof window !== "undefined") {
+    window.AnimationEvent = MockAnimationEvent;
+  }
+}
+
 // Minimal Web Audio API mock for jsdom environment (consumed by audioEngine in Task 6)
 if (typeof globalThis.AudioContext === "undefined") {
   class MockAudioContext {
@@ -94,6 +109,17 @@ if (typeof globalThis.AudioContext === "undefined") {
   }
 
   globalThis.AudioContext = MockAudioContext;
+}
+
+if (typeof HTMLMediaElement !== "undefined") {
+  if (!HTMLMediaElement.prototype.play || String(HTMLMediaElement.prototype.play).includes("Not implemented")) {
+    HTMLMediaElement.prototype.play = function () {
+      return Promise.resolve();
+    };
+  }
+  if (!HTMLMediaElement.prototype.pause) {
+    HTMLMediaElement.prototype.pause = function () {};
+  }
 }
 
 // Minimal WebGLRenderingContext mock for jsdom canvas (prevents crashes when 3D contexts are probed)

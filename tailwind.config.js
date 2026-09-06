@@ -35,6 +35,36 @@ export default {
           DEFAULT: "#B4552D",
           deep: "#8F3E1F",
         },
+        parchment: {
+          DEFAULT: "#ECDDC0",
+          light: "#F9F1E2",
+          deep: "#DFCCA8",
+          dark: "#D4BC90",
+          border: "#8C6A43",
+          shadow: "#2A1B0E",
+        },
+        walnut: {
+          DEFAULT: "#241407",
+          sepia: "#4A301A",
+          faint: "#7A5328",
+        },
+        wax: {
+          DEFAULT: "#A83226",
+          crimson: "#8C271E",
+          dark: "#5C140E",
+          gold: "#C27D38",
+        },
+        brass: {
+          DEFAULT: "#B88746",
+          light: "#E6C687",
+          dark: "#78531E",
+          shadow: "#3A2514",
+        },
+        wood: {
+          DEFAULT: "#140C06",
+          desk: "#1A0F08",
+          grain: "#24150A",
+        },
       },
       fontFamily: {
         worksans: ["Work Sans", "sans-serif"],

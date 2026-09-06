@@ -1,51 +1,52 @@
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
+import ParchmentRibbon from "./ParchmentRibbon";
+import ParchmentScroll from "./ParchmentScroll";
 
-/**
- * Noticeable & Clear StoryCard for Workshop Island.
- * Features prominent, high-contrast action buttons so visitors instantly
- * understand how to navigate deeper into the portfolio without confusion.
- */
-const StoryCard = ({ eyebrow, title, description, to, ctaText }) => (
-  <div className="w-full rounded-2xl border border-island-border bg-[#18120C]/95 backdrop-blur-md p-4 sm:p-5 text-left shadow-2xl shadow-black/80 transition-all">
-    {/* Eyebrow / Landmark indicator */}
-    <div className="flex items-center gap-2 mb-1">
-      <span className="w-1.5 h-1.5 rounded-full bg-copper" aria-hidden="true" />
-      <span className="font-mono text-[10px] uppercase tracking-wider text-copper font-medium">
+const StoryCard = ({
+  eyebrow,
+  title,
+  description,
+  to,
+  ctaText,
+  isOpen = true,
+  onRollComplete,
+}) => (
+  <ParchmentScroll isOpen={isOpen} onRollComplete={onRollComplete}>
+    <div className="mb-1 flex items-center gap-2">
+      <span className="w-5 h-px bg-[#8C6A43]/50" aria-hidden="true" />
+      <span className="font-serif italic text-xs tracking-wider uppercase text-[#8C3E14] font-semibold">
         {eyebrow}
       </span>
+      <span className="w-5 h-px bg-[#8C6A43]/50" aria-hidden="true" />
     </div>
 
-    {/* Title */}
-    <h2 className="font-serif text-lg sm:text-xl font-bold text-cream tracking-tight leading-snug">
+    <h2 className="font-serif text-lg sm:text-xl font-bold text-[#2A1608] tracking-tight leading-snug">
       {title}
     </h2>
 
-    {/* Crisp description */}
     {description && (
-      <p className="mt-1 text-xs text-cream/75 leading-relaxed">
+      <p className="mt-1.5 text-xs sm:text-[13px] text-[#4A301A] font-sans leading-relaxed">
         {description}
       </p>
     )}
 
-    {/* Prominent Action Button (Unmissable affordance) */}
     {to && ctaText && (
-      <div className="mt-3.5 pt-2.5 border-t border-island-border/50">
-        <Link
+      <div className="mt-3.5 pt-2.5 border-t border-[#8C6A43]/40 flex justify-center">
+        <ParchmentRibbon
+          variant="tab"
           to={to}
-          className="w-full inline-flex items-center justify-between px-3.5 py-2 rounded-lg bg-copper hover:bg-copper-deep text-cream text-xs font-medium tracking-wide shadow-md shadow-black/40 transition-all duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-island-copper"
+          ariaLabel={ctaText}
+          className="w-full justify-center"
         >
           <span>{ctaText}</span>
-          <span
-            aria-hidden="true"
-            className="text-island-sand text-sm transition-transform duration-200 group-hover:translate-x-1"
-          >
+          <span aria-hidden="true" className="ml-1.5">
             →
           </span>
-        </Link>
+        </ParchmentRibbon>
       </div>
     )}
-  </div>
+  </ParchmentScroll>
 );
 
 StoryCard.propTypes = {
@@ -54,96 +55,114 @@ StoryCard.propTypes = {
   description: PropTypes.string,
   to: PropTypes.string.isRequired,
   ctaText: PropTypes.string.isRequired,
+  isOpen: PropTypes.bool,
+  onRollComplete: PropTypes.func,
 };
 
-const renderContent = {
-  // Zone 1: Overview Awal
-  1: (
-    <div className="w-full rounded-2xl border border-island-border bg-[#18120C]/95 backdrop-blur-md p-4 sm:p-5 text-left shadow-2xl shadow-black/80">
-      <div className="flex items-center gap-2 mb-1">
-        <span className="w-1.5 h-1.5 rounded-full bg-copper" aria-hidden="true" />
-        <span className="font-mono text-[10px] uppercase tracking-wider text-copper font-medium">
-          Diorama Pulau
-        </span>
-      </div>
+const Homeinfo = ({
+  currentStage,
+  isOpen = true,
+  onRollComplete,
+  onStartTour = () => {},
+}) => {
+  const { t } = useLanguage();
 
-      <h1 className="font-serif text-xl sm:text-2xl font-bold text-cream tracking-tight leading-snug">
-        Raka Fantino
-      </h1>
+  const renderContent = {
+    1: (
+      <ParchmentScroll isOpen={isOpen} onRollComplete={onRollComplete}>
+        <div className="mb-1 flex items-center gap-2">
+          <span className="w-5 h-px bg-[#8C6A43]/50" aria-hidden="true" />
+          <span className="font-serif italic text-xs tracking-wider uppercase text-[#8C3E14] font-semibold">
+            {t("homeEyebrow")}
+          </span>
+          <span className="w-5 h-px bg-[#8C6A43]/50" aria-hidden="true" />
+        </div>
 
-      <p className="mt-1 text-xs text-cream/75 leading-relaxed">
-        Frontend &amp; Fullstack Engineer · Spesialis AI &amp; Web3 Systems.
-      </p>
+        <h1 className="font-serif text-lg sm:text-xl font-bold text-[#2A1608] tracking-tight leading-snug">
+          {t("zone1Title")}
+        </h1>
 
-      <div className="mt-3.5 pt-2.5 border-t border-island-border/50 grid grid-cols-2 gap-2">
-        <Link
-          to="/projects"
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-copper hover:bg-copper-deep text-cream text-xs font-medium shadow-md shadow-black/40 transition-all duration-200 group"
-        >
-          <span>Semua Proyek</span>
-          <span aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform">→</span>
-        </Link>
-        <Link
-          to="/about"
-          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-island-border/80 bg-island-dark/60 hover:bg-island-dark text-cream/80 hover:text-cream text-xs font-medium transition-all duration-200"
-        >
-          <span>Tentang Saya</span>
-        </Link>
-      </div>
-    </div>
-  ),
+        <p className="mt-1.5 text-xs sm:text-[13px] text-[#4A301A] font-sans leading-relaxed">
+          {t("zone1Sub")}
+        </p>
 
-  // Zone 2: Kabin Kerja -> Tentang Saya
-  2: (
-    <StoryCard
-      eyebrow="Kabin Kerja"
-      title="Tentang Saya"
-      description="Profil lengkap, perjalanan rekayasa sistem, pengalaman kerja, dan etos kerja di balik workshop ini."
-      to="/about"
-      ctaText="Buka Halaman Tentang Saya"
-    />
-  ),
+        <div className="mt-3.5 pt-2.5 border-t border-[#8C6A43]/40">
+          <ParchmentRibbon
+            variant="tab"
+            onClick={() => {
+              if (typeof onStartTour === "function") {
+                onStartTour();
+              }
+            }}
+            ariaLabel={t("zone1Action")}
+            className="w-full justify-center"
+          >
+            <span>{t("zone1Action")}</span>
+            <span aria-hidden="true" className="ml-1.5">
+              →
+            </span>
+          </ParchmentRibbon>
+        </div>
+      </ParchmentScroll>
+    ),
 
-  // Zone 3: Observatorium -> Riset AI & Penghargaan
-  3: (
-    <StoryCard
-      eyebrow="Observatorium"
-      title="Riset & Awards"
-      description="Eksplorasi kecerdasan buatan, pemenang AI Singapore 2025 dan Google Gemma 3n Challenge di Kaggle."
-      to="/about"
-      ctaText="Lihat Kredensial & Penghargaan"
-    />
-  ),
+    2: (
+      <StoryCard
+        eyebrow={t("zone2Eyebrow")}
+        title={t("zone2Title")}
+        description={t("zone2Desc")}
+        to="/about"
+        ctaText={t("zone2Cta")}
+        isOpen={isOpen}
+        onRollComplete={onRollComplete}
+      />
+    ),
 
-  // Zone 4: Reaktor Mesin -> Proyek Unggulan
-  4: (
-    <StoryCard
-      eyebrow="Reaktor Mesin"
-      title="Proyek & Lab"
-      description="Arsitektur trading bot Solana NinjaPump.ai, game desentralisasi multi-chain, dan aplikasi produksi."
-      to="/projects"
-      ctaText="Jelajahi Arsip Proyek Lengkap"
-    />
-  ),
+    3: (
+      <StoryCard
+        eyebrow={t("zone3Eyebrow")}
+        title={t("zone3Title")}
+        description={t("zone3Desc")}
+        to="/about#awards"
+        ctaText={t("zone3Cta")}
+        isOpen={isOpen}
+        onRollComplete={onRollComplete}
+      />
+    ),
 
-  // Zone 5: Mercusuar -> Kontak
-  5: (
-    <StoryCard
-      eyebrow="Mercusuar Pantai"
-      title="Hubungi Saya"
-      description="Saluran komunikasi terbuka untuk peluang kerja, kontrak proyek, atau kolaborasi teknis baru."
-      to="/contact"
-      ctaText="Kirim Pesan Sekarang"
-    />
-  ),
-};
+    4: (
+      <StoryCard
+        eyebrow={t("zone4Eyebrow")}
+        title={t("zone4Title")}
+        description={t("zone4Desc")}
+        to="/projects"
+        ctaText={t("zone4Cta")}
+        isOpen={isOpen}
+        onRollComplete={onRollComplete}
+      />
+    ),
 
-const Homeinfo = ({ currentStage }) => {
+    5: (
+      <StoryCard
+        eyebrow={t("zone5Eyebrow")}
+        title={t("zone5Title")}
+        description={t("zone5Desc")}
+        to="/contact"
+        ctaText={t("zone5Cta")}
+        isOpen={isOpen}
+        onRollComplete={onRollComplete}
+      />
+    ),
+  };
+
   return renderContent[currentStage] || null;
 };
 
 Homeinfo.propTypes = {
   currentStage: PropTypes.number,
+  isOpen: PropTypes.bool,
+  onRollComplete: PropTypes.func,
+  onStartTour: PropTypes.func,
 };
 
 export default Homeinfo;

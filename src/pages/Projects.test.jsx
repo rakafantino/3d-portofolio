@@ -1,13 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { LanguageProvider } from "../context/LanguageContext.jsx";
 import Projects from "./Projects";
 
 describe("Projects Page - Warm Editorial Bento Grid & Project Drawer", () => {
   const renderProjects = () => {
     return render(
       <MemoryRouter>
-        <Projects />
+        <LanguageProvider>
+          <Projects />
+        </LanguageProvider>
       </MemoryRouter>
     );
   };
@@ -76,7 +79,11 @@ describe("Projects Page - Warm Editorial Bento Grid & Project Drawer", () => {
 
     const drawerScope = within(drawer);
     expect(drawerScope.getByText("NinjaPump.ai")).toBeInTheDocument();
-    expect(drawerScope.getByText(/solana trading toolkit and dashboard/i)).toBeInTheDocument();
+    expect(
+      drawerScope.getByText(
+        /toolkit dan dashboard trading solana|solana trading toolkit and dashboard/i
+      )
+    ).toBeInTheDocument();
     expect(drawerScope.getByRole("link", { name: /buka tautan|open in new tab/i })).toHaveAttribute("href", "https://ninjapump.ai");
   });
 
@@ -105,11 +112,32 @@ describe("Projects Page - Warm Editorial Bento Grid & Project Drawer", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("renders the warm editorial callout linking to /contact", () => {
+  it("renders SubpageNav back link to '/' and does NOT render a header with nav link 'Tentang'", () => {
     renderProjects();
-    expect(screen.getByText(/punya proyek atau ide kolaborasi\?|have a project in mind\?/i)).toBeInTheDocument();
+
+    const backLink = screen.getByRole("link", { name: /kembali ke pulau|back to island/i });
+    expect(backLink).toBeInTheDocument();
+    expect(backLink).toHaveAttribute("href", "/");
+
+    expect(screen.queryByRole("link", { name: /^Tentang$/i })).not.toBeInTheDocument();
+  });
+
+  it("triggers exit roll-up when user clicks back to island", () => {
+    renderProjects();
+    const backLink = screen.getByRole("link", { name: /kembali ke pulau|back to island/i });
+    fireEvent.click(backLink);
+
+    const rollUpNode = document.querySelector(".animate-parchment-rollup");
+    expect(rollUpNode).toBeInTheDocument();
+  });
+
+  it("renders the warm editorial callout linking to /contact with ParchmentRibbon tab", () => {
+    renderProjects();
+    expect(screen.getByText(/punya ide seru yang pengen diwujudin\?|punya proyek atau ide kolaborasi\?|have an exciting idea to bring to life\?|have a project or collaboration in mind\?/i)).toBeInTheDocument();
     const contactLink = screen.getByRole("link", { name: /hubungi saya|kontak/i });
     expect(contactLink).toBeInTheDocument();
     expect(contactLink).toHaveAttribute("href", "/contact");
+    expect(contactLink).toHaveAttribute("data-testid", "parchment-ribbon");
+    expect(contactLink).toHaveAttribute("data-variant", "tab");
   });
 });

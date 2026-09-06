@@ -17,6 +17,7 @@ module.exports = {
         "src/pages/index.js",
         "src/assets/icons/index.js",
         "src/assets/images/index.js",
+        "src/context/LanguageContext.jsx",
       ],
       rules: {
         "react-refresh/only-export-components": "off",

@@ -25,6 +25,154 @@
   --ink-soft: #4a4034;
   --ink-faint: #7a6e5e;
   --copper: #b4552d;
+
+  --parchment: #ecddc0;
+  --parchment-light: #f9f1e2;
+  --parchment-deep: #dfcca8;
+  --parchment-dark: #d4bc90;
+  --parchment-border: #8c6a43;
+  --parchment-shadow: #2a1b0e;
+
+  --walnut: #241407;
+  --walnut-sepia: #4a301a;
+  --walnut-faint: #7a5328;
+
+  --wax: #a83226;
+  --wax-crimson: #8c271e;
+  --wax-dark: #5c140e;
+  --wax-gold: #c27d38;
+
+  --brass: #b88746;
+  --brass-light: #e6c687;
+  --brass-dark: #78531e;
+  --brass-shadow: #3a2514;
+
+  --wood: #140c06;
+  --wood-desk: #1a0f08;
+  --wood-grain: #24150a;
+}
+
+@keyframes parchmentUnroll {
+  0% {
+    transform: scaleY(0.02);
+    opacity: 0.5;
+  }
+  65% {
+    transform: scaleY(1.035);
+    opacity: 1;
+  }
+  85% {
+    transform: scaleY(0.985);
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes parchmentContentFade {
+  0%, 42% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes parchmentTopRollSettle {
+  0% {
+    transform: translateY(-2px) scale(0.98);
+  }
+  65% {
+    transform: translateY(0.5px) scale(1.005);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes parchmentTopRollRise {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  35% {
+    transform: translateY(0.5px) scale(1.005);
+  }
+  100% {
+    transform: translateY(-2px) scale(0.98);
+  }
+}
+
+@keyframes parchmentRollUp {
+  0% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  30% {
+    transform: scaleY(1.02);
+  }
+  100% {
+    transform: scaleY(0.02);
+    opacity: 0.2;
+  }
+}
+
+@keyframes parchmentContentFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.animate-parchment-unroll {
+  transform-origin: top center;
+  animation: parchmentUnroll 0.68s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+.animate-parchment-rollup {
+  transform-origin: top center;
+  animation: parchmentRollUp 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  will-change: transform;
+}
+
+.animate-parchment-content {
+  animation: parchmentContentFade 0.72s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-parchment-content-exit {
+  animation: parchmentContentFadeOut 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+.animate-parchment-top-roll {
+  animation: parchmentTopRollSettle 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-parchment-top-roll-rise {
+  animation: parchmentTopRollRise 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-parchment-unroll,
+  .animate-parchment-rollup,
+  .animate-parchment-content,
+  .animate-parchment-content-exit,
+  .animate-parchment-top-roll,
+  .animate-parchment-top-roll-rise {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }
 
 body {
@@ -53,6 +201,35 @@ body:has(.card[data-color="green"]:hover) {
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .bg-cartographer-desk {
+    background-color: #140C06;
+    background-image:
+      radial-gradient(circle at 50% -20%, rgba(200, 140, 75, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 120%, rgba(26, 15, 8, 0.95) 0%, rgba(15, 8, 3, 0.98) 70%),
+      repeating-linear-gradient(
+        90deg,
+        rgba(15, 8, 3, 0.6) 0px,
+        rgba(15, 8, 3, 0.6) 2px,
+        transparent 2px,
+        transparent 160px
+      ),
+      repeating-linear-gradient(
+        180deg,
+        rgba(36, 21, 10, 0.35) 0px,
+        rgba(29, 18, 8, 0.45) 4px,
+        rgba(20, 12, 6, 0.6) 8px,
+        rgba(29, 18, 8, 0.45) 12px,
+        rgba(36, 21, 10, 0.35) 16px
+      ),
+      linear-gradient(
+        180deg,
+        #1A0F08 0%,
+        #140C06 50%,
+        #100904 100%
+      );
+    background-attachment: fixed;
   }
 
   .max-container {

@@ -22,3 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# harness & agent setups
+.omo/
+.playwright-mcp/
+.trae/
+3d-models
+3d-models/
+.codegraph
+opencode.json
+bun.lock
+AGENTS.md
+.omocache/
+docs/

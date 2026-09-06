@@ -1,102 +1,115 @@
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
-const ZONE_DATA = {
-  1: {
-    eyebrow: "Diorama Pulau",
-    title: "Raka Fantino",
-    actionLabel: "Lihat Proyek",
-    to: "/projects",
-  },
-  2: {
-    eyebrow: "Kabin Kerja",
-    title: "Tentang Saya",
-    actionLabel: "Buka Halaman",
-    to: "/about",
-  },
-  3: {
-    eyebrow: "Observatorium",
-    title: "Riset & Awards",
-    actionLabel: "Lihat Awards",
-    to: "/about",
-  },
-  4: {
-    eyebrow: "Reaktor Mesin",
-    title: "Proyek & Lab",
-    actionLabel: "Buka Proyek",
-    to: "/projects",
-  },
-  5: {
-    eyebrow: "Mercusuar",
-    title: "Kontak",
-    actionLabel: "Kirim Pesan",
-    to: "/contact",
-  },
-};
-
-/**
- * MobileSmartDock
- * Ultra-compact unified dock for mobile viewports.
- * Features an unmissable call-to-action banner that invites users to tap and enter.
- */
-const MobileSmartDock = ({ currentStage, onSelectStage, isCameraMoving }) => {
-  const currentZone = ZONE_DATA[currentStage] || ZONE_DATA[1];
+const MobileSmartDock = ({ currentStage, onSelectStage, isVisible = true, className = "" }) => {
+  const { t } = useLanguage();
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 pb-[max(0.6rem,env(safe-area-inset-bottom))] px-3 pointer-events-auto select-none">
-      <div className="w-full max-w-md mx-auto flex flex-col gap-1.5 p-2 rounded-2xl border border-island-border/90 bg-[#16120D]/95 backdrop-blur-md shadow-2xl shadow-black/90">
-        {/* Row 1: High-Affordance Tap Banner */}
-        <Link
-          to={currentZone.to}
-          aria-label={`Buka ${currentZone.title}`}
-          className={`flex items-center justify-between px-3.5 py-2 rounded-xl border border-island-border/70 bg-gradient-to-r from-island-dark/90 to-island-dusk/90 active:scale-98 hover:border-island-copper transition-all duration-200 group ${
-            isCameraMoving ? "opacity-30 pointer-events-none" : "opacity-100"
-          }`}
+    <div
+      className={`md:hidden fixed bottom-0 left-0 right-0 z-30 pb-[max(0.8rem,env(safe-area-inset-bottom))] px-4 flex justify-center select-none transition-opacity duration-1000 ease-out ${
+        isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      } ${className}`}
+    >
+      <nav
+        aria-label={t("mobileNavAria")}
+        data-tour-target="astrolabe-nav"
+        className="relative inline-flex items-center justify-between gap-3 px-3.5 py-1.5 filter drop-shadow-[0_10px_24px_rgba(0,0,0,0.9)] mx-auto"
+        style={{
+          background: "linear-gradient(180deg, #3A2514 0%, #201309 60%, #140C06 100%)",
+          borderTop: "2px solid #B88746",
+          borderBottom: "2px solid #51381E",
+          borderLeft: "2px solid #78531E",
+          borderRight: "2px solid #78531E",
+          borderRadius: "6px",
+          boxShadow:
+            "inset 0 1px 2px rgba(230,198,135,0.45), inset 0 -2px 4px rgba(0,0,0,0.9), 0 0 16px rgba(184,135,70,0.25)",
+        }}
+      >
+        <span
+          aria-hidden="true"
+          className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-sm bg-[#B88746] border border-[#51381E] shadow-[0_1px_2px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.6)]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-sm bg-[#B88746] border border-[#51381E] shadow-[0_1px_2px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.6)]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute -bottom-1 -left-1 w-2.5 h-2.5 rounded-sm bg-[#B88746] border border-[#51381E] shadow-[0_1px_2px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.6)]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute -bottom-1 -right-1 w-2.5 h-2.5 rounded-sm bg-[#B88746] border border-[#51381E] shadow-[0_1px_2px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.6)]"
+        />
+
+        <button
+          type="button"
+          onClick={() => onSelectStage(currentStage === 1 ? 5 : currentStage - 1)}
+          aria-label={t("mobilePrevAria")}
+          className="group relative w-8 h-8 flex items-center justify-center text-[#D4B688] hover:text-[#FFE3A8] active:text-[#FFDF9E] rounded-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B88746] shrink-0 active:scale-95"
+          style={{
+            background: "radial-gradient(circle at 35% 30%, #51381E 0%, #3A2514 50%, #1D1208 100%)",
+            border: "1px solid #9E7A43",
+            boxShadow: "inset 0 1px 1px rgba(255,215,140,0.35), 0 1px 3px rgba(0,0,0,0.7)",
+          }}
         >
-          <div className="flex flex-col truncate pr-2">
-            <span className="font-mono text-[9px] uppercase tracking-wider text-copper font-semibold">
-              {currentZone.eyebrow}
-            </span>
-            <span className="font-serif text-sm font-bold text-cream truncate">
-              {currentZone.title}
-            </span>
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-copper hover:bg-copper-deep text-cream text-xs font-semibold shadow-md shadow-black/30 shrink-0">
-            <span>{currentZone.actionLabel}</span>
-            <span aria-hidden="true" className="group-hover:translate-x-0.5 transition-transform">→</span>
-          </div>
-        </Link>
-
-        {/* Row 2: Carousel Navigation (Prev / Counter / Next) */}
-        <nav aria-label="Navigasi zona mobile" className="flex items-center justify-between gap-2 w-full pt-0.5">
-          <button
-            type="button"
-            onClick={() => onSelectStage(currentStage === 1 ? 5 : currentStage - 1)}
-            aria-label="Zona Sebelumnya"
-            className="flex-1 py-1.5 text-xs font-sans rounded-lg bg-island-border/30 hover:bg-island-border/60 text-cream/75 flex items-center justify-center gap-1 transition-colors"
+          <span
+            aria-hidden="true"
+            className="font-serif font-extrabold text-base leading-none select-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] transition-transform group-hover:-translate-x-0.5"
           >
-            <span aria-hidden="true">←</span>
-            <span>Sebelumnya</span>
-          </button>
+            ‹
+          </span>
+        </button>
 
-          <div className="px-3 py-1 rounded-md bg-black/40 border border-island-border/50 font-mono text-xs flex items-center gap-1.5 shrink-0">
-            <span className="text-copper font-bold">{`0${currentStage}`}</span>
-            <span className="text-cream/30">/</span>
-            <span className="text-cream/60">05</span>
-          </div>
+        <div
+          className="relative flex items-center gap-1.5 px-4 py-1 rounded-[3px] font-mono text-xs shrink-0 tracking-wider shadow-inner select-none"
+          style={{
+            background: "linear-gradient(180deg, #241407 0%, #150B04 100%)",
+            border: "1px solid #8C6A43",
+            boxShadow: "inset 0 1.5px 3px rgba(0,0,0,0.95), 0 1px 0 rgba(255,215,140,0.15)",
+          }}
+        >
+          <span
+            aria-hidden="true"
+            className="absolute top-1 left-1 w-1 h-1 rounded-full bg-[#E6C687] shadow-[0_0_1px_rgba(0,0,0,0.9)]"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute top-1 right-1 w-1 h-1 rounded-full bg-[#E6C687] shadow-[0_0_1px_rgba(0,0,0,0.9)]"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute bottom-1 left-1 w-1 h-1 rounded-full bg-[#E6C687] shadow-[0_0_1px_rgba(0,0,0,0.9)]"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute bottom-1 right-1 w-1 h-1 rounded-full bg-[#E6C687] shadow-[0_0_1px_rgba(0,0,0,0.9)]"
+          />
 
-          <button
-            type="button"
-            onClick={() => onSelectStage(currentStage === 5 ? 1 : currentStage + 1)}
-            aria-label="Zona Selanjutnya"
-            className="flex-1 py-1.5 text-xs font-sans rounded-lg bg-island-border/30 hover:bg-island-border/60 text-cream/75 flex items-center justify-center gap-1 transition-colors"
+          <span className="text-[#E6C687] font-bold drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{`0${currentStage}`}</span>
+          <span className="text-[#947247]/60 font-semibold">/</span>
+          <span className="text-[#C2A378] font-medium">05</span>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onSelectStage(currentStage === 5 ? 1 : currentStage + 1)}
+          aria-label={t("mobileNextAria")}
+          className="group relative w-8 h-8 flex items-center justify-center text-[#D4B688] hover:text-[#FFE3A8] active:text-[#FFDF9E] rounded-sm transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B88746] shrink-0 active:scale-95"
+          style={{
+            background: "radial-gradient(circle at 35% 30%, #51381E 0%, #3A2514 50%, #1D1208 100%)",
+            border: "1px solid #9E7A43",
+            boxShadow: "inset 0 1px 1px rgba(255,215,140,0.35), 0 1px 3px rgba(0,0,0,0.7)",
+          }}
+        >
+          <span
+            aria-hidden="true"
+            className="font-serif font-extrabold text-base leading-none select-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] transition-transform group-hover:translate-x-0.5"
           >
-            <span>Selanjutnya</span>
-            <span aria-hidden="true">→</span>
-          </button>
-        </nav>
-      </div>
+            ›
+          </span>
+        </button>
+      </nav>
     </div>
   );
 };
@@ -105,6 +118,8 @@ MobileSmartDock.propTypes = {
   currentStage: PropTypes.number.isRequired,
   onSelectStage: PropTypes.func.isRequired,
   isCameraMoving: PropTypes.bool,
+  isVisible: PropTypes.bool,
+  className: PropTypes.string,
 };
 
 export default MobileSmartDock;

@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { LanguageProvider } from "../context/LanguageContext.jsx";
 import About from "./About";
 
 describe("About Page - Warm Light Editorial Profile", () => {
@@ -16,7 +17,9 @@ describe("About Page - Warm Light Editorial Profile", () => {
   const renderAbout = () => {
     return render(
       <MemoryRouter>
-        <About />
+        <LanguageProvider>
+          <About />
+        </LanguageProvider>
       </MemoryRouter>
     );
   };
@@ -36,21 +39,31 @@ describe("About Page - Warm Light Editorial Profile", () => {
     expect(
       screen.getByText("Google - The Gemma 3n Impact Challenge (The Ollama Prize)")
     ).toBeInTheDocument();
-    expect(screen.getByText("Basic Web Programming")).toBeInTheDocument();
+    expect(screen.getByText("Top 50 Accelerate With Llama")).toBeInTheDocument();
 
     expect(screen.getByText("AI Singapore")).toBeInTheDocument();
     expect(screen.getByText("Kaggle")).toBeInTheDocument();
-    expect(screen.getByText("Dicoding")).toBeInTheDocument();
+    expect(screen.getByText("Meta x Hacktiv8")).toBeInTheDocument();
     expect(screen.queryByText(/\[ PRIZE_VERIFIED \]/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/HONOR: FIRST TIER/i)).not.toBeInTheDocument();
   });
 
-  it("renders categorized skills grouped by type", () => {
+  it("renders categorized skills grouped by category", () => {
     renderAbout();
-    expect(screen.getByText("Frontend")).toBeInTheDocument();
-    expect(screen.getByText("Backend")).toBeInTheDocument();
+    expect(screen.getByText("Frontend & UI")).toBeInTheDocument();
+    expect(screen.getByText("Backend & Runtimes")).toBeInTheDocument();
+    expect(screen.getByText("Database & ORM")).toBeInTheDocument();
+    expect(screen.getByText("DevOps, Cloud & Automation")).toBeInTheDocument();
+    expect(screen.getByText("Web3 & Design")).toBeInTheDocument();
+
     expect(screen.getByText("React")).toBeInTheDocument();
+    expect(screen.getByText("Next.js")).toBeInTheDocument();
     expect(screen.getByText("Node.js")).toBeInTheDocument();
+    expect(screen.getByText("Hono")).toBeInTheDocument();
+    expect(screen.getByText("Neon")).toBeInTheDocument();
+    expect(screen.getByText("Drizzle ORM")).toBeInTheDocument();
+    expect(screen.getByText("Dokploy")).toBeInTheDocument();
+    expect(screen.getByText("Solana")).toBeInTheDocument();
   });
 
   it("renders authentic company names across tech and operations experiences", () => {
@@ -62,20 +75,37 @@ describe("About Page - Warm Light Editorial Profile", () => {
     expect(screen.getByText("PT Mitra Cahaya Sentosa")).toBeInTheDocument();
   });
 
-  it("strictly contains NO legacy fake corporate company names", () => {
+  it("strictly contains NO legacy fake corporate company names in experience", () => {
     renderAbout();
     expect(screen.queryByText(/Starbucks/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Tesla/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Shopify/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Meta/i)).not.toBeInTheDocument();
   });
 
-  it("renders the warm editorial contact callout linking to /contact", () => {
+  it("renders SubpageNav back link to '/' with Indonesian default text", () => {
+    renderAbout();
+    const backLink = screen.getByRole("link", { name: /kembali ke pulau|back to island/i });
+    expect(backLink).toBeInTheDocument();
+    expect(backLink).toHaveAttribute("href", "/");
+  });
+
+  it("triggers exit roll-up when user clicks back to island", () => {
+    renderAbout();
+    const backLink = screen.getByRole("link", { name: /kembali ke pulau|back to island/i });
+    fireEvent.click(backLink);
+
+    const rollUpNode = document.querySelector(".animate-parchment-rollup");
+    expect(rollUpNode).toBeInTheDocument();
+  });
+
+  it("renders the warm editorial contact callout linking to /contact with ParchmentRibbon tab", () => {
     renderAbout();
     const contactLinks = screen.getAllByRole("link", { name: /hubungi saya|kontak|contact/i });
     expect(contactLinks.length).toBeGreaterThan(0);
     const linkToContact = contactLinks.find((el) => el.getAttribute("href") === "/contact");
     expect(linkToContact).toBeDefined();
     expect(linkToContact).toHaveAttribute("href", "/contact");
+    expect(linkToContact).toHaveAttribute("data-testid", "parchment-ribbon");
+    expect(linkToContact).toHaveAttribute("data-variant", "tab");
   });
 });

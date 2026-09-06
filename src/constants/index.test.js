@@ -17,9 +17,30 @@ describe("src/constants/index schema and authentic CV data", () => {
         expect(skill.name.trim().length).toBeGreaterThan(0);
         expect(typeof skill.type).toBe("string");
         expect(skill.type.trim().length).toBeGreaterThan(0);
+        expect(typeof skill.category).toBe("string");
+        expect(skill.category.trim().length).toBeGreaterThan(0);
+        expect(typeof skill.iconKey).toBe("string");
+        expect(skill.iconKey.trim().length).toBeGreaterThan(0);
         expect(skill.imageUrl).toBeDefined();
         expect(typeof skill.imageUrl).toBe("string");
       });
+    });
+
+    it("contains all required categories and representative technologies", () => {
+      const categories = new Set(skills.map((s) => s.category));
+      expect(categories).toContain("Frontend & UI");
+      expect(categories).toContain("Backend & Runtimes");
+      expect(categories).toContain("Database & ORM");
+      expect(categories).toContain("DevOps, Cloud & Automation");
+      expect(categories).toContain("Web3 & Design");
+
+      const skillNames = skills.map((s) => s.name);
+      expect(skillNames).toContain("React");
+      expect(skillNames).toContain("Next.js");
+      expect(skillNames).toContain("Node.js");
+      expect(skillNames).toContain("PostgreSQL");
+      expect(skillNames).toContain("Docker");
+      expect(skillNames).toContain("Solana");
     });
   });
 
@@ -31,8 +52,16 @@ describe("src/constants/index schema and authentic CV data", () => {
       expect(experiences.length).toBeGreaterThanOrEqual(4);
 
       experiences.forEach((experience) => {
-        expect(typeof experience.title).toBe("string");
-        expect(experience.title.trim().length).toBeGreaterThan(0);
+        if (typeof experience.title === "object") {
+          expect(typeof experience.title.id).toBe("string");
+          expect(experience.title.id.trim().length).toBeGreaterThan(0);
+          expect(typeof experience.title.en).toBe("string");
+          expect(experience.title.en.trim().length).toBeGreaterThan(0);
+        } else {
+          expect(typeof experience.title).toBe("string");
+          expect(experience.title.trim().length).toBeGreaterThan(0);
+        }
+
         expect(typeof experience.company_name).toBe("string");
         expect(experience.company_name.trim().length).toBeGreaterThan(0);
         // Regression guard: `icon` was dropped with the dead image assets (B2).
@@ -42,8 +71,11 @@ describe("src/constants/index schema and authentic CV data", () => {
         expect(Array.isArray(experience.points)).toBe(true);
         expect(experience.points.length).toBeGreaterThan(0);
         experience.points.forEach((point) => {
-          expect(typeof point).toBe("string");
-          expect(point.trim().length).toBeGreaterThan(0);
+          expect(typeof point).toBe("object");
+          expect(typeof point.id).toBe("string");
+          expect(point.id.trim().length).toBeGreaterThan(0);
+          expect(typeof point.en).toBe("string");
+          expect(point.en.trim().length).toBeGreaterThan(0);
         });
         expect(ALLOWED_CATEGORIES.has(experience.category)).toBe(true);
       });
@@ -81,8 +113,11 @@ describe("src/constants/index schema and authentic CV data", () => {
         expect(typeof project.theme).toBe("string");
         expect(typeof project.name).toBe("string");
         expect(project.name.trim().length).toBeGreaterThan(0);
-        expect(typeof project.description).toBe("string");
-        expect(project.description.trim().length).toBeGreaterThan(0);
+        expect(typeof project.description).toBe("object");
+        expect(typeof project.description.id).toBe("string");
+        expect(project.description.id.trim().length).toBeGreaterThan(0);
+        expect(typeof project.description.en).toBe("string");
+        expect(project.description.en.trim().length).toBeGreaterThan(0);
         expect(typeof project.link).toBe("string");
         expect(project.link.startsWith("https://")).toBe(true);
         expect(Array.isArray(project.tags)).toBe(true);
@@ -123,8 +158,11 @@ describe("src/constants/index schema and authentic CV data", () => {
         expect(award.issuer.trim().length).toBeGreaterThan(0);
         expect(typeof award.date).toBe("string");
         expect(award.date.trim().length).toBeGreaterThan(0);
-        expect(typeof award.description).toBe("string");
-        expect(award.description.trim().length).toBeGreaterThan(0);
+        expect(typeof award.description).toBe("object");
+        expect(typeof award.description.id).toBe("string");
+        expect(award.description.id.trim().length).toBeGreaterThan(0);
+        expect(typeof award.description.en).toBe("string");
+        expect(award.description.en.trim().length).toBeGreaterThan(0);
       });
     });
   });
