@@ -68,6 +68,9 @@ const About = () => {
   const handleBack = () => {
     if (isExiting) return;
     setIsExiting(true);
+    setTimeout(() => {
+      navigate("/");
+    }, 850);
   };
 
   const handleRollComplete = (isOpen) => {

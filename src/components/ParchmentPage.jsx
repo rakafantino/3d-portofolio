@@ -13,7 +13,6 @@ const ParchmentPage = ({
   onRollComplete,
 }) => {
   const handleAnimationEnd = (e) => {
-    if (e.target !== e.currentTarget) return;
     if (
       !e.animationName ||
       e.animationName === "parchmentUnroll" ||

@@ -52,6 +52,42 @@
   --wood-grain: #24150a;
 }
 
+@layer base {
+  *,
+  *::before,
+  *::after {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  [role="button"],
+  [tabindex] {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+    border-color: inherit;
+  }
+
+  button:focus,
+  a:focus,
+  input:focus,
+  textarea:focus,
+  [role="button"]:focus {
+    outline: none !important;
+    box-shadow: none;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  [role="button"]:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 2px #b88746 !important;
+  }
+}
+
 @keyframes parchmentUnroll {
   0% {
     transform: scaleY(0.02);
@@ -110,12 +146,12 @@
     transform: scaleY(1);
     opacity: 1;
   }
-  30% {
+  25% {
     transform: scaleY(1.02);
   }
   100% {
-    transform: scaleY(0.02);
-    opacity: 0.2;
+    transform: scaleY(0.01);
+    opacity: 0.1;
   }
 }
 
@@ -124,13 +160,13 @@
     opacity: 1;
     transform: translateY(0);
   }
-  50% {
+  40% {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-10px);
   }
   100% {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-10px);
   }
 }
 
@@ -142,7 +178,7 @@
 
 .animate-parchment-rollup {
   transform-origin: top center;
-  animation: parchmentRollUp 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: parchmentRollUp 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
   will-change: transform;
 }
 
@@ -151,7 +187,7 @@
 }
 
 .animate-parchment-content-exit {
-  animation: parchmentContentFadeOut 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: parchmentContentFadeOut 0.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 .animate-parchment-top-roll {
@@ -159,7 +195,7 @@
 }
 
 .animate-parchment-top-roll-rise {
-  animation: parchmentTopRollRise 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: parchmentTopRollRise 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

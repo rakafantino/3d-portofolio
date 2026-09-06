@@ -105,15 +105,16 @@ const CameraRig = ({
   isDiving,
   onDiveComplete,
 }) => {
+  const initialFraming = framings[currentStage] || framings[1];
   const currentPosRef = useRef(
     showGate
       ? new THREE.Vector3(...SKY_DIVE_FRAMING.pos)
-      : new THREE.Vector3(0, 1.7, 4.8)
+      : new THREE.Vector3(...initialFraming.pos)
   );
   const currentLookAtRef = useRef(
     showGate
       ? new THREE.Vector3(...SKY_DIVE_FRAMING.target)
-      : new THREE.Vector3(0.15, 0.5, 0)
+      : new THREE.Vector3(...initialFraming.target)
   );
   const isMovingRef = useRef(false);
   const baseFovRef = useRef(baseFov);
@@ -186,7 +187,8 @@ CameraRig.propTypes = {
 
 const IslandWorldRig = ({ scale, currentStage, framings }) => {
   const groupRef = useRef(null);
-  const currentAngleRef = useRef(0);
+  const initialAngle = (framings[currentStage] || framings[1]).islandRotY;
+  const currentAngleRef = useRef(initialAngle);
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -247,7 +249,10 @@ const Home = () => {
       const isGateOpen = sessionStorage.getItem(SPLASH_STORAGE_KEY) === "true";
       if (!isGateOpen) return false;
       const initial = initialStage();
-      return shouldOpenStageCard(initial);
+      if (initial === 1) {
+        return shouldOpenStageCard(1);
+      }
+      return false;
     } catch {
       return false;
     }
@@ -350,7 +355,7 @@ const Home = () => {
     if (!showGate) {
       const revealTimer = setTimeout(() => {
         setCardIsOpen(shouldOpenStageCard(currentStage));
-      }, 300);
+      }, 700);
       return () => clearTimeout(revealTimer);
     }
   }, [showGate, currentStage]);
@@ -596,13 +601,13 @@ const Home = () => {
       </div>
 
       {/* Desktop & Mobile Card Containers - Only mount once gate is closed and camera dive completes */}
-      {!showGate && !isDiving && (
+      {!showGate && !isDiving && (cardIsOpen || isTransitioning) && (
         isMobile ? (
           <div
             key={`mobile-card-${displayedStage}`}
             className="md:hidden absolute top-[4.2rem] sm:top-20 left-4 right-4 z-20 pointer-events-auto max-w-sm mx-auto"
           >
-            {displayedStage && (displayedStage > 1 || (shouldOpenStageCard(1) && (cardIsOpen || isTransitioning))) && (
+            {displayedStage && shouldOpenStageCard(displayedStage) && (
               <Homeinfo
                 currentStage={displayedStage}
                 isOpen={cardIsOpen}
@@ -621,7 +626,7 @@ const Home = () => {
             className="hidden md:block absolute z-10 pointer-events-none -translate-x-1/2 -translate-y-1/2 w-[min(22rem,calc(100vw-2.5rem))]"
           >
             <div className="pointer-events-auto w-full">
-              {displayedStage && (displayedStage > 1 || (shouldOpenStageCard(1) && (cardIsOpen || isTransitioning))) && (
+              {displayedStage && shouldOpenStageCard(displayedStage) && (
                 <Homeinfo
                   currentStage={displayedStage}
                   isOpen={cardIsOpen}
