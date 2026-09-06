@@ -59,6 +59,7 @@ export const DICTIONARY = {
     // About Page
     aboutEyebrow: "Tentang",
     aboutIntro: "Saya software engineer yang fokus bikin web modern, responsif, dan enak dipakai. Sehari-hari banyak ngoprek frontend, arsitektur terdesentralisasi (Web3 seperti Solana & ICP), sampai eksplorasi AI praktis. Senang membangun produk dari nol hingga stabil di produksi.",
+    downloadCvBtn: "Unduh CV (PDF)",
     awardsTitle: "Prestasi & Penghargaan",
     awardsKicker: "Pencapaian",
     awardsSub: "Beberapa kompetisi internasional dan program akselerasi yang pernah saya selesaikan.",
@@ -222,6 +223,7 @@ export const DICTIONARY = {
     // About Page
     aboutEyebrow: "About",
     aboutIntro: "I'm a software engineer building fast, responsive, and delightful web applications. Most of my days are spent crafting modern frontends, decentralized systems (Solana & ICP), and practical AI integrations. I love taking products from zero to stable production.",
+    downloadCvBtn: "Download CV (PDF)",
     awardsTitle: "Honors & Achievements",
     awardsKicker: "Achievements",
     awardsSub: "A few international competitions and acceleration programs under my belt.",

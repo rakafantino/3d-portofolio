@@ -9,13 +9,16 @@ import { Link } from "react-router-dom";
 const ParchmentRibbon = ({
   children,
   to,
+  href,
+  download,
   className = "",
   variant = "banner",
   ariaLabel,
   onClick,
 }) => {
-  const isLink = Boolean(to);
-  const isButton = !isLink && Boolean(onClick);
+  const isExternalOrDownload = Boolean(href);
+  const isLink = !isExternalOrDownload && Boolean(to);
+  const isButton = !isLink && !isExternalOrDownload && Boolean(onClick);
 
   // Curled split swallowtail SVG for left end
   const leftTail = (
@@ -122,6 +125,22 @@ const ParchmentRibbon = ({
     </div>
   );
 
+  if (isExternalOrDownload) {
+    return (
+      <a
+        href={href}
+        download={download}
+        data-testid="parchment-ribbon"
+        data-variant={variant}
+        aria-label={ariaLabel}
+        onClick={onClick}
+        className={`${baseStyles} focus:outline-none focus-visible:ring-2 focus-visible:ring-[#B88746] focus-visible:ring-offset-1 active:translate-y-0.5 ${className}`}
+      >
+        {ribbonCore}
+      </a>
+    );
+  }
+
   if (isLink) {
     return (
       <Link
@@ -168,6 +187,8 @@ const ParchmentRibbon = ({
 ParchmentRibbon.propTypes = {
   children: PropTypes.node.isRequired,
   to: PropTypes.string,
+  href: PropTypes.string,
+  download: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   className: PropTypes.string,
   variant: PropTypes.string,
   ariaLabel: PropTypes.string,

@@ -24,11 +24,16 @@ describe("About Page - Warm Light Editorial Profile", () => {
     );
   };
 
-  it("renders the warm editorial header, kicker, and human intro", () => {
+  it("renders the warm editorial header, kicker, human intro, and CV download link", () => {
     renderAbout();
     expect(screen.getByText(/tentang/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/raka fantino/i);
     expect(screen.queryByText(/\/\/\s*PERSONNEL_FILE/i)).not.toBeInTheDocument();
+
+    const cvLink = screen.getByRole("link", { name: /unduh cv \(pdf\)|download cv \(pdf\)/i });
+    expect(cvLink).toBeInTheDocument();
+    expect(cvLink).toHaveAttribute("href", "/CV_Raka_Fantino.pdf");
+    expect(cvLink).toHaveAttribute("download", "CV_Raka_Fantino.pdf");
   });
 
   it("renders Featured Awards list with all award titles and issuers", () => {

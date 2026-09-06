@@ -108,6 +108,19 @@ const About = () => {
           <p className="font-serif text-base sm:text-lg text-[#4A2F17] leading-relaxed max-w-2xl mt-1">
             {t("aboutIntro")}
           </p>
+          <div className="mt-4 pt-1 flex items-center gap-4 flex-wrap">
+            <ParchmentRibbon
+              href="/CV_Raka_Fantino.pdf"
+              download="CV_Raka_Fantino.pdf"
+              ariaLabel={t("downloadCvBtn")}
+              variant="tab"
+            >
+              <span aria-hidden="true" className="font-bold text-xs sm:text-sm">
+                ↓
+              </span>
+              <span>{t("downloadCvBtn")}</span>
+            </ParchmentRibbon>
+          </div>
         </div>
 
         <div id="awards" className="mt-14 sm:mt-16 pt-2 scroll-mt-6">
