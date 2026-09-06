@@ -1,4 +1,5 @@
 import { Suspense, useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Clouds, Cloud } from "@react-three/drei";
@@ -249,10 +250,7 @@ const Home = () => {
       const isGateOpen = sessionStorage.getItem(SPLASH_STORAGE_KEY) === "true";
       if (!isGateOpen) return false;
       const initial = initialStage();
-      if (initial === 1) {
-        return shouldOpenStageCard(1);
-      }
-      return false;
+      return shouldOpenStageCard(initial);
     } catch {
       return false;
     }
@@ -260,6 +258,7 @@ const Home = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const pendingStageRef = useRef(null);
   const transitionTimerRef = useRef(null);
+  const location = useLocation();
 
   const config = INITIAL_CONFIG;
   const [isMobile, setIsMobile] = useState(isBrowserMobile);
@@ -285,6 +284,31 @@ const Home = () => {
     }
   });
   const [isTourActive, setIsTourActive] = useState(false);
+
+  const isInitialMountRef = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      return;
+    }
+
+    if (location.pathname === "/" && !showGate) {
+      const savedZone = initialStage();
+      setCurrentStage((prevStage) => {
+        if (savedZone !== prevStage) {
+          setDisplayedStage(savedZone);
+          return savedZone;
+        }
+        return prevStage;
+      });
+      setCardIsOpen(false);
+      const timer = setTimeout(() => {
+        setCardIsOpen(shouldOpenStageCard(savedZone));
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, showGate]);
 
   const handleStartTour = () => {
     setIsTourActive(true);
@@ -352,13 +376,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (!showGate) {
-      const revealTimer = setTimeout(() => {
-        setCardIsOpen(shouldOpenStageCard(currentStage));
-      }, 700);
-      return () => clearTimeout(revealTimer);
+    if (!showGate && location.pathname !== "/") {
+      setCardIsOpen(false);
     }
-  }, [showGate, currentStage]);
+  }, [showGate, location.pathname]);
 
   useEffect(() => {
     return () => {
