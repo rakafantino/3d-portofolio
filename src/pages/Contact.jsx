@@ -7,6 +7,7 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import useAlert from "../hooks/useAlert.js";
 import Alert from "../components/Alert.jsx";
 import { sendDispatch } from "../core/contactTransport.js";
+import { useDocumentTitle } from "../hooks/useDocumentTitle.js";
 
 const MAX_MESSAGE_LENGTH = 1000;
 const THROTTLE_WINDOW_MS = 3000;
@@ -14,6 +15,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Contact = () => {
   const { t } = useLanguage();
+  useDocumentTitle(t("contactEyebrow"));
   const navigate = useNavigate();
   const [isExiting, setIsExiting] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });

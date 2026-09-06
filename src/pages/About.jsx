@@ -5,6 +5,7 @@ import SubpageNav from "../components/SubpageNav";
 import ParchmentPage from "../components/ParchmentPage";
 import ParchmentRibbon from "../components/ParchmentRibbon";
 import { useLanguage } from "../context/LanguageContext";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { awards, skills, experiences } from "../constants";
 import {
   HonoIcon,
@@ -46,6 +47,7 @@ const CATEGORY_ORDER = [
 
 const About = () => {
   const { t } = useLanguage();
+  useDocumentTitle(t("aboutEyebrow"));
   const navigate = useNavigate();
   const location = useLocation();
   const [isExiting, setIsExiting] = useState(false);

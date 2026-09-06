@@ -271,7 +271,14 @@ const Home = () => {
   });
 
   const [isDiving, setIsDiving] = useState(false);
-  const [cloudDissolve, setCloudDissolve] = useState(false);
+  const [cloudDissolve, setCloudDissolve] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return sessionStorage.getItem(SPLASH_STORAGE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
   const [isTourActive, setIsTourActive] = useState(false);
 
   const handleStartTour = () => {

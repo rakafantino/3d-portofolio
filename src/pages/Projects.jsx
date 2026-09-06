@@ -7,9 +7,11 @@ import { useLanguage } from "../context/LanguageContext";
 import { projects } from "../constants";
 import { arrow } from "../assets/icons";
 import ProjectDrawer from "../components/ProjectDrawer";
+import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const Projects = () => {
   const { t } = useLanguage();
+  useDocumentTitle(t("projectsEyebrow"));
   const navigate = useNavigate();
   const [isExiting, setIsExiting] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
