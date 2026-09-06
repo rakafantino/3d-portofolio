@@ -121,7 +121,7 @@ describe("Contact Page - Warm Editorial Dispatch Form", () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/pesan gagal terkirim|i didn't receive your message/i)).toBeInTheDocument();
+      expect(screen.getByText(/pengiriman warkat gagal|dispatch failed/i)).toBeInTheDocument();
     });
   });
 
