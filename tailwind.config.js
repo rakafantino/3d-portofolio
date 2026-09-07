@@ -67,10 +67,8 @@ export default {
         },
       },
       fontFamily: {
-        worksans: ["Work Sans", "sans-serif"],
-        poppins: ["Poppins", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
-        sans: ["Plus Jakarta Sans", "Work Sans", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "sans-serif"],
         serif: ["Fraunces", "Georgia", "serif"],
       },
       boxShadow: {

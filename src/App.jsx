@@ -1,8 +1,13 @@
+import { Suspense, lazy } from "react";
 import { Route, BrowserRouter as Router, Routes, useLocation } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { LanguageProvider } from "./context/LanguageContext";
-import { Home, About, Projects, Contact } from "./pages";
+import { Home } from "./pages";
 import islandBg from "./assets/images/island-bg.png";
+
+const About = lazy(() => import("./pages/About"));
+const Projects = lazy(() => import("./pages/Projects"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 const AppLayout = () => {
   const location = useLocation();
@@ -26,11 +31,13 @@ const AppLayout = () => {
       {/* Subpage Overlay Pages: unroll downwards over the persistent island background */}
       {isSubpage && (
         <div className="relative z-10 w-full min-h-[100dvh]">
-          <Routes>
-            <Route path="/about" element={<About />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/contact" element={<Contact />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/about" element={<About />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/contact" element={<Contact />} />
+            </Routes>
+          </Suspense>
         </div>
       )}
 
